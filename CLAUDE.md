@@ -108,5 +108,6 @@ Use git for every change, so any problem can be traced to the commit that caused
 - **Brand:** Discount Vai. It is spelled **"Vai"**, never "Bhai".
 - **What it is:** a Bangladeshi clothing e-commerce site with an owner-managed admin panel.
 - **Launch categories:** MEN (Trousers, Shorts, 3/4 Pants, 2/4 Pants, Club Jerseys, Jackets, Drop T-Shirts, Panjabi) and ACCESSORIES (Bags, unisex). WOMEN is Coming Soon.
-- **Decisions so far:** custom Next.js site with a built-in admin panel; SSLCommerz for payments; English at launch, Bangla-ready; popup offer to be decided later.
+  - "2/4 Pants" = half pants; "Drop T-Shirts" = drop-shoulder T-shirts. Menu labels stay as the owner wrote them; URLs and SEO text use "half pants" and "drop shoulder".
+- **Decisions so far:** custom Next.js site with a built-in admin panel; payments by **Cash on Delivery** and **SSLCommerz** (online); English at launch, Bangla-ready; popup offer to be decided later.
 - **Current stage:** the research and site plan is approved. The user is making mockups in Claude Design. See [`plans/README.md`](plans/README.md).

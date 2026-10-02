@@ -171,10 +171,12 @@ No website code is written until the user says to start building.
 |---|---|
 | Brand name | **Discount Vai** (spelled "Vai", not "Bhai") |
 | Platform | **Custom-coded Next.js website with a built-in admin panel** at `/admin` |
-| Payments | **SSLCommerz** (one gateway covering mobile wallets like bKash/Nagad, plus cards). Exact methods to be decided later. |
+| Payments | **Cash on Delivery** and **online payment through SSLCommerz** (one gateway covering mobile wallets like bKash/Nagad, plus cards). The exact SSLCommerz methods are still to be decided. |
 | Language | **English at launch**, structured so **Bangla can be added later** without a redesign |
 | Popup offer | **Decide later.** All popup text and the offer are editable in the admin. |
 | Categories at launch | MEN (8 subcategories) and ACCESSORIES (Bags, unisex). **WOMEN = Coming Soon.** |
+| "2/4 Pants" | Means **half pants**. The menu label stays "2/4 Pants"; the URL and SEO text use "half pants", the phrase people search for. |
+| "Drop T-Shirts" | Means **drop-shoulder T-shirts**. The menu label stays "Drop T-Shirts"; the URL and SEO text use "drop shoulder". |
 
 ---
 
@@ -187,10 +189,10 @@ No website code is written until the user says to start building.
 | Trousers | `/men/trousers` | |
 | Shorts | `/men/shorts` | |
 | 3/4 Pants | `/men/3-4-pants` | |
-| 2/4 Pants | `/men/2-4-pants` | *Label to be confirmed (see Open questions)* |
+| 2/4 Pants | `/men/half-pants` | 2/4 pants = half pants. The URL uses the searched phrase. |
 | Club Jerseys | `/men/club-jerseys` | |
 | Jackets | `/men/jackets` | |
-| Drop T-Shirts | `/men/drop-shoulder-t-shirts` | Slug uses the phrase people search for |
+| Drop T-Shirts | `/men/drop-shoulder-t-shirts` | Drop T-shirts = drop-shoulder T-shirts. The URL uses the searched phrase. |
 | Panjabi | `/men/panjabi` | |
 | Accessories | `/accessories` | |
 | Bags (Unisex) | `/accessories/bags` | |
@@ -272,7 +274,7 @@ No website code is written until the user says to start building.
 7. **Best Sellers** carousel.
 8. **Bags spotlight:** a split image/text block linking to the Bags category.
 9. **Women's teaser:** "Women's collection coming soon. Get notified" (can be switched off).
-10. **Trust strip:** Easy exchange · Delivery across Bangladesh · Secure payment (SSLCommerz) · Quality fabrics.
+10. **Trust strip:** Easy exchange · Delivery across Bangladesh · Cash on Delivery & secure online payment · Quality fabrics.
 11. **Customer reviews:** customer photos, stars and short quotes, managed in the admin.
 12. **SEO text block:** a short, readable "About Discount Vai: affordable men's clothing online in Bangladesh…" with the page's H1 or H2 keywords.
 13. **Footer.**
@@ -318,7 +320,10 @@ No website code is written until the user says to start building.
   1. Contact: **phone (required)**, email (optional, recommended).
   2. Delivery address: name, district/city, area, full address. Then the delivery zone (inside/outside Dhaka), which sets the shipping cost.
   3. Order notes, and a discount code field.
-  4. Payment: **SSLCommerz**, which redirects to its secure page and back.
+  4. Payment, with two choices shown as large selectable cards:
+     - **Cash on Delivery**: the customer pays the courier on delivery. The order is placed right away.
+     - **Pay online (SSLCommerz)**: bKash, Nagad, cards and so on. It redirects to SSLCommerz's secure page and back.
+     - The admin can switch COD off, limit it to certain delivery zones, or ask for the delivery charge in advance on COD orders (a common way to cut fake orders in BD).
   5. A newsletter opt-in checkbox.
 - **Order confirmation page** with an order number, summary and next steps. A confirmation email is sent (and an SMS later, if wanted).
 - Payment-failed and payment-cancelled pages, each with a retry button.
@@ -335,7 +340,7 @@ No website code is written until the user says to start building.
   - **Company:** About, Style Guide (Soon), Privacy, Terms.
 - Newsletter signup form.
 - Social links: Facebook, Instagram, TikTok, WhatsApp. These are admin-set, and any that are blank are hidden.
-- SSLCommerz payment-methods banner, then "© Discount Vai".
+- Payment-methods banner ("Cash on Delivery" plus the SSLCommerz methods), then "© Discount Vai".
 - **Floating chat button** (WhatsApp or Messenger link, admin-set). Optional.
 
 ### 5.10 Other screens to design
@@ -352,10 +357,11 @@ Women Coming Soon page · Info page template (About, FAQ, policies) · Size guid
 | **Header and footer** | Announcement messages, mega-menu featured images, footer links, social links, chat button |
 | **Popup** | On/off, image, all text, offer, trigger %, days to hide |
 | **Subscribers** | List with email, date and source; **export CSV** |
-| **Orders** | List and search; status (Pending → Confirmed → Shipped → Delivered / Cancelled / Returned); payment status from SSLCommerz; customer details; print invoice |
+| **Orders** | List and search; status (Pending → Confirmed → Shipped → Delivered / Cancelled / Returned); payment method (COD or online); payment status (online: from SSLCommerz; COD: "Unpaid – COD" until marked paid on delivery); customer details; print invoice |
 | **Customers** | Accounts and order history |
 | **Discount codes** | % or fixed amount, expiry, usage limit, minimum order |
 | **Delivery settings** | Zones (inside/outside Dhaka), charges, free-delivery threshold, delivery times |
+| **Payment settings** | Cash on Delivery on/off, which zones allow COD, optional advance delivery charge for COD; SSLCommerz on/off and sandbox/live mode |
 | **Pages** | About, FAQ, policies and size guides (rich text editor) |
 | **Media library** | All uploaded images |
 | **Users and roles** | Owner (everything), Staff (products and orders only) |
@@ -412,7 +418,7 @@ The admin panel must also work well **on a phone**, so the owner can add product
 - Category intro text, internal links (related products, breadcrumbs), and Open Graph/Twitter cards so **Facebook and WhatsApp shares show the product image and price**. This matters a lot, because BD shopping runs on Facebook.
 
 **Starting keyword targets** (to be checked later in Google Search Console and Keyword Planner)
-- `men's trousers in Bangladesh` · `panjabi price in Bangladesh` · `drop shoulder t-shirt BD` · `club jersey price in Bangladesh` · `3/4 pant for men` · `men's shorts online BD` · `jacket for men in Bangladesh` · `unisex bag BD` · `online clothing shop Bangladesh` · `discount clothing BD` · brand `Discount Vai` (plus the "discount bhai" and "discountvai" spellings, used naturally on the About page).
+- `men's trousers in Bangladesh` · `panjabi price in Bangladesh` · `drop shoulder t-shirt BD` · `club jersey price in Bangladesh` · `3/4 pant for men` · `half pant for men BD` · `men's shorts online BD` · `jacket for men in Bangladesh` · `unisex bag BD` · `online clothing shop Bangladesh` · `discount clothing BD` · brand `Discount Vai` (plus the "discount bhai" and "discountvai" spellings, used naturally on the About page).
 - Phase 2: Bangla keywords (পাঞ্জাবি, জার্সি…) once the Bangla version is added (with `hreflang` tags), plus Style Guide blog posts for long-tail searches ("how to style a panjabi for Eid").
 
 **Measurement:** set up Google Search Console and Google Analytics 4 at launch. Meta Pixel is optional (see Open questions).
@@ -422,17 +428,17 @@ The admin panel must also work well **on a phone**, so the owner can add product
 ## 9. Technical direction (details go in a separate build plan after the mockups)
 - **Next.js (TypeScript)** storefront, with **Payload CMS** as the admin panel. Payload lives inside the same Next.js app at `/admin`, is free and open-source, and handles image uploads, drafts/scheduling, user roles and a phone-friendly admin.
 - PostgreSQL database; image storage on object storage (e.g. Cloudflare R2 or S3); Tailwind CSS for styling.
-- **SSLCommerz** hosted checkout with server-side payment verification (IPN).
+- **Cash on Delivery** orders are created directly. **SSLCommerz** uses its hosted checkout with server-side payment verification (IPN).
 - Bangla-ready from the start: all text lives in the CMS or a translation file, and the routes allow `/bn/...` later.
 - Everything is tracked in git (§1.2) from the first file.
 
 ---
 
 ## 10. Open questions (for the user and the owner)
-1. **"2/4 Pants"**: what does it mean (half pants?), and how is it different from Shorts? What should the label say?
-2. **"Drop T-Shirts"**: is that drop-shoulder T-shirts? Can the URL say "drop-shoulder"?
+1. ~~**"2/4 Pants"**: what does it mean?~~ **Answered:** half pants.
+2. ~~**"Drop T-Shirts"**: is that drop-shoulder T-shirts?~~ **Answered:** yes.
 3. Is there a **logo and brand colours** already?
-4. **Cash on Delivery**: offer it alongside SSLCommerz? It's very common for BD clothing orders. The owner also needs an **SSLCommerz merchant account** (it requires a trade licence).
+4. ~~**Cash on Delivery**: offer it alongside SSLCommerz?~~ **Answered:** yes, COD is offered. Still open: should COD orders pay the delivery charge in advance? Also, the owner needs an **SSLCommerz merchant account** (it requires a trade licence).
 5. Which **SSLCommerz methods** to enable (bKash, Nagad, Rocket, cards…)? *Pending.*
 6. **Popup offer**: discount or updates only? *Decide later; it's editable in the admin.*
 7. Should the popup also ask for a **phone/WhatsApp number** (optional field)?
@@ -465,5 +471,5 @@ The admin panel must also work well **on a phone**, so the owner can add product
   - Google Rich Results Test passes on product and category pages.
   - No `#` links (automated link check).
   - The popup follows its frequency rules (close it → it stays hidden on reload).
-  - SSLCommerz sandbox payment works end-to-end.
+  - SSLCommerz sandbox payment works end-to-end, and a Cash on Delivery order shows up in the admin as "Unpaid – COD".
   - Each change is in its own git commit.
