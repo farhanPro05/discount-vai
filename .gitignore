@@ -6,3 +6,15 @@ out/
 .DS_Store
 *.log
 .vercel/
+
+# payload uploads (local dev)
+/media
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
