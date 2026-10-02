@@ -7,8 +7,9 @@
 ## How to use
 1. Open Claude Design and start a new project.
 2. Paste everything under **"The prompt"** below. You can also attach the site plan file for extra context, but the prompt works on its own.
-3. When the palettes come back, pick one (or ask for changes) and let it finish the pages.
-4. Once the mockups are approved, share them back here so the build plan can be written from them.
+3. When the palettes and the product display options (A / B / C) come back, pick one of each (or ask for changes) and let it finish the pages.
+4. **Already pasted the earlier version?** Send the "Product display options" section below as a follow-up message instead of starting over.
+5. Once the mockups are approved, share them back here so the build plan can be written from them.
 
 ---
 
@@ -71,7 +72,54 @@ Create a design-system page showing:
 - **Feedback:** toasts, skeleton loaders, empty states.
 - **Containers:** modal, bottom sheet, drawer.
 
-## Part 3 — Pages
+## Part 3 — Product display options (show me 3 layouts before choosing)
+
+Products are the heart of the site, so design **3 different ways of displaying products** for me to compare before the grids are finalised. Apply each option to:
+- the **homepage product sections**: New Arrivals, Best Sellers, Featured collection;
+- a **category page**: Panjabi.
+
+Show both at 390 / 768 / 1440.
+
+**Option A: Classic grid** (like ravebd.com)
+- Uniform rows and columns: 4 per row on desktop, 3 on tablet, 2 on mobile.
+- Every image is the same size on a plain, clean card.
+- Under each image: "Name | Colour", the price, and small colour-swatch dots.
+- Centred section titles ("NEW ARRIVALS").
+- Simple and very easy to scan; good for browsing many products and spotting deals.
+
+**Option B: Image-first fashion grid** (like lerevecraze.com)
+- Large, tall 4:5 photos dominate the card. The text is minimal: the name on one line, then the price.
+- Each card swipes (mobile) or hovers (desktop) through several photos, with thin indicator bars under the image.
+- Tight gutters, and a slim filter bar at the top (Colour · Price · Sort by).
+- On the homepage, full-width campaign images ("Shop this look") sit between the product rows.
+
+**Option C: Editorial / mixed layout** (like rebeccaatwood.com)
+- A magazine feel with generous white space.
+- Product cards are mixed with large lifestyle photos and short text blocks, in varied tile sizes (e.g. one large feature tile beside two small ones, or staggered heights).
+- Homepage products sit in horizontal carousels that run off the edge of the screen (the next card is partly visible), with arrow controls.
+- Elegant centred captions under each image: "Classic Cotton Panjabi" and then *in White* in italics.
+- On the category page:
+  - a banner image;
+  - a centred title with the product count;
+  - on desktop, filters as accordions in a left sidebar;
+  - 3 columns of large images.
+
+**Rules for every option**
+- **The price is always visible on every product card**, including the sale price, the struck-through original price and the discount badge. We're a discount brand, so this matters even in the editorial option.
+- It must work at all 3 widths. Editorial layouts must collapse cleanly to a readable 2-column or 1-column layout on mobile.
+- Use the same design tokens and palette switcher as everything else.
+
+You may also propose an **Option D: a hybrid** (e.g. an editorial homepage with a classic grid on category pages) if you think it's better.
+
+**Recommend one option**, judging each on:
+- how easy it is to browse;
+- how well it shows discounts;
+- how usable it is on mobile;
+- how premium it feels.
+
+Add a **layout switcher** to the prototype, next to the palette switcher, so I can flip between the options on the homepage and the category page. After I choose, build the remaining pages in the chosen layout.
+
+## Part 4 — Pages
 
 Design **every page at three widths: Mobile 390px, Tablet 768px and Desktop 1440px**, side by side and labelled.
 
@@ -270,8 +318,9 @@ Design **every page at three widths: Mobile 390px, Tablet 768px and Desktop 1440
 ## Deliverables
 1. **Brand exploration board:** 4 palettes with contrast checks, 3 wordmarks plus the monogram, 2 font pairings, and your recommendation.
 2. **Design system page.**
-3. **Every page above** at 390 / 768 / 1440, including the key states.
-4. **A clickable prototype** linking the pages, with the palette switcher.
-5. **A tokens summary** to hand to the developer: final hex codes, fonts, type sizes, spacing and radius.
+3. **Product display options board:** Options A / B / C (plus D if proposed) on the homepage and the Panjabi category page at 3 widths, with your recommendation.
+4. **Every page above** at 390 / 768 / 1440, including the key states.
+5. **A clickable prototype** linking the pages, with the palette switcher and the layout switcher.
+6. **A tokens summary** to hand to the developer: final hex codes, fonts, type sizes, spacing and radius.
 
 No admin panel screens are needed; the site uses an existing admin system.

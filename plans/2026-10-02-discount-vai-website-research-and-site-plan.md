@@ -388,6 +388,10 @@ The admin panel must also work well **on a phone**, so the owner can add product
   - The full brief is in [`2026-10-02-claude-design-mockup-prompt.md`](2026-10-02-claude-design-mockup-prompt.md).
 - **Type:** a strong sans-serif for headings and a clean sans-serif for body text. Choose fonts that sit well next to a **Bangla font** added later (e.g. Hind Siliguri or Noto Sans Bengali).
 - **Photography:** all product photos use the **same aspect ratio (4:5)** on a clean, consistent background, with lifestyle shots for banners. The admin will show upload guidance.
+- **Product display layout: not chosen yet.** Claude Design shows 3 options on the homepage and a category page, and may propose a hybrid; the user picks one after reviewing them. In every option, prices, sale prices and discount badges stay visible on every product card.
+  - **A, classic grid** (RaveBD): uniform rows and columns.
+  - **B, image-first grid** (Le Reve): big swipeable photos with minimal text.
+  - **C, editorial/mixed** (Rebecca Atwood): varied tile sizes, lifestyle images and edge-bleeding carousels.
 - **Components to design** (each at 390, 768 and 1440):
   - Headers: desktop, sticky, and mobile with the drawer open.
   - Mega menu.
