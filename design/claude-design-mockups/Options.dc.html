@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Product display options · A to D</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{stageCls}}">
+
+<sc-if value="{{showCtl}}" hint-placeholder-val="{{false}}">
+<div class="ctl">
+<div class="ctl-g"><span class="ctl-l">Page</span><div class="seg"><sc-for list="{{pages}}" as="o" hint-placeholder-count="2"><button class="{{o.cls}}" type="button" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<div class="ctl-g"><span class="ctl-l">Layout</span><div class="seg"><sc-for list="{{layouts}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<div class="ctl-g"><span class="ctl-l">Palette</span><div class="seg"><sc-for list="{{palettes}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{o.pick}}"><span class="pdots"><sc-for list="{{o.dots}}" as="d" hint-placeholder-count="3"><i style="background: {{d.c}}"></i></sc-for></span>{{o.label}}</button></sc-for></div></div>
+<div class="ctl-g"><span class="ctl-l">Width</span><div class="seg"><sc-for list="{{widths}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<span class="ctl-hint">Hover photos in B and D · arrows move C and D carousels</span>
+</div>
+</sc-if>
+
+<div class="{{bodyCls}}">
+<div class="{{dvCls}}" style="width: {{W}}px">
+
+<!-- ===== Announcement + header (shared) ===== -->
+<sc-if value="{{notM}}" hint-placeholder-val="{{true}}"><div class="ann"><span>Free delivery on orders over ৳2,000</span><span class="dot">·</span><span>Easy 7-day exchange</span></div></sc-if>
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}"><div class="ann"><span>Free delivery over ৳2,000 · 7-day exchange</span></div></sc-if>
+<header class="hdr"><div class="wrap">
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}">
+<div class="hdr-d">
+<a class="wm" href="#home"><span>Discount</span><b>Vai</b></a>
+<nav class="nav" aria-label="Main">
+<a href="#men">Men<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></a>
+<a href="#women">Women <span class="soon">Soon</span></a>
+<a href="#accessories">Accessories<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></a>
+<a href="#new">New Arrivals</a>
+<a class="sale" href="#sale">Sale</a>
+</nav>
+<div class="hicons">
+<button class="ib" type="button" aria-label="Search"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg></button>
+<a class="ib" href="#account" aria-label="Account"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg></a>
+<a class="ib" href="#cart" aria-label="Cart, 2 items"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="cnt">2</span></a>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}">
+<div class="hdr-s">
+<div class="hl"><button class="ib" type="button" aria-label="Open menu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
+<a class="wm" href="#home"><span>Discount</span><b>Vai</b></a>
+<div class="hicons">
+<button class="ib" type="button" aria-label="Search"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg></button>
+<a class="ib" href="#cart" aria-label="Cart, 2 items"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="cnt">2</span></a>
+</div>
+</div>
+</sc-if>
+</div></header>
+
+<!-- ===================== HOME · A · Classic grid ===================== -->
+<sc-if value="{{homeA}}" hint-placeholder-val="{{false}}">
+<section class="sec"><div class="wrap">
+<div class="sh-a"><h2>New Arrivals</h2><a class="lnk" href="#new">View all</a></div>
+<div class="ga"><sc-for list="{{na}}" as="p" hint-placeholder-count="4">
+<a class="ca {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}} | {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span></span></a>
+</sc-for></div>
+</div></section>
+<section class="sec"><div class="wrap">
+<div class="sh-a"><h2>Panjabi for Eid</h2><span class="sub">Vai's festive picks, ready for the big day</span></div>
+<div class="ls bn-a figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · Eid campaign</span><div class="ov"><span class="eb">Featured collection</span><h3>Panjabi for Eid</h3><p>Soft cottons and festive weaves. From ৳1,850.</p><a class="btn" href="#eid">Shop the collection</a></div></div>
+<div class="ga"><sc-for list="{{fe}}" as="p" hint-placeholder-count="4">
+<a class="ca {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}} | {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span></span></a>
+</sc-for></div>
+</div></section>
+<section class="sec"><div class="wrap">
+<div class="sh-a"><h2>Best Sellers</h2><a class="lnk" href="#best">View all</a></div>
+<div class="ga"><sc-for list="{{bs}}" as="p" hint-placeholder-count="4">
+<a class="ca {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}} | {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span></span></a>
+</sc-for></div>
+</div></section>
+</sc-if>
+
+<!-- ===================== HOME · B · Image-first ===================== -->
+<sc-if value="{{homeB}}" hint-placeholder-val="{{false}}">
+<section class="sec"><div class="wb">
+<div class="sh-b"><h2>New Arrivals</h2><a class="lnk" href="#new">View all</a></div>
+<div class="gb"><sc-for list="{{na}}" as="p" hint-placeholder-count="4">
+<div class="cb {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></a></div>
+</sc-for></div>
+</div></section>
+<section class="camp ls figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silT}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silS}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Campaign photo · weekend look</span><a class="hs" href="#p13" aria-label="Oversized Drop-Shoulder Tee, ৳550" style="right: 24%; top: 40%"><span>+</span></a><a class="hs" href="#p5" aria-label="Cargo 3/4 Pant, ৳950" style="right: 10%; top: 64%"><span>+</span></a><div class="ov"><span class="eb">Shop this look</span><h3>Weekend, sorted.</h3><p>Drop tee, cargo 3/4 and a sling bag. Under ৳3,000 for all three.</p><a class="btn" href="#look">Shop the look</a></div></section>
+<section class="sec"><div class="wb">
+<div class="sh-b"><h2>Best Sellers</h2><a class="lnk" href="#best">View all</a></div>
+<div class="gb"><sc-for list="{{bs}}" as="p" hint-placeholder-count="4">
+<div class="cb {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></a></div>
+</sc-for></div>
+</div></section>
+<section class="camp ls figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Campaign photo · Eid</span><a class="hs" href="#p15" aria-label="Classic Cotton Panjabi, ৳1,990" style="right: 24%; top: 46%"><span>+</span></a><div class="ov"><span class="eb">Featured collection</span><h3>Panjabi for Eid</h3><p>Soft cottons and festive weaves. From ৳1,850.</p><a class="btn" href="#eid">Shop the collection</a></div></section>
+<section class="sec"><div class="wb">
+<div class="sh-b"><h2>Panjabi for Eid</h2><a class="lnk" href="#eid">View all</a></div>
+<div class="gb"><sc-for list="{{fe}}" as="p" hint-placeholder-count="4">
+<div class="cb {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></a></div>
+</sc-for></div>
+</div></section>
+</sc-if>
+
+<!-- ===================== HOME · C · Editorial ===================== -->
+<sc-if value="{{homeC}}" hint-placeholder-val="{{false}}">
+<section class="sec"><div class="wrap">
+<div class="sh-c"><div><span class="eb">Just landed</span><h2>New Arrivals</h2></div><div class="r"><sc-if value="{{notM}}" hint-placeholder-val="{{true}}"><a class="lnk" href="#new">View all</a></sc-if><div class="arws"><button class="{{cPrevCls}}" type="button" aria-label="Previous products" onClick="{{cPrev}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button><button class="{{cNextCls}}" type="button" aria-label="Next products" onClick="{{cNext}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button></div></div></div>
+<div class="car"><div class="trk" style="transform: translateX(-{{cShift}}px)"><sc-for list="{{na}}" as="p" hint-placeholder-count="4">
+<a class="cc {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}}</span><span class="col">in {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></span></a>
+</sc-for></div></div>
+</div></section>
+<section class="sec"><div class="wrap">
+<div class="sh-c"><div><span class="eb">Featured collection</span><h2>Panjabi for Eid</h2></div><div class="r"><a class="lnk" href="#eid">View all 24</a></div></div>
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}">
+<div class="fe-c">
+<div class="ls ls1"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · Eid morning</span></div>
+<div class="rt">
+<div class="two"><sc-for list="{{feC1}}" as="p" hint-placeholder-count="2">
+<a class="cc {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}}</span><span class="col">in {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></span></a>
+</sc-for></div>
+<div class="tb"><span class="eb">The Eid edit</span><h3>Made for long days of visiting</h3><p>Breathable cottons, quiet embroidery and easy fits. Four pieces we would wear ourselves, from ৳1,850.</p><a class="lnk" href="#eid">Shop the collection</a></div>
+</div>
+<sc-for list="{{feC2}}" as="p" hint-placeholder-count="2">
+<a class="cc {{p.cardCls}} {{p.posCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}}</span><span class="col">in {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></span></a>
+</sc-for>
+<div class="ls ls2"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · embroidery close-up</span></div>
+</div>
+</sc-if>
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}">
+<div class="fe-cs">
+<div class="ls ls1"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · Eid morning</span></div>
+<div class="tb"><span class="eb">The Eid edit</span><h3>Made for long days of visiting</h3><p>Breathable cottons, quiet embroidery and easy fits. From ৳1,850.</p><a class="lnk" href="#eid">Shop the collection</a></div>
+<div class="st"><sc-for list="{{fe}}" as="p" hint-placeholder-count="4">
+<a class="cc {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}}</span><span class="col">in {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></span></a>
+</sc-for></div>
+</div>
+</sc-if>
+</div></section>
+<section class="sec"><div class="wrap">
+<div class="sh-c"><div><span class="eb">Vai's picks</span><h2>Best Sellers</h2></div><div class="r"><a class="lnk" href="#best">View all</a></div></div>
+<div class="st st4"><sc-for list="{{bs}}" as="p" hint-placeholder-count="4">
+<a class="cc {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}}</span><span class="col">in {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></span></a>
+</sc-for></div>
+</div></section>
+</sc-if>
+
+<!-- ===================== HOME · D · Hybrid ===================== -->
+<sc-if value="{{homeD}}" hint-placeholder-val="{{true}}">
+<section class="sec"><div class="wrap">
+<div class="sh-d"><h2>New Arrivals</h2><div class="r"><a class="lnk" href="#new">View all</a><div class="arws"><button class="{{dPrevCls}}" type="button" aria-label="Previous products" onClick="{{dPrev}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button><button class="{{dNextCls}}" type="button" aria-label="Next products" onClick="{{dNext}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button></div></div></div>
+<div class="car"><div class="trk" style="transform: translateX(-{{dShift}}px)"><sc-for list="{{na}}" as="p" hint-placeholder-count="4">
+<div class="cd {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="cl"><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span><span>{{p.colour}}</span></span></a></div>
+</sc-for></div></div>
+</div></section>
+<section class="camp ls figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silT}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silS}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Campaign photo · weekend look</span><a class="hs" href="#p13" aria-label="Oversized Drop-Shoulder Tee, ৳550" style="right: 24%; top: 40%"><span>+</span></a><a class="hs" href="#p5" aria-label="Cargo 3/4 Pant, ৳950" style="right: 10%; top: 64%"><span>+</span></a><div class="ov"><span class="eb">Shop this look</span><h3>Weekend, sorted.</h3><p>Drop tee, cargo 3/4 and a sling bag. Under ৳3,000 for all three.</p><a class="btn" href="#look">Shop the look</a></div></section>
+<section class="sec"><div class="wrap">
+<div class="sh-d"><h2>Panjabi for Eid</h2><div class="r"><a class="lnk" href="#eid">Shop the collection</a></div></div>
+<div class="fe-d">
+<div class="ls figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · Eid campaign</span><div class="ov"><span class="eb">Featured collection</span><h3>Dressed for Eid</h3><p>From ৳1,850. Free delivery over ৳2,000.</p><a class="btn" href="#eid">Shop the collection</a></div></div>
+<div class="g2"><sc-for list="{{fe}}" as="p" hint-placeholder-count="4">
+<div class="cd {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="cl"><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span><span>{{p.colour}}</span></span></a></div>
+</sc-for></div>
+</div>
+</div></section>
+<section class="sec"><div class="wrap">
+<div class="sh-d"><h2>Vai's Best Sellers</h2><div class="r"><a class="lnk" href="#best">View all</a></div></div>
+<div class="ga"><sc-for list="{{bs}}" as="p" hint-placeholder-count="4">
+<div class="cd {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="cl"><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span><span>{{p.colour}}</span></span></a></div>
+</sc-for></div>
+</div></section>
+</sc-if>
+
+<!-- ===================== PANJABI · A · Classic grid ===================== -->
+<sc-if value="{{catA}}" hint-placeholder-val="{{false}}">
+<div class="cat"><div class="wrap">
+<nav class="bc" aria-label="Breadcrumb"><a href="#home">Home</a><span>/</span><a href="#men">Men</a><span>/</span><span class="cur">Panjabi</span></nav>
+<div class="ct-a"><h1>Panjabi</h1><p>24 products</p></div>
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}"><div class="fb-a"><button class="dd" type="button"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"></path></svg>Filter</button><button class="dd" type="button"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16"></path></svg>Sort</button></div></sc-if>
+<sc-if value="{{notM}}" hint-placeholder-val="{{true}}"><div class="fb-a"><button class="dd" type="button">Size<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><button class="dd" type="button">Colour<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><button class="dd" type="button">Price<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><span class="sp"></span><button class="dd" type="button">Sort by: Newest<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div></sc-if>
+<div class="ga"><sc-for list="{{cat}}" as="p" hint-placeholder-count="8">
+<a class="ca {{p.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.type}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{p.name}} | {{p.colour}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span></span></a>
+</sc-for></div>
+<div class="lm"><p class="lm-t">Showing {{shown}} of 24</p><div class="lm-bar"><span style="width: {{shownPct}}%"></span></div><a class="btn-o" href="#more">Load more</a><nav class="pg" aria-label="Pages"><a class="on" href="#p1">1</a><a href="#p2">2</a><a href="#p2" aria-label="Next page">›</a></nav></div>
+</div></div>
+</sc-if>
+
+<!-- ===================== PANJABI · B · Image-first ===================== -->
+<sc-if value="{{catB}}" hint-placeholder-val="{{false}}">
+<div class="cat"><div class="wb">
+<nav class="bc" aria-label="Breadcrumb"><a href="#home">Home</a><span>/</span><a href="#men">Men</a><span>/</span><span class="cur">Panjabi</span></nav>
+<div class="ct-b"><h1>Panjabi</h1><span class="cnt2">24 items</span></div>
+<sc-if value="{{notM}}" hint-placeholder-val="{{true}}"><div class="fb-b"><button class="fx" type="button">Colour<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><span class="dot2">·</span><button class="fx" type="button">Price<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><span class="dot2">·</span><button class="fx" type="button">Size<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><span class="sp"></span><button class="fx" type="button">Sort by<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div></sc-if>
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}"><div class="fb-b"><button class="fx" type="button"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"></path></svg>Filter</button><span class="sp"></span><button class="fx" type="button">Sort by<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div></sc-if>
+<div class="gb"><sc-for list="{{cat}}" as="p" hint-placeholder-count="8">
+<div class="cb {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></a></div>
+</sc-for></div>
+<div class="lm"><p class="lm-t">Showing {{shown}} of 24</p><div class="lm-bar"><span style="width: {{shownPct}}%"></span></div><a class="btn-o" href="#more">Load more</a><nav class="pg" aria-label="Pages"><a class="on" href="#p1">1</a><a href="#p2">2</a><a href="#p2" aria-label="Next page">›</a></nav></div>
+</div></div>
+</sc-if>
+
+<!-- ===================== PANJABI · C · Editorial ===================== -->
+<sc-if value="{{catC}}" hint-placeholder-val="{{false}}">
+<div class="cat">
+<div class="ls cbn"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Banner photo · desktop and mobile crops</span></div>
+<div class="wrap">
+<nav class="bc" aria-label="Breadcrumb"><a href="#home">Home</a><span>/</span><a href="#men">Men</a><span>/</span><span class="cur">Panjabi</span></nav>
+<div class="ct-c"><h1>Panjabi</h1><span class="cnt3">24 pieces</span><p>Cotton, linen and festive weaves, cut for Eid and every day after.</p></div>
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}">
+<div class="cl-c">
+<aside class="side" aria-label="Filters">
+<div class="acc"><button class="acc-h" type="button">Size<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button><div class="acc-b"><div class="sizes"><button class="sz" type="button">S</button><button class="sz on" type="button">M</button><button class="sz on" type="button">L</button><button class="sz" type="button">XL</button><button class="sz" type="button">XXL</button></div></div></div>
+<div class="acc"><button class="acc-h" type="button">Colour<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button><div class="acc-b">
+<button class="crow" type="button"><span class="sw" style="background: #F7F5F0"></span>White<span class="n">6</span></button>
+<button class="crow" type="button"><span class="sw" style="background: #D6C6A6"></span>Sand<span class="n">3</span></button>
+<button class="crow" type="button"><span class="sw" style="background: #9DAE97"></span>Sage<span class="n">2</span></button>
+<button class="crow" type="button"><span class="sw" style="background: #2E3A57"></span>Navy<span class="n">4</span></button>
+<button class="crow" type="button"><span class="sw" style="background: #7A2E36"></span>Maroon<span class="n">2</span></button>
+<button class="crow" type="button"><span class="sw" style="background: #2F5146"></span>Bottle Green<span class="n">2</span></button>
+</div></div>
+<div class="acc"><button class="acc-h" type="button">Price<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button><div class="acc-b"><div class="rng"><span class="tr"></span><span class="fl"></span><span class="kn" style="left: 12%"></span><span class="kn" style="left: 70%"></span></div><div class="rng-l"><span>৳1,850</span><span>৳3,450</span></div></div></div>
+<div class="acc"><button class="acc-h" type="button">Fabric<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"></path></svg></button></div>
+<div class="acc"><button class="acc-h" type="button">On sale only<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"></path></svg></button></div>
+</aside>
+<div>
+<div class="gtop"><span>Showing {{shown}} of 24</span><button class="dd" type="button">Sort by: Newest<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<div class="g3"><sc-for list="{{catCItems}}" as="it" hint-placeholder-count="7">
+<sc-if value="{{it.isIns}}" hint-placeholder-val="{{false}}"><div class="ins ls figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · styled look</span><div class="ov"><span class="eb">Styling note</span><h3>One Panjabi, three ways</h3><a class="lnk" href="#look">Shop the look</a></div></div></sc-if>
+<sc-if value="{{it.isP}}" hint-placeholder-val="{{true}}"><a class="cc {{it.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{it.sil}}" fill="{{it.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{it.type}}</span><div class="bdg"><sc-for list="{{it.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{it.name}}</span><span class="col">in {{it.colour}}</span><span class="pr"><span class="{{it.nowCls}}">{{it.nowF}}</span><sc-if value="{{it.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{it.wasF}}</s></sc-if></span></span></a></sc-if>
+</sc-for></div>
+<div class="lm"><p class="lm-t">Showing {{shown}} of 24</p><div class="lm-bar"><span style="width: {{shownPct}}%"></span></div><a class="btn-o" href="#more">Load more</a><nav class="pg" aria-label="Pages"><a class="on" href="#p1">1</a><a href="#p2">2</a><a href="#p2" aria-label="Next page">›</a></nav></div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}">
+<div class="fb-c"><button class="fx" type="button"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"></path></svg>Filters</button><button class="fx" type="button">Sort by: Newest<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<div class="g3"><sc-for list="{{catCItems}}" as="it" hint-placeholder-count="6">
+<sc-if value="{{it.isIns}}" hint-placeholder-val="{{false}}"><div class="ins ls figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · styled look</span><div class="ov"><span class="eb">Styling note</span><h3>One Panjabi, three ways</h3><a class="lnk" href="#look">Shop the look</a></div></div></sc-if>
+<sc-if value="{{it.isP}}" hint-placeholder-val="{{true}}"><a class="cc {{it.cardCls}}" href="#product"><div class="ph"><svg class="sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{it.sil}}" fill="{{it.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{it.type}}</span><div class="bdg"><sc-for list="{{it.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="meta"><span class="nm">{{it.name}}</span><span class="col">in {{it.colour}}</span><span class="pr"><span class="{{it.nowCls}}">{{it.nowF}}</span><sc-if value="{{it.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{it.wasF}}</s></sc-if></span></span></a></sc-if>
+</sc-for></div>
+<div class="lm"><p class="lm-t">Showing {{shown}} of 24</p><div class="lm-bar"><span style="width: {{shownPct}}%"></span></div><a class="btn-o" href="#more">Load more</a><nav class="pg" aria-label="Pages"><a class="on" href="#p1">1</a><a href="#p2">2</a><a href="#p2" aria-label="Next page">›</a></nav></div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<!-- ===================== PANJABI · D · Hybrid ===================== -->
+<sc-if value="{{catD}}" hint-placeholder-val="{{false}}">
+<div class="cat"><div class="wrap">
+<nav class="bc" aria-label="Breadcrumb"><a href="#home">Home</a><span>/</span><a href="#men">Men</a><span>/</span><span class="cur">Panjabi</span></nav>
+<div class="ct-d"><h1>Panjabi</h1><p>24 products · Cotton, linen and festive Panjabi for Eid and beyond.</p></div>
+<div class="chips"><a class="chip" href="#men">All Men</a><a class="chip" href="#trousers">Trousers</a><a class="chip" href="#shorts">Shorts</a><a class="chip" href="#three-quarter">3/4 Pants</a><a class="chip" href="#half-pants">2/4 Pants</a><a class="chip" href="#jerseys">Club Jerseys</a><a class="chip" href="#jackets">Jackets</a><a class="chip" href="#drop-shoulder">Drop T-Shirts</a><a class="chip on" href="#panjabi" aria-current="page">Panjabi</a></div>
+<sc-if value="{{notM}}" hint-placeholder-val="{{true}}"><div class="fb-d"><button class="fx" type="button">Size<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><button class="fx" type="button">Colour<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><button class="fx" type="button">Price<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><button class="tog" type="button">On sale</button><span class="sp"></span><button class="fx" type="button">Sort by: Newest<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div></sc-if>
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}"><div class="fb-d"><button class="fx" type="button"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"></path></svg>Filter</button><span class="vline"></span><button class="fx" type="button"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16"></path></svg>Sort</button></div></sc-if>
+<div class="ga"><sc-for list="{{cat}}" as="p" hint-placeholder-count="8">
+<div class="cd {{p.cardCls}}"><a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}" onMouseLeave="{{p.reset}}"><div class="ph"><svg class="sil {{p.shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{p.tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a><div class="bars"><sc-for list="{{p.bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div><a class="meta" href="#product"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="cl"><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span><span>{{p.colour}}</span></span></a></div>
+</sc-for></div>
+<div class="lm"><p class="lm-t">Showing {{shown}} of 24</p><div class="lm-bar"><span style="width: {{shownPct}}%"></span></div><a class="btn-o" href="#more">Load more</a><nav class="pg" aria-label="Pages"><a class="on" href="#p1">1</a><a href="#p2">2</a><a href="#p2" aria-label="Next page">›</a></nav></div>
+</div></div>
+</sc-if>
+
+<!-- ===== Footer (stub: full footer is designed with the global elements) ===== -->
+<footer class="ftr"><div class="wrap ftr-in"><a class="wm" href="#home"><span>Discount</span><b>Vai</b></a><p>Good clothes at fair prices, delivered across Bangladesh.</p><p>© 2026 Discount Vai</p></div></footer>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"page":{"editor":"enum","options":["home","panjabi"],"default":"home"},"layout":{"editor":"enum","options":["A","B","C","D"],"default":"D"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"embed":{"editor":null},"$preview":{"width":1440,"height":3600}}'>
+class Component extends DCLogic {
+  dvData() {
+  if (this._dv) return this._dv;
+  var DV_SIL = {
+  panjabi: 'M37 14 L45 11 Q50 17 55 11 L63 14 L77 21 L86 74 L77 76 L70 38 L71 116 L29 116 L30 38 L23 76 L14 74 L23 21 Z M49.2 16 L50.8 16 L50.8 44 L49.2 44 Z',
+  tee: 'M31 24 L42 19 Q50 26 58 19 L69 24 L87 38 L79 51 L70 45 L70 102 L30 102 L30 45 L21 51 L13 38 Z',
+  jersey: 'M31 24 L43 19 L50 30 L57 19 L69 24 L86 36 L78 48 L70 43 L70 102 L30 102 L30 43 L22 48 L14 36 Z',
+  jacket: 'M33 21 L44 17 L50 23 L56 17 L67 21 L80 29 L87 86 L77 88 L70 44 L70 100 L30 100 L30 44 L23 88 L13 86 L20 29 Z M49.3 23 L50.7 23 L50.7 100 L49.3 100 Z',
+  trouser: 'M32 12 L68 12 L73 116 L56 116 L50 44 L44 116 L27 116 Z',
+  shorts: 'M29 32 L71 32 L75 86 L54 88 L50 58 L46 88 L25 86 Z',
+  half: 'M30 34 L70 34 L73 80 L54 82 L50 58 L46 82 L27 80 Z',
+  three4: 'M31 18 L69 18 L73 100 L55 100 L50 52 L45 100 L27 100 Z',
+  tote: 'M27 50 L73 50 L77 112 L23 112 Z M38 50 Q38 25 50 25 Q62 25 62 50 L58 50 Q58 30 50 30 Q42 30 42 50 Z',
+  backpack: 'M29 36 Q29 22 50 22 Q71 22 71 36 L73 110 L27 110 Z M44 22 Q44 12 50 12 Q56 12 56 22 L53 22 Q53 15.5 50 15.5 Q47 15.5 47 22 Z M36 76 L64 76 L64 100 L36 100 Z',
+  sling: 'M28 62 Q28 54 36 54 L64 54 Q72 54 72 62 L72 98 Q72 106 64 106 L36 106 Q28 106 28 98 Z M33 54 L66 12 L69.5 14.5 L38 54 Z'
+};
+var DV_TYPE = { panjabi: 'Panjabi', tee: 'Drop tee', jersey: 'Club jersey', jacket: 'Jacket', trouser: 'Trousers', shorts: 'Shorts', half: '2/4 pant', three4: '3/4 pant', tote: 'Tote bag', backpack: 'Backpack', sling: 'Sling bag' };
+var DV_CAT = {
+  1: { n: 'Slim Fit Cotton Chino', c: 'Khaki', k: 'trouser', p: 1850, s: 1450, f: '#B9A57E', sw: ['#B9A57E', '#2F3B4C', '#3B3B39'] },
+  2: { n: 'Relaxed Twill Trouser', c: 'Charcoal', k: 'trouser', p: 1950, f: '#47484C', sw: ['#47484C', '#B9A57E'] },
+  3: { n: 'Everyday Cotton Shorts', c: 'Navy', k: 'shorts', p: 890, s: 690, f: '#2E3B57', sw: ['#2E3B57', '#7C8A6A', '#D8D2C4'] },
+  4: { n: 'Drawstring Linen-Blend Shorts', c: 'Olive', k: 'shorts', p: 990, f: '#737A52', sw: ['#737A52', '#D9CFBA'] },
+  5: { n: 'Cargo 3/4 Pant', c: 'Stone', k: 'three4', p: 1150, s: 950, f: '#BDB4A3', sw: ['#BDB4A3', '#3C3C3A', '#6E7550'], nw: 1 },
+  6: { n: 'Jogger 3/4 Pant', c: 'Black', k: 'three4', p: 1050, f: '#2B2B2C', sw: ['#2B2B2C', '#7D7F84'] },
+  7: { n: 'Cotton Half Pant', c: 'Grey Melange', k: 'half', p: 750, s: 590, f: '#A9A9A6', sw: ['#A9A9A6', '#2E3B57', '#2B2B2C'] },
+  8: { n: 'Printed Half Pant', c: 'Teal', k: 'half', p: 790, f: '#3E7A78', sw: ['#3E7A78', '#C7B79A'] },
+  9: { n: 'Home Club Jersey 25/26', c: 'Red/White', k: 'jersey', p: 1250, f: '#B5524A', sw: ['#B5524A'] },
+  10: { n: 'Away Club Jersey 25/26', c: 'Sky Blue', k: 'jersey', p: 1250, s: 1050, f: '#8DB3D3', sw: ['#8DB3D3', '#F2F0EA'], nw: 1 },
+  11: { n: 'Lightweight Bomber Jacket', c: 'Olive', k: 'jacket', p: 3250, s: 2650, f: '#66704A', sw: ['#66704A', '#2B2B2C', '#BDB4A3'], nw: 1 },
+  12: { n: 'Denim Trucker Jacket', c: 'Mid Blue', k: 'jacket', p: 3450, f: '#5D7A9E', sw: ['#5D7A9E', '#2F3B4C'] },
+  13: { n: 'Oversized Drop-Shoulder Tee', c: 'Off-White', k: 'tee', p: 690, s: 550, f: '#F3F0E8', sw: ['#F3F0E8', '#2B2B2C', '#9DAE97', '#C9A98A'], nw: 1 },
+  14: { n: 'Graphic Drop-Shoulder Tee', c: 'Black', k: 'tee', p: 750, f: '#2A2A2B', sw: ['#2A2A2B', '#F3F0E8'] },
+  15: { n: 'Classic Cotton Panjabi', c: 'White', k: 'panjabi', p: 2450, s: 1990, f: '#F7F5F0', sw: ['#F7F5F0', '#9DAE97', '#2E3A57'] },
+  16: { n: 'Embroidered Festive Panjabi', c: 'Maroon', k: 'panjabi', p: 3850, f: '#7A2E36', sw: ['#7A2E36', '#2F5146'] },
+  17: { n: 'Slub Cotton Panjabi', c: 'Sage', k: 'panjabi', p: 2250, f: '#9DAE97', sw: ['#9DAE97', '#F7F5F0', '#D6C6A6'] },
+  18: { n: 'Everyday Canvas Tote', c: 'Natural', k: 'tote', p: 950, f: '#E3D7BE', sw: ['#E3D7BE', '#2B2B2C'], nw: 1 },
+  19: { n: 'Urban Backpack', c: 'Black', k: 'backpack', p: 2450, s: 1990, f: '#2C2C2E', sw: ['#2C2C2E', '#66704A'] },
+  20: { n: 'Crossbody Sling Bag', c: 'Brown', k: 'sling', p: 1350, f: '#7B5638', sw: ['#7B5638', '#2C2C2E'] },
+  21: { n: 'Linen-Blend Panjabi', c: 'Sand', k: 'panjabi', p: 2650, s: 2190, f: '#D6C6A6', sw: ['#D6C6A6', '#F7F5F0'], nw: 1 },
+  22: { n: 'Kabli-Collar Panjabi', c: 'Navy', k: 'panjabi', p: 2850, f: '#2E3A57', sw: ['#2E3A57', '#47484C'] },
+  23: { n: 'Printed Cotton Panjabi', c: 'Indigo', k: 'panjabi', p: 2350, s: 1850, f: '#44507A', sw: ['#44507A', '#7A2E36'] },
+  24: { n: 'Short Kurta Panjabi', c: 'Off-White', k: 'panjabi', p: 1950, f: '#EFEBE1', sw: ['#EFEBE1'], out: 1 },
+  25: { n: 'Jacquard Festive Panjabi', c: 'Bottle Green', k: 'panjabi', p: 3650, s: 2990, f: '#2F5146', sw: ['#2F5146', '#7A2E36', '#CDB98A'], nw: 1 },
+  26: { n: 'Pintuck Cotton Panjabi', c: 'Sky', k: 'panjabi', p: 2550, f: '#A9C3D6', sw: ['#A9C3D6', '#F7F5F0'] },
+  27: { n: 'Mandarin-Collar Panjabi', c: 'Charcoal', k: 'panjabi', p: 2750, s: 2290, f: '#4A4B50', sw: ['#4A4B50', '#2E3A57'] },
+  28: { n: 'Check Cotton Panjabi', c: 'Rust', k: 'panjabi', p: 2150, f: '#A0583A', sw: ['#A0583A', '#D6C6A6'], nw: 1 },
+  29: { n: 'Silk-Blend Festive Panjabi', c: 'Gold Beige', k: 'panjabi', p: 4250, s: 3450, f: '#CDB98A', sw: ['#CDB98A', '#F7F5F0'] }
+};
+var DV_NA = [21, 13, 11, 25, 10, 5, 18, 28];
+var DV_BS = [15, 1, 3, 19, 14, 7, 12, 16];
+var DV_FE = [15, 16, 25, 23];
+var DV_PJ = [15, 25, 16, 21, 24, 23, 17, 22, 27, 26, 28, 29];
+var DV_PAL = {
+  sage: { label: 'Sage & Sand', d: ['#E6ECE3', '#3D5643', '#A0452B'] },
+  harbour: { label: 'Harbour', d: ['#E2E9F0', '#22385A', '#A94B2E'] },
+  clay: { label: 'Clay & Stone', d: ['#F1E2D7', '#4B3529', '#9A3F2B'] },
+  olive: { label: 'Olive & Ivory', d: ['#ECEEDF', '#4B5729', '#984820'] }
+};
+  this._dv = { SIL: DV_SIL, TYPE: DV_TYPE, CAT: DV_CAT, NA: DV_NA, BS: DV_BS, FE: DV_FE, PJ: DV_PJ, PAL: DV_PAL };
+  return this._dv;
+  }
+  pickShot(key, i) {
+    var s = (this.state && this.state.shot) || {};
+    if ((s[key] || 0) === i) return;
+    var n = Object.assign({}, s);
+    n[key] = i;
+    this.setState({ shot: n });
+  }
+  move(id, d, max) {
+    var o = (this.state && this.state.off) || {};
+    var v = Math.max(0, Math.min(max, (o[id] || 0) + d));
+    var n = Object.assign({}, o);
+    n[id] = v;
+    this.setState({ off: n });
+  }
+  pick(k, v) {
+    var u = {};
+    u[k] = v;
+    this.setState(u);
+  }
+  renderVals() {
+    var self = this;
+    var D = this.dvData();
+    var DV_SIL = D.SIL, DV_TYPE = D.TYPE, DV_CAT = D.CAT, DV_NA = D.NA, DV_BS = D.BS, DV_FE = D.FE, DV_PJ = D.PJ, DV_PAL = D.PAL;
+    var st = this.state || {};
+    var pr = this.props || {};
+    var page = st.page || pr.page || 'home';
+    var L = st.layout || pr.layout || 'D';
+    var pal = st.palette || pr.palette || 'sage';
+    if (!DV_PAL[pal]) pal = 'sage';
+    var W = Number(st.width || pr.width || 1440);
+    var embed = pr.embed === true || pr.embed === '1' || pr.embed === 'true';
+    var bp = W < 768 ? 'm' : (W < 1024 ? 't' : 'd');
+    var n3 = function (d, t, m) { return bp === 'd' ? d : (bp === 't' ? t : m); };
+    var taka = function (n) { return '৳' + n.toLocaleString('en-US'); };
+    var shots = st.shot || {};
+    var SHOT = ['Front', 'Back', 'Detail'];
+    var SHOTCLS = ['', 'shot-1', 'shot-2'];
+
+    var dec = function (id, sec) {
+      var p = DV_CAT[id];
+      var uid = sec + '-' + id;
+      var idx = shots[uid] || 0;
+      var onSale = !!p.s && !p.out;
+      var badges = [];
+      if (p.out) {
+        badges.push({ label: 'SOLD OUT', cls: 'b b-out' });
+      } else {
+        if (onSale) badges.push({ label: '-' + Math.round((1 - p.s / p.p) * 100) + '%', cls: 'b b-sale' });
+        if (p.nw) badges.push({ label: 'NEW', cls: 'b b-new' });
+      }
+      return {
+        uid: uid, name: p.n, colour: p.c, type: DV_TYPE[p.k],
+        tag: DV_TYPE[p.k] + (idx ? ' · ' + SHOT[idx] : ''),
+        sil: DV_SIL[p.k], fill: p.f, onSale: onSale,
+        nowF: taka(onSale ? p.s : p.p), wasF: taka(p.p), nowCls: onSale ? 'now sale' : 'now',
+        badges: badges, sw: p.sw.map(function (c) { return { c: c }; }),
+        shotCls: SHOTCLS[idx], cardCls: p.out ? 'is-out' : '', posCls: '',
+        bars: [0, 1, 2].map(function (i) {
+          return { cls: i === idx ? 'bar on' : 'bar', label: 'Show photo ' + (i + 1) + ' of 3', pick: function () { self.pickShot(uid, i); } };
+        }),
+        reset: function () { self.pickShot(uid, 0); },
+        isP: true, isIns: false
+      };
+    };
+
+    var carousel = (L === 'C' || L === 'D');
+    var naN = carousel ? 8 : n3(8, 6, 4);
+    var feN = carousel ? 4 : n3(4, 3, 4);
+    var bsN = n3(4, 3, 4);
+    var catN = L === 'C' ? n3(7, 6, 6) : n3(12, 9, 8);
+    var na = DV_NA.slice(0, naN).map(function (id) { return dec(id, 'na'); });
+    var fe = DV_FE.slice(0, feN).map(function (id) { return dec(id, 'fe'); });
+    var bs = DV_BS.slice(0, bsN).map(function (id) { return dec(id, 'bs'); });
+    var cat = DV_PJ.slice(0, catN).map(function (id) { return dec(id, 'cat'); });
+    var catCItems = cat.slice();
+    catCItems.splice(bp === 'd' ? 3 : 4, 0, { uid: 'ins', isIns: true, isP: false });
+    var feC1 = fe.slice(0, 2);
+    var feC2 = fe.slice(2, 4).map(function (p, i) { return Object.assign({}, p, { posCls: i ? 'p4' : 'p3' }); });
+
+    var off = st.off || {};
+    var cc = { d: [404, 3], t: [320, 2], m: [276, 1] }[bp];
+    var cdd = { d: [320, 4], t: [276, 2], m: [168, 2] }[bp];
+    var cMax = 8 - cc[1];
+    var dMax = 8 - cdd[1];
+    var cO = Math.min(off.c || 0, cMax);
+    var dO = Math.min(off.d || 0, dMax);
+
+    var opts = function (k, cur, list) {
+      return list.map(function (o) {
+        return { label: o[1], cls: o[0] === cur ? 'on' : '', pick: function () { self.pick(k, o[0]); } };
+      });
+    };
+    var isHome = page !== 'panjabi';
+
+    return {
+      stageCls: embed ? 'stage embed' : 'stage',
+      bodyCls: (embed || W >= 1440) ? 'stage-body wide' : 'stage-body boxed',
+      dvCls: 'dv pal-' + pal + ' bp-' + bp + ' L-' + L,
+      W: W,
+      showCtl: !embed,
+      pages: opts('page', isHome ? 'home' : 'panjabi', [['home', 'Homepage'], ['panjabi', 'Panjabi category']]),
+      layouts: opts('layout', L, [['A', 'A · Classic grid'], ['B', 'B · Image-first'], ['C', 'C · Editorial'], ['D', 'D · Hybrid (rec.)']]),
+      widths: opts('width', W, [[390, '390'], [768, '768'], [1440, '1440']]),
+      palettes: Object.keys(DV_PAL).map(function (k) {
+        return { label: DV_PAL[k].label, cls: k === pal ? 'on' : '', pick: function () { self.pick('palette', k); }, dots: DV_PAL[k].d.map(function (c) { return { c: c }; }) };
+      }),
+      bpM: bp === 'm', bpT: bp === 't', bpDk: bp === 'd', notM: bp !== 'm', notDk: bp !== 'd',
+      homeA: isHome && L === 'A', homeB: isHome && L === 'B', homeC: isHome && L === 'C', homeD: isHome && L === 'D',
+      catA: !isHome && L === 'A', catB: !isHome && L === 'B', catC: !isHome && L === 'C', catD: !isHome && L === 'D',
+      na: na, fe: fe, bs: bs, cat: cat, catCItems: catCItems, feC1: feC1, feC2: feC2,
+      shown: catN, shownPct: Math.round(catN / 24 * 100),
+      cShift: cO * cc[0], dShift: dO * cdd[0],
+      cPrev: function () { self.move('c', -1, cMax); }, cNext: function () { self.move('c', 1, cMax); },
+      dPrev: function () { self.move('d', -1, dMax); }, dNext: function () { self.move('d', 1, dMax); },
+      cPrevCls: cO <= 0 ? 'arw off' : 'arw', cNextCls: cO >= cMax ? 'arw off' : 'arw',
+      dPrevCls: dO <= 0 ? 'arw off' : 'arw', dNextCls: dO >= dMax ? 'arw off' : 'arw',
+      silP: DV_SIL.panjabi, silT: DV_SIL.tee, silS: DV_SIL.three4
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Category listing template</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}px">
+<dc-import name="Header" width="{{W}}" inner="1" go="{{go}}" active="{{active}}" hint-size="100%,108px"></dc-import>
+
+<sc-if value="{{isSale}}" hint-placeholder-val="{{false}}">
+<section class="sale-bn ls"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silJ}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag">Sale banner · desktop and mobile crops</span><div class="wrap sale-bn-in"><span class="eb">Vai's Sale</span><p class="sale-h">Up to 30% off</p><p>Real discounts on real stock, while it lasts.</p></div></section>
+</sc-if>
+
+<div class="cat"><div class="wrap">
+<nav class="bc" aria-label="Breadcrumb"><sc-for list="{{crumbs}}" as="c" hint-placeholder-count="2"><a href="#crumb" onClick="{{c.go}}">{{c.label}}</a><span aria-hidden="true">/</span></sc-for><span class="cur" aria-current="page">{{here}}</span></nav>
+<div class="ct-l"><div><h1>{{h1}}</h1><sc-if value="{{hasIntro}}" hint-placeholder-val="{{true}}"><p class="{{introCls}}">{{intro}} <button class="lnk" type="button" onClick="{{toggleIntro}}">{{introBtn}}</button></p></sc-if></div><span class="cnt2">{{count}}</span></div>
+
+<sc-if value="{{hasChips}}" hint-placeholder-val="{{true}}"><div class="chips"><sc-for list="{{chips}}" as="c" hint-placeholder-count="6"><a class="{{c.cls}}" href="#chip" onClick="{{c.go}}">{{c.label}}</a></sc-for></div></sc-if>
+
+<sc-if value="{{notEmptySearch}}" hint-placeholder-val="{{true}}">
+<div class="fb-d fb-rel">
+<sc-if value="{{notM}}" hint-placeholder-val="{{true}}">
+<sc-if value="{{hasSize}}" hint-placeholder-val="{{true}}"><button class="{{ddSizeCls}}" type="button" onClick="{{openSize}}" aria-expanded="{{ddSizeS}}">Size{{sizeCount}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></sc-if>
+<button class="fx" type="button" onClick="{{openFilter}}">Colour{{colourCount}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<button class="fx" type="button" onClick="{{openFilter}}">Price{{priceCount}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<sc-if value="{{showSaleTog}}" hint-placeholder-val="{{true}}"><button class="tog" type="button">On sale</button></sc-if>
+<span class="sp"></span>
+<button class="{{ddSortCls}}" type="button" onClick="{{openSort}}" aria-expanded="{{ddSortS}}">Sort by: {{sortLabel}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+</sc-if>
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}"><button class="fx" type="button" onClick="{{openFilter}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"></path></svg>Filter{{filterCount}}</button><span class="vline"></span><button class="fx" type="button" onClick="{{openSort}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16"></path></svg>Sort</button></sc-if>
+
+<sc-if value="{{ddSize}}" hint-placeholder-val="{{false}}">
+<div class="ddp" role="dialog" aria-label="Filter by size">
+<p class="ddp-h">Size</p>
+<div class="sizes"><sc-for list="{{sizeOpts}}" as="z" hint-placeholder-count="5"><button class="{{z.cls}}" type="button" aria-pressed="{{z.pressed}}" onClick="{{z.pick}}">{{z.label}}</button></sc-for></div>
+<div class="ddp-f"><button class="lnk" type="button" onClick="{{clearSizes}}">Clear</button><button class="btn" type="button" onClick="{{closeAll}}">Show 14 results</button></div>
+</div>
+</sc-if>
+<sc-if value="{{ddSort}}" hint-placeholder-val="{{false}}">
+<div class="ddp right" role="listbox" aria-label="Sort by">
+<sc-for list="{{sorts}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" role="option" aria-selected="{{o.sel}}" onClick="{{o.pick}}"><span class="radio"></span>{{o.label}}</button></sc-for>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{hasActive}}" hint-placeholder-val="{{false}}"><div class="act"><sc-for list="{{activeChips}}" as="a" hint-placeholder-count="3"><button class="chip act-c" type="button" onClick="{{clearAll}}">{{a}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></sc-for><button class="lnk" type="button" onClick="{{clearAll}}">Clear all</button></div></sc-if>
+</sc-if>
+
+<sc-if value="{{showGrid}}" hint-placeholder-val="{{true}}">
+<div class="ga"><sc-for list="{{grid}}" as="p" hint-placeholder-count="8"><div class="ci"><dc-import name="Card" item="{{p}}" go="{{go}}" hint-size="100%,480px"></dc-import></div></sc-for></div>
+<div class="lm"><p class="lm-t">Showing {{shown}} of {{total}}</p><div class="lm-bar"><span style="width: {{pct}}%"></span></div><button class="btn-o" type="button">Load more</button><nav class="pg" aria-label="Pages"><a class="on" href="#p1" aria-current="page">1</a><a href="#p2">2</a><sc-if value="{{threePages}}" hint-placeholder-val="{{false}}"><a href="#p3">3</a></sc-if><a href="#p2" aria-label="Next page">›</a></nav></div>
+</sc-if>
+
+<sc-if value="{{isEmptyFilter}}" hint-placeholder-val="{{false}}">
+<div class="empty"><span class="empty-ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.5 8.5-5 5M8.5 8.5l5 5"></path><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span><h2>No Panjabi match these filters</h2><p>Try removing a filter or two. Our sizes run S to XXL, and most colours restock every week.</p><div class="empty-a"><button class="btn lg" type="button" onClick="{{clearAll}}">Clear all filters</button><a class="btn-o" href="#men" onClick="{{goMen}}">Shop all Men</a></div></div>
+</sc-if>
+
+<sc-if value="{{isEmptySearch}}" hint-placeholder-val="{{false}}">
+<div class="empty"><span class="empty-ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m13.5 8.5-5 5M8.5 8.5l5 5"></path><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span><h2>Nothing yet, vai</h2><p>Check the spelling, try a shorter word like "panjabi" or "shorts", or browse a category below.</p>
+<label class="field-s big"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg><input type="search" value="kurta pajama" aria-label="Search"></label></div>
+<div class="sh-d"><h2>Popular categories</h2></div>
+<div class="pop-cats"><sc-for list="{{popCats}}" as="c" hint-placeholder-count="6"><a class="pc" href="#cat" onClick="{{c.go}}"><svg class="cat-sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{c.sil}}" fill-rule="evenodd"></path></svg><span>{{c.label}}</span></a></sc-for></div>
+<div class="sh-d mt"><h2>Vai's Picks</h2></div>
+<div class="ga"><sc-for list="{{picks}}" as="p" hint-placeholder-count="4"><div class="ci"><dc-import name="Card" item="{{p}}" go="{{go}}" hint-size="100%,480px"></dc-import></div></sc-for></div>
+</sc-if>
+
+<sc-if value="{{hasFaq}}" hint-placeholder-val="{{true}}">
+<section class="faqb"><h2>{{faqTitle}}</h2>
+<sc-for list="{{faqs}}" as="f" hint-placeholder-count="4"><div class="acc"><button class="acc-h" type="button" aria-expanded="{{f.exp}}" onClick="{{f.toggle}}">{{f.q}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{f.icon}}"></path></svg></button><sc-if value="{{f.open}}" hint-placeholder-val="{{false}}"><div class="acc-b"><p>{{f.a}}</p></div></sc-if></div></sc-for>
+</section>
+</sc-if>
+</div></div>
+
+<dc-import name="Footer" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,480px"></dc-import>
+
+<sc-if value="{{sheetFilter}}" hint-placeholder-val="{{false}}">
+<button class="scrim" type="button" aria-label="Close filters" onClick="{{closeAll}}"></button>
+<div class="sheet tall" role="dialog" aria-modal="true" aria-label="Filter">
+<div class="sheet-h"><span class="grab" aria-hidden="true"></span><h2>Filter</h2><button class="ib" type="button" aria-label="Close" onClick="{{closeAll}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+<div class="sheet-b">
+<sc-if value="{{hasSize}}" hint-placeholder-val="{{true}}"><div class="acc"><p class="acc-h">Size<span class="muted">{{sizeSel}}</span></p><div class="acc-b"><div class="sizes"><sc-for list="{{sizeOpts}}" as="z" hint-placeholder-count="5"><button class="{{z.cls}}" type="button" aria-pressed="{{z.pressed}}" onClick="{{z.pick}}">{{z.label}}</button></sc-for></div></div></div></sc-if>
+<div class="acc"><p class="acc-h">Colour<span class="muted">Any</span></p><div class="acc-b"><div class="sw-grid"><sc-for list="{{colours}}" as="c" hint-placeholder-count="6"><button class="swc" type="button"><span class="sw" style="background: {{c.c}}"></span>{{c.n}}</button></sc-for></div></div></div>
+<div class="acc"><p class="acc-h">Price<span class="muted">৳500 to ৳4,500</span></p><div class="acc-b"><div class="rng"><span class="tr"></span><span class="fl"></span><span class="kn" style="left: 12%"></span><span class="kn" style="left: 70%"></span></div><div class="rng-l"><span>৳500</span><span>৳4,500</span></div></div></div>
+<div class="acc"><label class="chk"><input type="checkbox"><span>On sale only</span></label></div>
+</div>
+<div class="sheet-f"><button class="btn-o" type="button" onClick="{{clearSizes}}">Clear all</button><button class="btn" type="button" onClick="{{closeAll}}">Show 14 results</button></div>
+</div>
+</sc-if>
+<sc-if value="{{sheetSort}}" hint-placeholder-val="{{false}}">
+<button class="scrim" type="button" aria-label="Close sort" onClick="{{closeAll}}"></button>
+<div class="sheet short" role="dialog" aria-modal="true" aria-label="Sort by">
+<div class="sheet-h"><span class="grab" aria-hidden="true"></span><h2>Sort by</h2><button class="ib" type="button" aria-label="Close" onClick="{{closeAll}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+<div class="sheet-b"><sc-for list="{{sorts}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" role="option" aria-selected="{{o.sel}}" onClick="{{o.pick}}"><span class="radio"></span>{{o.label}}</button></sc-for></div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"kind":{"editor":"enum","options":["men","panjabi","bags","sale","search"],"default":"panjabi"},"state":{"editor":"enum","options":["default","filters","sort","empty"],"default":"default"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":3200}}'>
+class Component extends DCLogic {
+  set1(k, v) { var u = {}; u[k] = v; this.setState(u); }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var kind = pr.kind || 'panjabi';
+    var pstate = pr.state || 'default';
+    var cleared = !!st.cleared;
+    var emptyF = pstate === 'empty' && kind !== 'search' && !cleared;
+    var emptyS = pstate === 'empty' && kind === 'search';
+    var dd = st.dd !== undefined ? st.dd : (b.bpDk ? (pstate === 'filters' ? 'size' : (pstate === 'sort' ? 'sort' : '')) : '');
+    var sheet = st.sheet !== undefined ? st.sheet : (b.notDk ? (pstate === 'filters' ? 'filter' : (pstate === 'sort' ? 'sort' : '')) : '');
+    var defSizes = pstate === 'filters' ? { M: 1, L: 1 } : (emptyF ? { XS: 1 } : {});
+    var sizes = st.sizes || defSizes;
+    var sortI = st.sort || 0;
+    var chipsFor = function (list, on) {
+      return list.map(function (c) { return { label: c[0], go: go(c[1]), cls: c[0] === on ? 'chip on' : 'chip' }; });
+    };
+    var menChips = [['All Men', 'men'], ['Trousers', 'men'], ['Shorts', 'men'], ['3/4 Pants', 'men'], ['2/4 Pants', 'men'], ['Club Jerseys', 'men'], ['Jackets', 'men'], ['Drop T-Shirts', 'men'], ['Panjabi', 'panjabi']];
+    var C = {
+      men: { h1: "Men's Clothing", here: 'Men', crumbs: [['Home', 'home']], intro: 'Everyday trousers, shorts, tees, jerseys, jackets and Panjabi, made to last and priced fairly.', more: ' New styles land every week, every order ships across Bangladesh, and every size comes with a 7-day exchange.', count: '86 products', total: 86, chips: chipsFor(menChips, 'All Men'), list: D.LISTS.men, faq: 'Shopping men’s clothing: FAQ', active: 'men' },
+      panjabi: { h1: 'Panjabi', here: 'Panjabi', crumbs: [['Home', 'home'], ['Men', 'men']], intro: 'Festive and everyday Panjabi in cotton, linen and jacquard.', more: ' Regular fits that run true to size, with an easy 7-day exchange if it is not quite right.', count: emptyF ? '0 products' : '24 products', total: 24, chips: chipsFor(menChips, 'Panjabi'), list: D.LISTS.panjabi, faq: 'Panjabi: FAQ', active: 'men' },
+      bags: { h1: 'Bags (Unisex)', here: 'Bags', crumbs: [['Home', 'home'], ['Accessories', 'bags']], intro: 'Totes, backpacks, slings and duffels for everyone.', more: ' One size, tough canvas and padded straps, built to carry a lot.', count: '9 products', total: 9, chips: chipsFor([['All bags', 'bags'], ['Totes', 'bags'], ['Backpacks', 'bags'], ['Slings', 'bags'], ['Duffels', 'bags'], ['Waist bags', 'bags']], 'All bags'), list: D.LISTS.bags, faq: '', active: 'acc' },
+      sale: { h1: 'Sale', here: 'Sale', crumbs: [['Home', 'home']], intro: 'Real discounts on real stock. Prices shown are final.', more: ' Exchanges still apply on every sale item, and Cash on Delivery works as usual.', count: '17 products', total: 17, chips: chipsFor([['All sale', 'sale'], ['Panjabi', 'sale'], ['Trousers', 'sale'], ['Shorts', 'sale'], ['Jackets', 'sale'], ['Tees', 'sale'], ['Jerseys', 'sale'], ['Bags', 'sale']], 'All sale'), list: D.LISTS.sale, faq: '', active: 'sale' },
+      search: { h1: emptyS ? 'No results for “kurta pajama”' : 'Results for “panjabi”', here: 'Search', crumbs: [['Home', 'home']], intro: '', more: '', count: emptyS ? '0 results' : '12 results', total: 12, chips: chipsFor([['Products (12)', 'search-results'], ['Men › Panjabi', 'panjabi']], 'Products (12)'), list: D.LISTS.search, faq: '', active: '' }
+    };
+    var c = C[kind] || C.panjabi;
+    var n = kind === 'bags' ? b.n3(8, 9, 8) : b.n3(12, 9, 8);
+    var grid = D.items(c.list.slice(0, n));
+    var sizeLabels = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    var selSizes = sizeLabels.filter(function (s) { return sizes[s]; });
+    var sortLabels = kind === 'sale' ? ['Biggest discount', 'Newest', 'Price: low to high', 'Price: high to low', 'Best selling'] : ['Newest', 'Price: low to high', 'Price: high to low', 'Best selling'];
+    var introOpen = !!st.intro;
+    var faqOpen = st.faq !== undefined ? st.faq : 0;
+    var faqs = kind === 'men' ? [
+      ['How do I find my size?', 'Every product page has a Size Guide with chest, length and waist in inches. If you are between sizes, go one up for a relaxed fit.'],
+      ['How much is delivery?', 'Inside Dhaka ৳70 (1 to 2 days), outside Dhaka ৳130 (2 to 4 days). Free on orders over ৳2,000.'],
+      ['Can I exchange if it does not fit?', 'Yes. Exchange any unworn item within 7 days of delivery. We pick it up and drop the new size.'],
+      ['Can I pay on delivery?', 'Yes, Cash on Delivery works everywhere in Bangladesh. You can also pay online with bKash, Nagad or card.']
+    ] : [
+      ['Do your Panjabi run true to size?', 'Yes, our Panjabi use a regular fit. Check the Size Guide for chest and length; size up for a looser festive look.'],
+      ['Will my order arrive before Eid?', 'Order at least 4 days before Eid outside Dhaka and 2 days inside Dhaka. Festive rush dates are shown at checkout.'],
+      ['How should I wash embroidered Panjabi?', 'Hand wash cold, inside out, and dry in shade. Iron on the reverse side to protect the embroidery.'],
+      ['Can I exchange a Panjabi after Eid?', 'Unworn items with tags can be exchanged within 7 days of delivery, festive season included.']
+    ];
+    var closeAll = function () { self.setState({ dd: '', sheet: '' }); };
+    var hasSize = kind !== 'bags';
+    var activeChips = emptyF ? ['Size: XS', 'Colour: Yellow', 'Under ৳1,000'] : (pstate === 'filters' && selSizes.length ? selSizes.map(function (s) { return 'Size: ' + s; }) : []);
+    return {
+      rootCls: b.rootCls, W: b.W, go: pr.go, notM: b.notM, bpM: b.bpM, active: c.active,
+      isSale: kind === 'sale', silJ: D.SIL.jacket, silP: D.SIL.panjabi,
+      crumbs: c.crumbs.map(function (x) { return { label: x[0], go: go(x[1]) }; }), here: c.here,
+      h1: c.h1, hasIntro: !!c.intro, intro: c.intro + (introOpen ? c.more : ''), introCls: 'intro', introBtn: introOpen ? 'Read less' : 'Read more',
+      toggleIntro: function () { self.set1('intro', !introOpen); },
+      count: c.count, hasChips: !emptyS, chips: c.chips,
+      notEmptySearch: !emptyS, hasSize: hasSize, showSaleTog: kind !== 'sale',
+      sizeCount: selSizes.length ? ' (' + selSizes.length + ')' : '', colourCount: emptyF ? ' (1)' : '', priceCount: emptyF ? ' (1)' : '',
+      filterCount: (selSizes.length + (emptyF ? 2 : 0)) ? ' (' + (selSizes.length + (emptyF ? 2 : 0)) + ')' : '',
+      ddSize: dd === 'size', ddSort: dd === 'sort', ddSizeS: dd === 'size' ? 'true' : 'false', ddSortS: dd === 'sort' ? 'true' : 'false',
+      ddSizeCls: dd === 'size' ? 'fx on' : 'fx', ddSortCls: dd === 'sort' ? 'fx on' : 'fx',
+      openSize: function () { if (b.bpDk) self.set1('dd', dd === 'size' ? '' : 'size'); else self.set1('sheet', 'filter'); },
+      openFilter: function () { if (b.bpDk) self.set1('dd', dd === 'size' ? '' : 'size'); else self.set1('sheet', 'filter'); },
+      openSort: function () { if (b.bpDk) self.set1('dd', dd === 'sort' ? '' : 'sort'); else self.set1('sheet', 'sort'); },
+      closeAll: closeAll,
+      sheetFilter: sheet === 'filter', sheetSort: sheet === 'sort',
+      sizeOpts: sizeLabels.map(function (s) {
+        var on = !!sizes[s];
+        return { label: s, cls: on ? 'sz on' : 'sz', pressed: on ? 'true' : 'false', pick: function () { var n2 = Object.assign({}, sizes); if (on) delete n2[s]; else n2[s] = 1; self.set1('sizes', n2); } };
+      }),
+      sizeSel: selSizes.length ? selSizes.join(', ') : 'Any',
+      clearSizes: function () { self.set1('sizes', {}); },
+      clearAll: function () { self.setState({ cleared: true, sizes: {} }); },
+      sortLabel: sortLabels[sortI],
+      sorts: sortLabels.map(function (l, i) { return { label: l, cls: i === sortI ? 'opt on' : 'opt', sel: i === sortI ? 'true' : 'false', pick: function () { self.setState({ sort: i, dd: '', sheet: '' }); } }; }),
+      colours: [{ c: '#F7F5F0', n: 'White' }, { c: '#D6C6A6', n: 'Sand' }, { c: '#9DAE97', n: 'Sage' }, { c: '#2E3A57', n: 'Navy' }, { c: '#7A2E36', n: 'Maroon' }, { c: '#2F5146', n: 'Green' }],
+      hasActive: activeChips.length > 0, activeChips: activeChips,
+      showGrid: !emptyF && !emptyS, grid: grid, shown: grid.length, total: c.total, pct: Math.round(grid.length / c.total * 100), threePages: c.total > 24,
+      isEmptyFilter: emptyF, isEmptySearch: emptyS,
+      popCats: [['Panjabi', 'panjabi', 'panjabi'], ['Trousers', 'trouser', 'men'], ['Shorts', 'shorts', 'men'], ['Drop T-Shirts', 'tee', 'men'], ['Jackets', 'jacket', 'men'], ['Bags', 'backpack', 'bags']].map(function (x) { return { label: x[0], sil: D.SIL[x[1]], go: go(x[2]) }; }),
+      picks: D.items(D.LISTS.picks.slice(0, b.n3(4, 3, 4))),
+      hasFaq: !!c.faq && !emptyF, faqTitle: c.faq,
+      faqs: faqs.map(function (f, i) {
+        var open = faqOpen === i;
+        return { q: f[0], a: f[1], open: open, exp: open ? 'true' : 'false', icon: open ? 'M5 12h14' : 'M5 12h14M12 5v14', toggle: function () { self.set1('faq', open ? -1 : i); } };
+      }),
+      goMen: go('men')
+    };
+  }
+}
+</script>
+</body>
+</html>

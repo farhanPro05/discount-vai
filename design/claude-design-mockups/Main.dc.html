@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Discount Vai · Clickable prototype</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="stage">
+<div class="ctl">
+<div class="ctl-g"><span class="ctl-l">Page</span>
+<button class="ctl-ib" type="button" aria-label="Back" onClick="{{back}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7M19 12H5"></path></svg></button>
+<label class="ctl-sel"><span class="sr">Choose a page</span><select value="{{route}}" onChange="{{onRoute}}">
+<optgroup label="Home"><option value="home">Home</option><option value="home-popup">Home · email popup</option></optgroup>
+<optgroup label="Shop"><option value="men">Men landing</option><option value="panjabi">Panjabi</option><option value="panjabi-filters">Panjabi · filters open</option><option value="panjabi-sort">Panjabi · sort open</option><option value="panjabi-empty">Panjabi · no results</option><option value="bags">Bags</option><option value="sale">Sale</option></optgroup>
+<optgroup label="Search"><option value="search">Search · live suggestions</option><option value="search-results">Search results</option><option value="search-empty">Search · no results</option></optgroup>
+<optgroup label="Product"><option value="product">Product page</option><option value="product-size">Product · size guide</option><option value="product-toast">Product · added to cart</option></optgroup>
+<optgroup label="Cart and checkout"><option value="cart-drawer">Cart drawer</option><option value="cart">Cart page</option><option value="cart-empty">Cart · empty</option><option value="checkout">Checkout</option><option value="order">Order confirmed</option><option value="order-failed">Payment failed</option></optgroup>
+<optgroup label="Account"><option value="login">Log in / register</option><option value="orders">Order history</option><option value="order-detail">Order detail</option></optgroup>
+<optgroup label="Info"><option value="about">About</option><option value="faq">FAQ</option><option value="returns">Returns and exchange</option><option value="contact">Contact</option><option value="women">Women · coming soon</option><option value="soon">Coming soon (generic)</option><option value="notfound">404</option></optgroup>
+</select></label>
+</div>
+<div class="ctl-g"><span class="ctl-l">Palette</span><div class="seg"><sc-for list="{{palettes}}" as="o" hint-placeholder-count="4"><button class="{{o.cls}}" type="button" onClick="{{o.pick}}"><span class="pdots"><sc-for list="{{o.dots}}" as="d" hint-placeholder-count="3"><i style="background: {{d.c}}"></i></sc-for></span>{{o.label}}</button></sc-for></div></div>
+<div class="ctl-g"><span class="ctl-l">Width</span><div class="seg"><sc-for list="{{widths}}" as="o" hint-placeholder-count="3"><button class="{{o.cls}}" type="button" onClick="{{o.pick}}">{{o.label}}</button></sc-for></div></div>
+<span class="ctl-hint">Layout: D (hybrid) · everything is clickable</span>
+</div>
+<div class="{{bodyCls}}">
+<dc-import name="Screen" route="{{route}}" width="{{W}}" palette="{{pal}}" go="{{go}}" hint-size="100%,900px"></dc-import>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"route":{"editor":"enum","options":["home","men","panjabi","product","cart-drawer","checkout","login","about"],"default":"home"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"$preview":{"width":1440,"height":7400}}'>
+class Component extends DCLogic {
+  nav(r) {
+    var st = this.state || {};
+    var cur = st.route || (this.props && this.props.route) || 'home';
+    if (r === cur) return;
+    var hist = (st.hist || []).concat([cur]).slice(-30);
+    this.setState({ route: r, hist: hist });
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    if (!this._go) this._go = function (r) { self.nav(r); };
+    var route = st.route || pr.route || 'home';
+    var pal = st.palette || pr.palette || 'sage';
+    var W = Number(st.width || pr.width || 1440);
+    return {
+      route: route, pal: pal, W: W, go: this._go, hintW: W + 'px',
+      bodyCls: W >= 1440 ? 'stage-body wide' : 'stage-body boxed',
+      onRoute: function (e) { self.nav(e.target.value); },
+      back: function () { var h = (self.state && self.state.hist) || []; if (!h.length) return; var prev = h[h.length - 1]; self.setState({ route: prev, hist: h.slice(0, -1) }); },
+      palettes: Object.keys(D.PALS).map(function (k) {
+        return { label: D.PALS[k].label, cls: k === pal ? 'on' : '', pick: function () { self.setState({ palette: k }); }, dots: D.PALS[k].d.map(function (c) { return { c: c }; }) };
+      }),
+      widths: [390, 768, 1440].map(function (w) { return { label: String(w), cls: w === W ? 'on' : '', pick: function () { self.setState({ width: w }); } }; })
+    };
+  }
+}
+</script>
+</body>
+</html>

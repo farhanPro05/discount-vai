@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Product page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}px">
+<dc-import name="Header" width="{{W}}" inner="1" wa="{{waFlag}}" go="{{go}}" active="men" hint-size="100%,108px"></dc-import>
+<div class="wrap">
+<nav class="bc" aria-label="Breadcrumb"><a href="#home" onClick="{{goHome}}">Home</a><span aria-hidden="true">/</span><a href="#men" onClick="{{goMen}}">Men</a><span aria-hidden="true">/</span><a href="#panjabi" onClick="{{goPanjabi}}">Panjabi</a><span aria-hidden="true">/</span><span class="cur" aria-current="page">Classic Cotton Panjabi</span></nav>
+<div class="pdp">
+<div class="gal">
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}">
+<div class="thumbs"><sc-for list="{{views}}" as="v" hint-placeholder-count="4"><button class="{{v.cls}}" type="button" aria-label="{{v.label}}" onClick="{{v.pick}}"><span class="ph"><svg class="sil {{v.shot}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{sil}}" fill="{{fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg></span></button></sc-for></div>
+<div class="gal-main"><div class="ph"><svg class="sil {{mainShot}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{sil}}" fill="{{fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">Panjabi · {{mainLabel}} · 4:5</span><div class="bdg"><span class="b b-sale">-19%</span></div></div></div>
+</sc-if>
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}">
+<div class="gal-car"><div class="gal-trk" style="transform: translateX(-{{galPct}}%)"><sc-for list="{{views}}" as="v" hint-placeholder-count="4"><div class="ph"><svg class="sil {{v.shot}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{sil}}" fill="{{fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">Panjabi · {{v.name}}</span></div></sc-for></div><div class="bdg"><span class="b b-sale">-19%</span></div><span class="gal-n">{{galN}} / 4</span></div>
+<div class="dots dark"><sc-for list="{{views}}" as="v" hint-placeholder-count="4"><button class="{{v.dot}}" type="button" aria-label="{{v.label}}" onClick="{{v.pick}}"></button></sc-for></div>
+</sc-if>
+</div>
+
+<div class="info">
+<p class="kick">Panjabi · Regular fit</p>
+<h1>Classic Cotton Panjabi</h1>
+<div class="pp"><span class="now sale">৳1,990</span><s class="was">৳2,450</s><span class="b b-sale">-19%</span></div>
+<p class="save">You save ৳460</p>
+
+<div class="po"><p class="opt-l">Colour: <b>{{colName}}</b></p><div class="swatches"><sc-for list="{{colours}}" as="c" hint-placeholder-count="3"><button class="{{c.cls}}" type="button" aria-label="{{c.n}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}"><span style="background: {{c.c}}"></span></button></sc-for></div></div>
+
+<div class="po"><div class="opt-row"><p class="opt-l">Size: <b>{{size}}</b></p><button class="lnk ic-lnk" type="button" onClick="{{openSize}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"></path><path d="m14.5 12.5 2-2M11.5 9.5l2-2M8.5 6.5l2-2M17.5 15.5l2-2"></path></svg>Size Guide</button></div>
+<div class="sizes"><sc-for list="{{sizes}}" as="z" hint-placeholder-count="5"><button class="{{z.cls}}" type="button" aria-pressed="{{z.pressed}}" aria-disabled="{{z.dis}}" aria-label="{{z.aria}}" onClick="{{z.pick}}">{{z.label}}</button></sc-for></div></div>
+
+<p class="low"><span class="dotw" aria-hidden="true"></span>Only 3 left in {{size}}. Order soon.</p>
+
+<div class="buy">
+<div class="qty" role="group" aria-label="Quantity"><button type="button" aria-label="Decrease quantity" onClick="{{dec}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg></button><span aria-live="polite">{{qty}}</span><button type="button" aria-label="Increase quantity" onClick="{{inc}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14"></path></svg></button></div>
+<button class="btn lg grow" type="button" onClick="{{add}}">Add to Cart</button>
+</div>
+<a class="btn-dark lg full" href="#checkout" onClick="{{goCheckout}}">Buy Now</a>
+
+<div class="ship">
+<p><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg><span><b>Inside Dhaka</b> ৳70, 1 to 2 days · <b>Outside Dhaka</b> ৳130, 2 to 4 days</span></p>
+<p><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg><span><b>Easy 7-day exchange.</b> Wrong size? We pick it up and swap it.</span></p>
+<p><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg><span>Cash on Delivery, bKash, Nagad or card</span></p>
+</div>
+
+<div class="accs">
+<sc-for list="{{accs}}" as="a" hint-placeholder-count="3"><div class="acc"><button class="acc-h" type="button" aria-expanded="{{a.exp}}" onClick="{{a.toggle}}">{{a.t}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{a.icon}}"></path></svg></button>
+<sc-if value="{{a.isDesc}}" hint-placeholder-val="{{true}}"><sc-if value="{{a.open}}" hint-placeholder-val="{{true}}"><div class="acc-b"><p>A clean, everyday Panjabi in soft combed cotton that breathes through long Eid days. Mandarin collar, hidden placket and side pockets. Pairs with white pajama or your favourite chinos.</p></div></sc-if></sc-if>
+<sc-if value="{{a.isDet}}" hint-placeholder-val="{{false}}"><sc-if value="{{a.open}}" hint-placeholder-val="{{false}}"><div class="acc-b"><dl class="spec"><dt>Fabric</dt><dd>100% combed cotton, 140 GSM</dd><dt>Fit</dt><dd>Regular fit, knee length</dd><dt>Care</dt><dd>Machine wash cold, dry in shade, iron medium</dd><dt>SKU</dt><dd>DV-PJ-0015-WH</dd></dl></div></sc-if></sc-if>
+<sc-if value="{{a.isDel}}" hint-placeholder-val="{{false}}"><sc-if value="{{a.open}}" hint-placeholder-val="{{false}}"><div class="acc-b"><p>Inside Dhaka ৳70 (1 to 2 days). Outside Dhaka ৳130 (2 to 4 days). Free delivery on orders over ৳2,000. Exchange unworn items within 7 days; we collect from your door.</p></div></sc-if></sc-if>
+</div></sc-for>
+</div>
+
+<div class="share"><span class="muted">Share</span><a class="ib bd" href="#facebook" aria-label="Share on Facebook"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a><a class="ib bd" href="#whatsapp" aria-label="Share on WhatsApp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9 9.5c.4 2.3 2.3 4.4 5 5l1.2-1.2 1.6.8-.4 1.4c-3.3.4-7.2-3.3-7-6.8l1.4-.4.8 1.6Z"></path></svg></a><button class="ib bd" type="button" aria-label="Copy link" onClick="{{copy}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></button><sc-if value="{{copied}}" hint-placeholder-val="{{false}}"><span class="muted">Link copied</span></sc-if></div>
+</div>
+</div>
+
+<section class="sec"><div class="sh-d"><h2>You may also like</h2><div class="r"><div class="arws"><button class="{{prevCls}}" type="button" aria-label="Previous products" onClick="{{prev}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button><button class="{{nextCls}}" type="button" aria-label="Next products" onClick="{{next}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button></div></div></div>
+<div class="car"><div class="trk" style="transform: translateX(-{{shift}}px)"><sc-for list="{{like}}" as="p" hint-placeholder-count="4"><div class="ci"><dc-import name="Card" item="{{p}}" go="{{go}}" hint-size="100%,480px"></dc-import></div></sc-for></div></div>
+</section>
+<section class="sec sec-t"><div class="sh-d"><h2>Recently viewed</h2></div>
+<div class="ga"><sc-for list="{{recent}}" as="p" hint-placeholder-count="4"><div class="ci"><dc-import name="Card" item="{{p}}" go="{{go}}" hint-size="100%,480px"></dc-import></div></sc-for></div>
+</section>
+</div>
+<dc-import name="Footer" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,480px"></dc-import>
+
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}">
+<div class="satc"><div class="satc-p"><span class="now sale">৳1,990</span><s class="was">৳2,450</s></div><button class="btn lg grow" type="button" onClick="{{add}}">Add to Cart · {{size}}</button></div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+<div class="toast" role="status" aria-live="polite">
+<span class="t-ok"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span class="t-th"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{sil}}" fill="{{fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.15)" stroke-width=".8"></path></svg></span>
+<span class="t-t"><b>Added to cart</b><small>Classic Cotton Panjabi · {{colName}} · {{size}} · Qty {{qty}}</small></span>
+<a class="lnk" href="#cart" onClick="{{goCart}}">View cart</a>
+<button class="ib sm" type="button" aria-label="Dismiss" onClick="{{hideToast}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+</sc-if>
+
+<sc-if value="{{sizeOpen}}" hint-placeholder-val="{{false}}">
+<button class="scrim" type="button" aria-label="Close size guide" onClick="{{closeSize}}"></button>
+<div class="{{sgCls}}" role="dialog" aria-modal="true" aria-label="Size Guide">
+<div class="sheet-h"><sc-if value="{{bpM}}" hint-placeholder-val="{{false}}"><span class="grab" aria-hidden="true"></span></sc-if><h2>Size Guide · Panjabi</h2><button class="ib" type="button" aria-label="Close" onClick="{{closeSize}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+<div class="sg-b">
+<div class="seg2" role="group" aria-label="Units"><button class="{{inCls}}" type="button" onClick="{{setIn}}">Inches</button><button class="{{cmCls}}" type="button" onClick="{{setCm}}">Centimetres</button></div>
+<div class="tbl-w"><table class="tbl"><thead><tr><th scope="col">Size</th><th scope="col">Chest</th><th scope="col">Length</th><th scope="col">Shoulder</th><th scope="col">Sleeve</th></tr></thead><tbody><sc-for list="{{chart}}" as="r" hint-placeholder-count="5"><tr class="{{r.cls}}"><th scope="row">{{r.s}}</th><td>{{r.a}}</td><td>{{r.b}}</td><td>{{r.c}}</td><td>{{r.d}}</td></tr></sc-for></tbody></table></div>
+<div class="htm">
+<div class="htm-fig" aria-hidden="true"><svg viewBox="0 0 100 125"><path d="{{sil}}" fill="var(--sunk)" stroke="var(--text2)" stroke-width=".8" fill-rule="evenodd"></path><path d="M30 44 H70" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="2 2"></path><path d="M74 21 V116" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="2 2"></path><path d="M63 14 L84 72" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="2 2"></path></svg></div>
+<div><p class="htm-h">How to measure</p><ol class="steps"><li><b>Chest:</b> around the fullest part, under the arms, tape level.</li><li><b>Length:</b> from the top of the shoulder down to where you want the hem.</li><li><b>Sleeve:</b> from the shoulder seam to the wrist.</li></ol><p class="muted">Between sizes? Go one up for a relaxed festive fit.</p></div>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"overlay":{"editor":"enum","options":["none","size","toast"],"default":"none"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":3150}}'>
+class Component extends DCLogic {
+  set1(k, v) { var u = {}; u[k] = v; this.setState(u); }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var ov = pr.overlay || 'none';
+    var gi = st.gi || 0;
+    var viewNames = ['Front', 'Back', 'Embroidery detail', 'Flat lay'];
+    var shots = ['', 'shot-1', 'shot-2', 'shot-3'];
+    var cols = [{ c: '#F7F5F0', n: 'White', f: '#F7F5F0' }, { c: '#9DAE97', n: 'Sage', f: '#9DAE97' }, { c: '#2E3A57', n: 'Navy', f: '#2E3A57' }];
+    var ci = st.ci || 0;
+    var size = st.size || 'M';
+    var qty = st.qty || 1;
+    var unit = st.unit || 'in';
+    var toast = st.toast !== undefined ? st.toast : ov === 'toast';
+    var sizeOpen = st.sg !== undefined ? st.sg : ov === 'size';
+    var accOpen = st.acc !== undefined ? st.acc : 0;
+    var step = { d: 320, t: 276, m: 168 }[b.bp];
+    var vis = { d: 4, t: 2, m: 2 }[b.bp];
+    var max = 6 - vis;
+    var off = Math.min(st.off || 0, max);
+    var rows = [['S', 38, 40, 17, 23], ['M', 40, 41, 17.5, 23.5], ['L', 42, 42, 18, 24], ['XL', 44, 43, 18.5, 24.5], ['XXL', 46, 44, 19, 25]];
+    var cv = function (n) { return unit === 'in' ? n + '"' : Math.round(n * 2.54) + ' cm'; };
+    var accDefs = [['Description', 'desc'], ['Details', 'det'], ['Delivery & Exchange', 'del']];
+    return {
+      rootCls: b.rootCls, W: b.W, go: pr.go, bpDk: b.bpDk, notDk: b.notDk, bpM: b.bpM,
+      waFlag: b.bpM ? '0' : '1',
+      sil: D.SIL.panjabi, fill: cols[ci].f,
+      views: viewNames.map(function (n, i) {
+        return { name: n, label: 'Show ' + n.toLowerCase() + ' photo', shot: shots[i], cls: i === gi ? 'thumb on' : 'thumb', dot: i === gi ? 'dot on' : 'dot', pick: function () { self.set1('gi', i); } };
+      }),
+      mainShot: shots[gi], mainLabel: viewNames[gi], galPct: gi * 100, galN: gi + 1,
+      colName: cols[ci].n,
+      colours: cols.map(function (c, i) { return { c: c.c, n: c.n, cls: i === ci ? 'swb on' : 'swb', pressed: i === ci ? 'true' : 'false', pick: function () { self.set1('ci', i); } }; }),
+      size: size,
+      sizes: ['S', 'M', 'L', 'XL', 'XXL'].map(function (s) {
+        var out = s === 'XL';
+        return { label: s, cls: out ? 'sz out' : (s === size ? 'sz on' : 'sz'), pressed: s === size ? 'true' : 'false', dis: out ? 'true' : 'false', aria: out ? s + ', out of stock' : s, pick: function () { if (!out) self.set1('size', s); } };
+      }),
+      qty: qty, inc: function () { self.set1('qty', Math.min(9, qty + 1)); }, dec: function () { self.set1('qty', Math.max(1, qty - 1)); },
+      add: function () { self.set1('toast', true); },
+      toast: toast, hideToast: function () { self.set1('toast', false); },
+      sizeOpen: sizeOpen, openSize: function () { self.set1('sg', true); }, closeSize: function () { self.set1('sg', false); },
+      sgCls: b.bpM ? 'sheet tall sg' : 'modal sg',
+      inCls: unit === 'in' ? 'on' : '', cmCls: unit === 'cm' ? 'on' : '',
+      setIn: function () { self.set1('unit', 'in'); }, setCm: function () { self.set1('unit', 'cm'); },
+      chart: rows.map(function (r) { return { s: r[0], a: cv(r[1]), b: cv(r[2]), c: cv(r[3]), d: cv(r[4]), cls: r[0] === size ? 'hl' : '' }; }),
+      accs: accDefs.map(function (a, i) {
+        var open = accOpen === i;
+        return { t: a[0], isDesc: a[1] === 'desc', isDet: a[1] === 'det', isDel: a[1] === 'del', open: open, exp: open ? 'true' : 'false', icon: open ? 'M5 12h14' : 'M5 12h14M12 5v14', toggle: function () { self.set1('acc', open ? -1 : i); } };
+      }),
+      copied: !!st.copied, copy: function () { self.set1('copied', true); },
+      like: D.items(D.LISTS.like), recent: D.items(D.LISTS.recent.slice(0, b.n3(4, 3, 2))),
+      shift: off * step,
+      prev: function () { self.set1('off', Math.max(0, off - 1)); }, next: function () { self.set1('off', Math.min(max, off + 1)); },
+      prevCls: off <= 0 ? 'arw off' : 'arw', nextCls: off >= max ? 'arw off' : 'arw',
+      goHome: go('home'), goMen: go('men'), goPanjabi: go('panjabi'), goCheckout: go('checkout'), goCart: go('cart-drawer')
+    };
+  }
+}
+</script>
+</body>
+</html>

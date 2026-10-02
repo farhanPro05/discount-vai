@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Screen router</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="screen">
+<sc-if value="{{isHome}}" hint-placeholder-val="{{true}}"><dc-import name="Home" width="{{W}}" palette="{{palette}}" popup="{{popup}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isListing}}" hint-placeholder-val="{{false}}"><dc-import name="Listing" width="{{W}}" palette="{{palette}}" kind="{{kind}}" state="{{lstate}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isSearch}}" hint-placeholder-val="{{false}}"><dc-import name="Search" width="{{W}}" palette="{{palette}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isProduct}}" hint-placeholder-val="{{false}}"><dc-import name="Product" width="{{W}}" palette="{{palette}}" overlay="{{overlay}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isCart}}" hint-placeholder-val="{{false}}"><dc-import name="Cart" width="{{W}}" palette="{{palette}}" mode="{{mode}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isCheckout}}" hint-placeholder-val="{{false}}"><dc-import name="Checkout" width="{{W}}" palette="{{palette}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isOrder}}" hint-placeholder-val="{{false}}"><dc-import name="Order" width="{{W}}" palette="{{palette}}" mode="{{mode}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isAccount}}" hint-placeholder-val="{{false}}"><dc-import name="Account" width="{{W}}" palette="{{palette}}" mode="{{mode}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+<sc-if value="{{isInfo}}" hint-placeholder-val="{{false}}"><dc-import name="Info" width="{{W}}" palette="{{palette}}" mode="{{mode}}" go="{{go}}" hint-size="100%,900px"></dc-import></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"route":{"editor":"enum","options":["home","home-popup","men","panjabi","panjabi-filters","panjabi-sort","panjabi-empty","bags","sale","search","search-results","search-empty","product","product-size","product-toast","cart-drawer","cart","cart-empty","checkout","order","order-failed","login","orders","order-detail","about","faq","returns","contact","notfound","women","soon"],"default":"home"},"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":7300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var pr = this.props || {};
+    var r = pr.route || 'home';
+    var W = Number(pr.width || 1440);
+    var R = {
+      'home': ['home'], 'home-popup': ['home', { popup: 'default' }],
+      'men': ['listing', { kind: 'men' }], 'panjabi': ['listing', { kind: 'panjabi' }],
+      'panjabi-filters': ['listing', { kind: 'panjabi', lstate: 'filters' }], 'panjabi-sort': ['listing', { kind: 'panjabi', lstate: 'sort' }],
+      'panjabi-empty': ['listing', { kind: 'panjabi', lstate: 'empty' }], 'bags': ['listing', { kind: 'bags' }], 'sale': ['listing', { kind: 'sale' }],
+      'search-results': ['listing', { kind: 'search' }], 'search-empty': ['listing', { kind: 'search', lstate: 'empty' }],
+      'search': ['search'],
+      'product': ['product'], 'product-size': ['product', { overlay: 'size' }], 'product-toast': ['product', { overlay: 'toast' }],
+      'cart-drawer': ['cart', { mode: 'drawer' }], 'cart': ['cart', { mode: 'page' }], 'cart-empty': ['cart', { mode: 'empty' }],
+      'checkout': ['checkout'], 'order': ['order', { mode: 'confirmed' }], 'order-failed': ['order', { mode: 'failed' }],
+      'login': ['account', { mode: 'login' }], 'orders': ['account', { mode: 'orders' }], 'order-detail': ['account', { mode: 'detail' }],
+      'about': ['info', { mode: 'about' }], 'faq': ['info', { mode: 'faq' }], 'returns': ['info', { mode: 'returns' }], 'contact': ['info', { mode: 'contact' }],
+      'notfound': ['info', { mode: 'notfound' }], 'women': ['info', { mode: 'women' }], 'soon': ['info', { mode: 'soon' }]
+    };
+    var hit = R[r] || R.notfound;
+    var o = hit[1] || {};
+    var c = hit[0];
+    return {
+      W: W, palette: pr.palette || 'sage', go: pr.go, hint: W + 'px,900px',
+      isHome: c === 'home', isListing: c === 'listing', isSearch: c === 'search', isProduct: c === 'product', isCart: c === 'cart',
+      isCheckout: c === 'checkout', isOrder: c === 'order', isAccount: c === 'account', isInfo: c === 'info',
+      popup: o.popup || 'none', kind: o.kind || 'panjabi', lstate: o.lstate || 'default', overlay: o.overlay || 'none', mode: o.mode || ''
+    };
+  }
+}
+</script>
+</body>
+</html>

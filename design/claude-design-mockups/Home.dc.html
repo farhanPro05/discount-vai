@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}px">
+<dc-import name="Header" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,108px"></dc-import>
+
+<!-- 1 · Hero slider -->
+<section class="hero" aria-label="Featured">
+<div class="{{heroCls}}">
+<svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{s.sil}}" fill-rule="evenodd"></path></svg>
+<svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{s.sil2}}" fill-rule="evenodd"></path></svg>
+<span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Hero {{slideN}} of 3 · {{crop}}</span>
+<div class="wrap hero-in"><div class="hero-t"><span class="eb">{{s.eb}}</span><h1>{{s.h}}</h1><p>{{s.p}}</p><a class="btn lg" href="#shop" onClick="{{s.go}}">{{s.cta}}</a></div></div>
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}"><button class="arw hero-prev" type="button" aria-label="Previous slide" onClick="{{prevSlide}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button><button class="arw hero-next" type="button" aria-label="Next slide" onClick="{{nextSlide}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button></sc-if>
+<div class="dots"><sc-for list="{{dots}}" as="d" hint-placeholder-count="3"><button class="{{d.cls}}" type="button" aria-label="{{d.label}}" onClick="{{d.pick}}"></button></sc-for></div>
+</div>
+</section>
+
+<!-- 2 · Shop by category -->
+<section class="sec sec-t"><div class="wrap">
+<div class="sh-d"><h2>Shop by Category</h2><div class="r"><a class="lnk" href="#men" onClick="{{goMen}}">Shop all Men</a></div></div>
+<div class="cats"><sc-for list="{{cats}}" as="c" hint-placeholder-count="9"><a class="{{c.cls}}" href="#cat" onClick="{{c.go}}"><span class="cat-img"><svg class="cat-sil" viewBox="0 0 100 125" aria-hidden="true"><path d="{{c.sil}}" fill-rule="evenodd"></path></svg></span><span class="cat-l"><span><b>{{c.label}}</b><small>{{c.sub}}</small></span><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a></sc-for></div>
+</div></section>
+
+<!-- 3 · New arrivals carousel -->
+<section class="sec sec-t"><div class="wrap">
+<div class="sh-d"><h2>New Arrivals</h2><div class="r"><a class="lnk" href="#new" onClick="{{goMen}}">View all</a><div class="arws"><button class="{{prevCls}}" type="button" aria-label="Previous products" onClick="{{prev}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button><button class="{{nextCls}}" type="button" aria-label="Next products" onClick="{{next}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button></div></div></div>
+<div class="car"><div class="trk" style="transform: translateX(-{{shift}}px)"><sc-for list="{{na}}" as="p" hint-placeholder-count="4"><div class="ci"><dc-import name="Card" item="{{p}}" go="{{go}}" hint-size="100%,480px"></dc-import></div></sc-for></div></div>
+</div></section>
+
+<!-- 4 · Deal banner with countdown -->
+<section class="sec sec-t"><div class="wrap"><div class="deal">
+<div class="deal-t"><span class="eb">Ends Sunday, 11:59 pm</span><h2>Vai's Deals of the Week</h2><p>Up to 25% off bestsellers. When they're gone, they're gone.</p></div>
+<div class="cdown" role="timer" aria-label="Time left on this week's deals"><sc-for list="{{cd}}" as="u" hint-placeholder-count="4"><span class="cd-u"><b>{{u.v}}</b><span>{{u.l}}</span></span></sc-for></div>
+<a class="btn-inv lg" href="#sale" onClick="{{goSale}}">Shop the deals</a>
+</div></div></section>
+
+<!-- 5 · Featured collection -->
+<section class="sec sec-t"><div class="wrap">
+<div class="sh-d"><h2>Panjabi for Eid</h2><div class="r"><a class="lnk" href="#panjabi" onClick="{{goPanjabi}}">Shop the collection</a></div></div>
+<div class="fe-d">
+<div class="ls figs-r"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · Eid campaign</span><div class="ov"><span class="eb">Featured collection</span><h3>Dressed for Eid</h3><p>From ৳1,850. Free delivery over ৳2,000.</p><a class="btn" href="#panjabi" onClick="{{goPanjabi}}">Shop the collection</a></div></div>
+<div class="g2"><sc-for list="{{fe}}" as="p" hint-placeholder-count="4"><div class="ci"><dc-import name="Card" item="{{p}}" go="{{go}}" hint-size="100%,480px"></dc-import></div></sc-for></div>
+</div>
+</div></section>
+
+<!-- 6 · Best sellers -->
+<section class="sec sec-t"><div class="wrap">
+<div class="sh-d"><h2>Vai's Best Sellers</h2><div class="r"><a class="lnk" href="#best" onClick="{{goMen}}">View all</a></div></div>
+<div class="ga"><sc-for list="{{bs}}" as="p" hint-placeholder-count="4"><div class="ci"><dc-import name="Card" item="{{p}}" go="{{go}}" hint-size="100%,480px"></dc-import></div></sc-for></div>
+</div></section>
+
+<!-- 7 · Bags spotlight -->
+<section class="sec sec-t"><div class="wrap"><div class="split">
+<div class="ls split-img"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silB}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silT}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo · bags on the move</span></div>
+<div class="split-t"><span class="eb">Bags · Unisex</span><h2>Carry more, pay less.</h2><p>Totes, backpacks and slings built for rickshaw rides and long commutes. Tough canvas, honest prices, from ৳650.</p><div class="chip-row"><a class="chip" href="#totes" onClick="{{goBags}}">Totes</a><a class="chip" href="#backpacks" onClick="{{goBags}}">Backpacks</a><a class="chip" href="#slings" onClick="{{goBags}}">Slings</a></div><a class="btn lg" href="#bags" onClick="{{goBags}}">Shop bags</a></div>
+</div></div></section>
+
+<!-- 8 · Women teaser -->
+<section class="sec sec-t"><div class="wrap"><div class="teaser">
+<span class="soon lg">Coming soon</span>
+<h2>Women's collection is on the way</h2>
+<p>Same fair prices, same easy exchange. Be the first to know when it lands.</p>
+<div class="nl"><input type="email" placeholder="Your email address" aria-label="Email address for women's launch"><button class="btn" type="button">Get notified</button></div>
+<a class="lnk" href="#women" onClick="{{goWomen}}">Take a sneak peek</a>
+</div></div></section>
+
+<!-- 9 · Trust strip -->
+<section class="trust" aria-label="Why shop with us"><div class="wrap trust-in">
+<div class="tr-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg><span><b>Easy exchange</b><small>7 days, no fuss</small></span></div>
+<div class="tr-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg><span><b>Delivery across Bangladesh</b><small>1 to 4 days</small></span></div>
+<div class="tr-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path></svg><span><b>Cash on Delivery</b><small>and secure online payment</small></span></div>
+<div class="tr-i"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg><span><b>Quality fabrics</b><small>checked before they ship</small></span></div>
+</div></section>
+
+<!-- 10 · Reviews -->
+<section class="sec"><div class="wrap">
+<div class="sh-d"><h2>What our customers say</h2><div class="r"><span class="rating"><b>4.8</b> / 5 from 1,240 reviews</span></div></div>
+<div class="rv-row"><sc-for list="{{reviews}}" as="r" hint-placeholder-count="3">
+<figure class="rv"><div class="ls rv-img"><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Customer photo</span><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{r.sil}}" fill-rule="evenodd"></path></svg></div>
+<div class="rv-b"><span class="stars" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
+<blockquote>{{r.q}}</blockquote>
+<figcaption><b>{{r.n}}</b> · {{r.c}}<small>Bought: {{r.p}}</small></figcaption></div></figure>
+</sc-for></div>
+</div></section>
+
+<!-- 11 · SEO block -->
+<section class="sec sec-t"><div class="wrap"><div class="seo">
+<h2>About Discount Vai</h2>
+<p>Discount Vai is a Bangladeshi online clothing shop for men, with unisex bags and a women's line on the way. We make everyday trousers, shorts, drop-shoulder tees, club jerseys, jackets and Panjabi in breathable fabrics, and sell them at prices that make sense.</p>
+<sc-if value="{{seoOpen}}" hint-placeholder-val="{{false}}"><p>Order online with Cash on Delivery anywhere in Bangladesh, or pay with bKash, Nagad or card. Delivery inside Dhaka takes 1 to 2 days and outside Dhaka 2 to 4 days. If the size is not right, exchange it within 7 days. Think of us as your brother in the business: honest about quality, fair on price.</p></sc-if>
+<button class="lnk" type="button" onClick="{{toggleSeo}}" aria-expanded="{{seoOpenS}}">{{seoLabel}}</button>
+</div></div></section>
+
+<dc-import name="Footer" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,480px"></dc-import>
+
+<sc-if value="{{showPopup}}" hint-placeholder-val="{{false}}"><dc-import name="Popup" width="{{W}}" inner="1" state="{{popup}}" go="{{go}}" hint-size="100%,844px"></dc-import></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"popup":{"editor":"enum","options":["none","default","error","loading","success"],"default":"none"},"go":{"editor":null},"$preview":{"width":1440,"height":7300}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    var self = this;
+    this._t = setInterval(function () { self.setState({ tick: ((self.state && self.state.tick) || 0) + 1 }); }, 1000);
+  }
+  componentWillUnmount() { if (this._t) clearInterval(this._t); }
+  set1(k, v) { var u = {}; u[k] = v; this.setState(u); }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var slides = [
+      { eb: 'The Eid edit', h: 'Eid, sorted.', p: 'Festive and everyday Panjabi in breathable cotton. From ৳1,850.', cta: 'Shop Panjabi', go: go('panjabi'), sil: D.SIL.panjabi, sil2: D.SIL.panjabi },
+      { eb: 'New drop', h: 'Easy summer shorts.', p: 'Cotton and linen-blend shorts, half pants and 3/4s. From ৳590.', cta: 'Shop shorts', go: go('men'), sil: D.SIL.shorts, sil2: D.SIL.tee },
+      { eb: 'Vai’s Deals', h: 'Up to 25% off bestsellers.', p: 'Jackets, chinos and backpacks at their lowest prices this season.', cta: 'Shop the sale', go: go('sale'), sil: D.SIL.jacket, sil2: D.SIL.backpack }
+    ];
+    var si = st.slide || 0;
+    var crops = { d: 'desktop crop 1440 × 600, subject right', t: 'tablet crop 768 × 520', m: 'mobile crop 390 × 560, portrait, subject top' };
+    var step = { d: 320, t: 276, m: 168 }[b.bp];
+    var vis = { d: 4, t: 2, m: 2 }[b.bp];
+    var max = 8 - vis;
+    var off = Math.min(st.off || 0, max);
+    var left = 2 * 86400 + 14 * 3600 + 36 * 60 + 9 - ((st.tick || 0) % 86400);
+    var two = function (n) { return (n < 10 ? '0' : '') + n; };
+    var catDefs = [
+      ['Trousers', 'Chinos and twills', 'trouser', 'men'], ['Shorts', 'Cotton and linen', 'shorts', 'men'], ['3/4 Pants', 'Cargo and jogger', 'three4', 'men'],
+      ['2/4 Pants', 'Half pants', 'half', 'men'], ['Club Jerseys', '25/26 season', 'jersey', 'men'], ['Jackets', 'Bombers and denim', 'jacket', 'men'],
+      ['Drop T-Shirts', 'Oversized fits', 'tee', 'men'], ['Panjabi', 'Festive and everyday', 'panjabi', 'panjabi'], ['Bags (Unisex)', 'Totes, backpacks, slings', 'backpack', 'bags']
+    ];
+    var seoOpen = !!st.seo;
+    return {
+      rootCls: b.rootCls, W: b.W, bpDk: b.bpDk, go: pr.go,
+      heroCls: 'ls hero-sl hs-' + si, s: slides[si], slideN: si + 1, crop: crops[b.bp],
+      prevSlide: function () { self.set1('slide', (si + 2) % 3); },
+      nextSlide: function () { self.set1('slide', (si + 1) % 3); },
+      dots: [0, 1, 2].map(function (i) { return { cls: i === si ? 'dot on' : 'dot', label: 'Show slide ' + (i + 1), pick: function () { self.set1('slide', i); } }; }),
+      cats: catDefs.map(function (c, i) { return { label: c[0], sub: c[1], sil: D.SIL[c[2]], go: go(c[3]), cls: i === 8 ? 'cat wide' : 'cat' }; }),
+      na: D.items(D.LISTS.na), fe: D.items(D.LISTS.fe), bs: D.items(D.LISTS.bs.slice(0, b.n3(4, 3, 4))),
+      shift: off * step,
+      prev: function () { self.set1('off', Math.max(0, off - 1)); },
+      next: function () { self.set1('off', Math.min(max, off + 1)); },
+      prevCls: off <= 0 ? 'arw off' : 'arw', nextCls: off >= max ? 'arw off' : 'arw',
+      cd: [
+        { v: two(Math.floor(left / 86400)), l: 'Days' }, { v: two(Math.floor(left % 86400 / 3600)), l: 'Hours' },
+        { v: two(Math.floor(left % 3600 / 60)), l: 'Mins' }, { v: two(left % 60), l: 'Secs' }
+      ],
+      reviews: [
+        { n: 'Rafi', c: 'Dhaka', q: 'Ordered the white Panjabi for Eid. Fabric is soft, stitching is neat and it arrived in a day.', p: 'Classic Cotton Panjabi', sil: D.SIL.panjabi },
+        { n: 'Arif', c: 'Chattogram', q: 'Exchanged a size with zero hassle. The chinos fit better than brands twice the price.', p: 'Slim Fit Cotton Chino', sil: D.SIL.trouser },
+        { n: 'Nayeem', c: 'Sylhet', q: 'Paid cash on delivery, got a call to confirm first. The backpack has survived a month of commuting.', p: 'Urban Backpack', sil: D.SIL.backpack }
+      ],
+      seoOpen: seoOpen, seoOpenS: seoOpen ? 'true' : 'false', seoLabel: seoOpen ? 'Read less' : 'Read more',
+      toggleSeo: function () { self.set1('seo', !seoOpen); },
+      showPopup: !!pr.popup && pr.popup !== 'none', popup: pr.popup || 'default',
+      silP: D.SIL.panjabi, silB: D.SIL.backpack, silT: D.SIL.tote,
+      goMen: go('men'), goSale: go('sale'), goPanjabi: go('panjabi'), goBags: go('bags'), goWomen: go('women')
+    };
+  }
+}
+</script>
+</body>
+</html>

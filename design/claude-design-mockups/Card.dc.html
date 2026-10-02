@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Product card · Option D</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{wrapCls}}">
+<div class="cd {{p.cardCls}}">
+<a class="phl" href="#product" aria-label="{{p.name}}, {{p.colour}}, {{p.nowF}}" onClick="{{open}}" onMouseLeave="{{reset}}"><div class="ph"><svg class="sil {{shotCls}}" viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".6"></path></svg><span class="ph-tag">{{tag}}</span><div class="bdg"><sc-for list="{{p.badges}}" as="b" hint-placeholder-count="1"><span class="{{b.cls}}">{{b.label}}</span></sc-for></div></div><span class="zones"><sc-for list="{{bars}}" as="z" hint-placeholder-count="3"><span class="zone" onMouseEnter="{{z.pick}}"></span></sc-for></span></a>
+<div class="bars"><sc-for list="{{bars}}" as="z" hint-placeholder-count="3"><button class="{{z.cls}}" type="button" aria-label="{{z.label}}" onClick="{{z.pick}}"></button></sc-for></div>
+<a class="meta" href="#product" onClick="{{open}}"><span class="nm">{{p.name}}</span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span><span class="cl"><span class="sws"><sc-for list="{{p.sw}}" as="s" hint-placeholder-count="2"><span class="sw" style="background: {{s.c}}"></span></sc-for></span><span>{{p.colour}}</span></span></a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"item":{"editor":null},"go":{"editor":null},"pid":{"editor":"enum","options":["15","17","28","24"],"default":"15"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"$preview":{"width":348,"height":540}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var solo = !pr.item;
+    var p = pr.item || D.item(Number(pr.pid || 15));
+    var idx = st.i || 0;
+    var shots = ['Front', 'Back', 'Detail'];
+    return {
+      p: p,
+      wrapCls: solo ? 'dv pal-' + (D.PALS[pr.palette] ? pr.palette : 'sage') + ' bp-d L-D card-solo' : 'card-in',
+      shotCls: ['', 'shot-1', 'shot-2'][idx],
+      tag: p.type + (idx ? ' · ' + shots[idx] : ''),
+      bars: [0, 1, 2].map(function (i) {
+        return { cls: i === idx ? 'bar on' : 'bar', label: 'Show photo ' + (i + 1) + ' of 3', pick: function () { if ((self.state && self.state.i || 0) !== i) self.setState({ i: i }); } };
+      }),
+      reset: function () { if (self.state && self.state.i) self.setState({ i: 0 }); },
+      open: D.nav(pr, 'product')
+    };
+  }
+}
+</script>
+</body>
+</html>

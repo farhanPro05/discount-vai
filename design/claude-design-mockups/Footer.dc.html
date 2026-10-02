@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Footer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{wrapCls}}" style="width: {{wCss}}">
+<footer class="ft">
+<div class="wrap ft-grid">
+<div class="ft-brand">
+<a class="wm" href="#home" onClick="{{goHome}}"><span>Discount</span><b>Vai</b></a>
+<p class="ft-promise">Good clothes, fair prices, honest service. That's the Vai promise.</p>
+<label class="ft-news"><span class="ft-l">New drops and members-only deals, straight to your inbox</span><span class="ft-row"><input type="email" placeholder="Your email address" aria-label="Email address"><button class="btn-inv" type="button">Join</button></span></label>
+<div class="ft-soc">
+<a class="ib" href="#facebook" aria-label="Facebook"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+<a class="ib" href="#instagram" aria-label="Instagram"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><path d="M17.5 6.5h.01"></path></svg></a>
+<a class="ib" href="#tiktok" aria-label="TikTok"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"></path><path d="M14 3c.6 2.6 2.4 4.4 5 4.6"></path></svg></a>
+<a class="ib" href="#whatsapp" aria-label="WhatsApp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9 9.5c.4 2.3 2.3 4.4 5 5l1.2-1.2 1.6.8-.4 1.4c-3.3.4-7.2-3.3-7-6.8l1.4-.4.8 1.6Z"></path></svg></a>
+</div>
+</div>
+<nav class="ft-col" aria-label="Shop"><p class="ft-h">Shop</p><a href="#men" onClick="{{goMen}}">Men</a><a href="#accessories" onClick="{{goBags}}">Accessories</a><a href="#women" onClick="{{goWomen}}">Women <span class="soon">Soon</span></a><a href="#new" onClick="{{goMen}}">New Arrivals</a><a href="#sale" onClick="{{goSale}}">Sale</a></nav>
+<nav class="ft-col" aria-label="Help"><p class="ft-h">Help</p><a href="#contact" onClick="{{goContact}}">Contact</a><a href="#faq" onClick="{{goFaq}}">FAQ</a><a href="#size-guide" onClick="{{goSize}}">Size Guide</a><a href="#shipping" onClick="{{goFaq}}">Shipping &amp; Delivery</a><a href="#returns" onClick="{{goReturns}}">Returns &amp; Exchange</a><a href="#track" onClick="{{goOrders}}">Track Order</a></nav>
+<nav class="ft-col" aria-label="Company"><p class="ft-h">Company</p><a href="#about" onClick="{{goAbout}}">About</a><a href="#style-guide" onClick="{{goSoon}}">Style Guide <span class="soon">Soon</span></a><a href="#privacy" onClick="{{goAbout}}">Privacy</a><a href="#terms" onClick="{{goAbout}}">Terms</a></nav>
+</div>
+<div class="wrap ft-bot">
+<div class="pay"><span class="ft-l">We accept</span><span class="pill">Cash on Delivery</span><span class="pill">bKash</span><span class="pill">Nagad</span><span class="pill">Visa</span><span class="pill">Mastercard</span></div>
+<p class="copy">© 2026 Discount Vai. All rights reserved.</p>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"inner":{"editor":null},"$preview":{"width":1440,"height":480}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var b = D.base(pr);
+    var inner = D.flag(pr.inner);
+    var go = function (to) { return D.nav(pr, to); };
+    return {
+      wrapCls: inner ? 'fwrap' : b.rootCls + ' fwrap',
+      wCss: inner ? 'auto' : b.W + 'px',
+      goHome: go('home'), goMen: go('men'), goBags: go('bags'), goWomen: go('women'), goSale: go('sale'),
+      goContact: go('contact'), goFaq: go('faq'), goSize: go('product-size'), goReturns: go('returns'),
+      goOrders: go('orders'), goAbout: go('about'), goSoon: go('soon')
+    };
+  }
+}
+</script>
+</body>
+</html>

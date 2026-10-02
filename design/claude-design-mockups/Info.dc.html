@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Info pages, contact, 404 and coming soon</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}px">
+<dc-import name="Header" width="{{W}}" inner="1" go="{{go}}" active="{{active}}" hint-size="100%,108px"></dc-import>
+
+<sc-if value="{{isTpl}}" hint-placeholder-val="{{true}}">
+<div class="wrap pg-pad">
+<nav class="bc" aria-label="Breadcrumb"><a href="#home" onClick="{{goHome}}">Home</a><span aria-hidden="true">/</span><span class="cur" aria-current="page">{{crumb}}</span></nav>
+<div class="info-l">
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}"><nav class="side-nav" aria-label="Help and company"><sc-for list="{{nav}}" as="n" hint-placeholder-count="7"><a class="{{n.cls}}" href="#info" onClick="{{n.go}}">{{n.label}}</a></sc-for></nav></sc-if>
+<article class="prose">
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}"><div class="chips"><sc-for list="{{nav}}" as="n" hint-placeholder-count="7"><a class="{{n.chip}}" href="#info" onClick="{{n.go}}">{{n.label}}</a></sc-for></div></sc-if>
+
+<sc-if value="{{isAbout}}" hint-placeholder-val="{{true}}">
+<h1>About Discount Vai</h1>
+<p class="lead">We started Discount Vai with one simple idea: good clothes should not cost a fortune, and buying them should feel like getting advice from your brother.</p>
+<div class="ls prose-img"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silT}}" fill-rule="evenodd"></path></svg><span class="ls-tag">Team or workshop photo</span></div>
+<h2>What we make</h2>
+<p>Everyday menswear and unisex bags: trousers, shorts, 3/4 and half pants, drop-shoulder tees, club jerseys, jackets and Panjabi. A women's line is on the way.</p>
+<div class="vals"><div class="val"><b>Fair prices</b><p>We keep margins honest and pass the savings on. No fake "was" prices.</p></div><div class="val"><b>Quality checked</b><p>Every piece is checked for stitching, colour and size before it ships.</p></div><div class="val"><b>Here to help</b><p>Real people on WhatsApp and phone, every day from 9 am to 10 pm.</p></div></div>
+<h2>How we work</h2>
+<p>We sell online only, so we can skip rent and pass that on to you. Order with Cash on Delivery anywhere in Bangladesh, or pay with bKash, Nagad or card, and exchange within 7 days if it isn't right.</p>
+</sc-if>
+
+<sc-if value="{{isFaq}}" hint-placeholder-val="{{false}}">
+<h1>Frequently asked questions</h1>
+<p class="lead">Quick answers on orders, delivery and exchanges. Can't find yours? <a class="lnk" href="#contact" onClick="{{goContact}}">Ask us</a>.</p>
+<label class="field-s"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg><input type="search" placeholder="Search the FAQ" aria-label="Search the FAQ"></label>
+<sc-for list="{{faqGroups}}" as="g" hint-placeholder-count="3"><h2>{{g.t}}</h2><sc-for list="{{g.qs}}" as="f" hint-placeholder-count="3"><div class="acc"><button class="acc-h" type="button" aria-expanded="{{f.exp}}" onClick="{{f.toggle}}">{{f.q}}<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{f.icon}}"></path></svg></button><sc-if value="{{f.open}}" hint-placeholder-val="{{false}}"><div class="acc-b"><p>{{f.a}}</p></div></sc-if></div></sc-for></sc-for>
+</sc-if>
+
+<sc-if value="{{isReturns}}" hint-placeholder-val="{{false}}">
+<h1>Returns &amp; Exchange</h1>
+<p class="lead">Wrong size or not quite right? Exchange it within 7 days of delivery. No drama.</p>
+<div class="facts"><div><b>7 days</b><span>to request an exchange</span></div><div><b>Free pickup</b><span>inside Dhaka, ৳70 outside</span></div><div><b>Refunds</b><span>to bKash, Nagad or your card in 5 to 7 days</span></div></div>
+<h2>How to exchange</h2>
+<ol class="steps"><li><b>Message us</b> on WhatsApp or the Contact page with your order number.</li><li><b>Pick a new size or item.</b> We hold it for you.</li><li><b>Hand over the item</b> to our rider, unworn with tags on.</li><li><b>Get the new one</b> in the same trip or within 2 days.</li></ol>
+<h2>What can be exchanged</h2>
+<p>Unworn items with original tags and packaging. Sale items can be exchanged for a different size.</p>
+<h2>What can't</h2>
+<p>Items that have been worn, washed or altered, and innerwear for hygiene reasons.</p>
+<h2>Refunds</h2>
+<p>If we can't swap it, we refund to your original payment method. Cash on Delivery orders are refunded to bKash or Nagad.</p>
+</sc-if>
+</article>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isContact}}" hint-placeholder-val="{{false}}">
+<div class="wrap pg-pad">
+<nav class="bc" aria-label="Breadcrumb"><a href="#home" onClick="{{goHome}}">Home</a><span aria-hidden="true">/</span><span class="cur" aria-current="page">Contact</span></nav>
+<h1 class="pg-h1">Get in touch</h1>
+<p class="lead">Questions about sizes, orders or exchanges? We reply on WhatsApp within an hour, every day from 9 am to 10 pm.</p>
+<div class="contact-l">
+<div class="box form">
+<div class="row2"><label class="fld"><span class="fl">Your name</span><input type="text" placeholder="e.g. Rafi Ahmed"></label><label class="fld"><span class="fl">Phone</span><input type="tel" placeholder="01XXXXXXXXX"></label></div>
+<div class="row2"><label class="fld"><span class="fl">Email <i class="optl">optional</i></span><input type="email" placeholder="name@example.com"></label><label class="fld"><span class="fl">Order number <i class="optl">optional</i></span><input type="text" placeholder="#DV-00000"></label></div>
+<label class="fld"><span class="fl">Topic</span><span class="sel"><select><option>Order or delivery</option><option>Exchange or refund</option><option>Size help</option><option>Something else</option></select></span></label>
+<label class="fld"><span class="fl">Message</span><textarea rows="5" placeholder="Tell us what's up"></textarea></label>
+<sc-if value="{{sent}}" hint-placeholder-val="{{false}}"><p class="note ok"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Thanks! We'll get back to you within a few hours.</p></sc-if>
+<button class="btn lg" type="button" onClick="{{send}}">Send message</button>
+</div>
+<div class="cards-c">
+<a class="cc-c" href="#call"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span><b>Call us</b>[01XXX-XXXXXX]</span></a>
+<a class="cc-c" href="#whatsapp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9 9.5c.4 2.3 2.3 4.4 5 5l1.2-1.2 1.6.8-.4 1.4c-3.3.4-7.2-3.3-7-6.8l1.4-.4.8 1.6Z"></path></svg><span><b>WhatsApp</b>Fastest reply, usually within an hour</span></a>
+<a class="cc-c" href="#email"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg><span><b>Email</b>[hello@your-domain.com]</span></a>
+<a class="cc-c" href="#facebook"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg><span><b>Facebook</b>Message our page</span></a>
+<p class="muted sm"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Every day, 9 am to 10 pm</p>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{is404}}" hint-placeholder-val="{{false}}">
+<div class="wrap narrow res">
+<p class="big404" aria-hidden="true">404</p>
+<h1>Lost, vai?</h1>
+<p class="res-sub">This page has wandered off. Let's get you back to the good stuff.</p>
+<label class="field-s big"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg><input type="search" placeholder="Search Panjabi, shorts, bags" aria-label="Search"></label>
+<div class="chip-row center"><sc-for list="{{links404}}" as="c" hint-placeholder-count="5"><a class="chip" href="#cat" onClick="{{c.go}}">{{c.label}}</a></sc-for></div>
+<a class="btn lg" href="#home" onClick="{{goHome}}">Go to homepage</a>
+</div>
+</sc-if>
+
+<sc-if value="{{isWomen}}" hint-placeholder-val="{{false}}">
+<section class="ls soon-hero"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silTote}}" fill-rule="evenodd"></path></svg><span class="ls-tag">Campaign photo · women's teaser</span>
+<div class="wrap soon-in"><span class="soon lg">Coming soon</span><h1>Women's collection is coming soon</h1><p>Easy kurtis, wide-leg trousers and everyday tops, at the same fair prices. Be the first to know when it lands.</p>
+<div class="nl"><input type="email" value="{{wEmail}}" onChange="{{onW}}" placeholder="Your email address" aria-label="Email for women's launch"><button class="btn" type="button" onClick="{{notify}}">Notify me</button></div>
+<sc-if value="{{wDone}}" hint-placeholder-val="{{false}}"><p class="note ok"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>You're on the list. We'll email you on launch day.</p></sc-if>
+</div></section>
+<div class="wrap pg-pad"><div class="sh-d"><h2>Shop in the meantime</h2></div>
+<div class="meantime"><a class="mt-tile ls" href="#men" onClick="{{goMen}}"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silT}}" fill-rule="evenodd"></path></svg><span class="mt-t"><b>Shop Men</b><span class="lnk">Trousers, tees, Panjabi and more</span></span></a><a class="mt-tile ls" href="#bags" onClick="{{goBags}}"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silTote}}" fill-rule="evenodd"></path></svg><span class="mt-t"><b>Shop Bags</b><span class="lnk">Unisex totes, backpacks, slings</span></span></a></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isSoon}}" hint-placeholder-val="{{false}}">
+<div class="wrap narrow res">
+<span class="soon lg">Soon</span>
+<h1>Style Guide is on its way</h1>
+<p class="res-sub">We're putting together outfit ideas and how-to-wear notes for every piece. Want a heads-up when it's live?</p>
+<div class="nl"><input type="email" placeholder="Your email address" aria-label="Email"><button class="btn" type="button">Notify me</button></div>
+<div class="empty-a"><a class="btn-o" href="#men" onClick="{{goMen}}">Shop Men</a><a class="btn-o" href="#home" onClick="{{goHome}}">Back to home</a></div>
+</div>
+</sc-if>
+
+<dc-import name="Footer" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"mode":{"editor":"enum","options":["about","faq","returns","contact","notfound","women","soon"],"default":"about"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  set1(k, v) { var u = {}; u[k] = v; this.setState(u); }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var mode = pr.mode || 'about';
+    var tpl = mode === 'about' || mode === 'faq' || mode === 'returns';
+    var navDefs = [['About us', 'about'], ['FAQ', 'faq'], ['Shipping & Delivery', 'faq'], ['Returns & Exchange', 'returns'], ['Size Guide', 'product-size'], ['Privacy', 'about'], ['Terms', 'about']];
+    var curLabel = { about: 'About us', faq: 'FAQ', returns: 'Returns & Exchange' }[mode];
+    var open = st.faq !== undefined ? st.faq : '0-0';
+    var groups = [
+      ['Orders and payment', [
+        ['Can I pay Cash on Delivery?', 'Yes. Cash on Delivery works anywhere in Bangladesh. We call to confirm before we ship.'],
+        ['Which online payments do you take?', 'bKash, Nagad, Visa and Mastercard, all through SSLCommerz’s secure page.'],
+        ['Do I need an account to order?', 'No. Guest checkout only needs your phone number and address.']]],
+      ['Delivery', [
+        ['How much is delivery?', 'Inside Dhaka ৳70, outside Dhaka ৳130. Free on orders over ৳2,000.'],
+        ['How long does it take?', '1 to 2 days inside Dhaka, 2 to 4 days elsewhere. Festive seasons can add a day.'],
+        ['How do I track my order?', 'Use Track Order in the menu, or the SMS link we send when it ships.']]],
+      ['Exchanges', [
+        ['How long do I have to exchange?', '7 days from delivery. Items must be unworn with tags on.'],
+        ['Is the exchange free?', 'Pickup is free inside Dhaka. Outside Dhaka it costs ৳70.'],
+        ['Can I exchange a sale item?', 'Yes, for a different size of the same item.']]]
+    ];
+    var wDone = !!st.wDone;
+    return {
+      rootCls: b.rootCls, W: b.W, go: pr.go, bpDk: b.bpDk, notDk: b.notDk,
+      active: mode === 'women' ? 'women' : '',
+      isTpl: tpl, isAbout: mode === 'about', isFaq: mode === 'faq', isReturns: mode === 'returns',
+      isContact: mode === 'contact', is404: mode === 'notfound', isWomen: mode === 'women', isSoon: mode === 'soon',
+      crumb: curLabel || '',
+      nav: navDefs.map(function (n) { var on = n[0] === curLabel; return { label: n[0], go: go(n[1]), cls: on ? 'on' : '', chip: on ? 'chip on' : 'chip' }; }),
+      faqGroups: groups.map(function (g, gi) {
+        return { t: g[0], qs: g[1].map(function (q, qi) {
+          var k = gi + '-' + qi; var o = open === k;
+          return { q: q[0], a: q[1], open: o, exp: o ? 'true' : 'false', icon: o ? 'M5 12h14' : 'M5 12h14M12 5v14', toggle: function () { self.set1('faq', o ? '' : k); } };
+        }) };
+      }),
+      sent: !!st.sent, send: function () { self.set1('sent', true); },
+      links404: [['Men', 'men'], ['Panjabi', 'panjabi'], ['Bags', 'bags'], ['New Arrivals', 'men'], ['Sale', 'sale']].map(function (c) { return { label: c[0], go: go(c[1]) }; }),
+      wEmail: st.wEmail || '', onW: function (e) { self.set1('wEmail', e.target.value); },
+      notify: function () { self.set1('wDone', true); }, wDone: wDone,
+      silP: D.SIL.panjabi, silT: D.SIL.tee, silTote: D.SIL.tote,
+      goHome: go('home'), goContact: go('contact'), goMen: go('men'), goBags: go('bags')
+    };
+  }
+}
+</script>
+</body>
+</html>

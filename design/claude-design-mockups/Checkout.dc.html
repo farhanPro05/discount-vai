@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Checkout</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}px">
+<header class="hdr co-hdr"><div class="wrap co-hdr-in"><a class="wm" href="#home" onClick="{{goHome}}"><span>Discount</span><b>Vai</b></a><span class="co-sec"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Secure checkout</span><a class="lnk" href="#cart" onClick="{{goCart}}">Back to cart</a></div></header>
+
+<div class="wrap co">
+<h1 class="pg-h1">Checkout</h1>
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}">
+<button class="co-tog" type="button" aria-expanded="{{sumOpenS}}" onClick="{{toggleSum}}"><span><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>{{sumLabel}}</span><b>{{totF}}</b></button>
+<sc-if value="{{sumOpen}}" hint-placeholder-val="{{false}}"><div class="sumc flat"><sc-for list="{{lines}}" as="l" hint-placeholder-count="2"><div class="s-line"><span class="l-th sm"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{l.sil}}" fill="{{l.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg><i>{{l.qty}}</i></span><span class="s-n">{{l.name}}<small>{{l.colour}} · {{l.size}}</small></span><b>{{l.nowF}}</b></div></sc-for><div class="sum-r"><span>Subtotal</span><span>{{subF}}</span></div><div class="sum-r"><span>Delivery</span><span>{{delF}}</span></div><sc-if value="{{hasDisc}}" hint-placeholder-val="{{false}}"><div class="sum-r ok"><span>Discount (VAI10)</span><span>-{{discF}}</span></div></sc-if></div></sc-if>
+</sc-if>
+
+<div class="co-l">
+<div class="co-form">
+<section class="co-s"><h2><span class="num">1</span>Contact</h2>
+<div class="row2"><label class="fld"><span class="fl">Phone number <i class="req">required</i></span><input type="tel" placeholder="01XXXXXXXXX" value="01712 345678" aria-required="true"><span class="hint">We call or SMS to confirm your order.</span></label>
+<label class="fld"><span class="fl">Email <i class="optl">optional</i></span><input type="email" placeholder="name@example.com"><span class="hint">For your receipt and delivery updates.</span></label></div>
+</section>
+
+<section class="co-s"><h2><span class="num">2</span>Delivery address</h2>
+<label class="fld"><span class="fl">Full name <i class="req">required</i></span><input type="text" value="Rafi Ahmed" aria-required="true"></label>
+<div class="row2"><label class="fld"><span class="fl">District / City <i class="req">required</i></span><span class="sel"><select aria-required="true" onChange="{{onDistrict}}"><option>Dhaka</option><option>Chattogram</option><option>Sylhet</option><option>Rajshahi</option><option>Khulna</option></select></span></label>
+<label class="fld"><span class="fl">Area <i class="req">required</i></span><span class="sel"><select aria-required="true"><option>Dhanmondi</option><option>Mirpur</option><option>Gulshan</option><option>Uttara</option></select></span></label></div>
+<label class="fld"><span class="fl">Full address <i class="req">required</i></span><textarea rows="3" placeholder="House, road, block and a landmark the rider can find" aria-required="true"></textarea></label>
+</section>
+
+<section class="co-s"><h2><span class="num">3</span>Delivery zone</h2>
+<div class="opts2"><sc-for list="{{zones}}" as="z" hint-placeholder-count="2"><button class="{{z.cls}}" type="button" role="radio" aria-checked="{{z.sel}}" onClick="{{z.pick}}"><span class="radio"></span><span class="oc-t"><b>{{z.t}}</b><small>{{z.d}}</small></span><b class="oc-p">{{z.p}}</b></button></sc-for></div>
+</section>
+
+<section class="co-s"><h2><span class="num">4</span>Notes and discount</h2>
+<label class="fld"><span class="fl">Order notes <i class="optl">optional</i></span><textarea rows="2" placeholder="e.g. Please call before coming, gate code 12"></textarea></label>
+<label class="fld"><span class="fl">Discount code</span><span class="fld-row"><input type="text" value="{{code}}" onChange="{{onCode}}" placeholder="e.g. VAI10"><button class="btn-o" type="button" onClick="{{applyCode}}">Apply</button></span>
+<sc-if value="{{hasDisc}}" hint-placeholder-val="{{false}}"><span class="hint ok">VAI10 applied: you save {{discF}}.</span></sc-if><sc-if value="{{badCode}}" hint-placeholder-val="{{false}}"><span class="hint bad">That code didn't work. Check the spelling or try VAI10.</span></sc-if></label>
+</section>
+
+<section class="co-s"><h2><span class="num">5</span>Payment</h2>
+<div class="opts2 pay-c"><sc-for list="{{pays}}" as="p" hint-placeholder-count="2"><button class="{{p.cls}}" type="button" role="radio" aria-checked="{{p.sel}}" onClick="{{p.pick}}"><span class="radio"></span><span class="oc-t"><b>{{p.t}}</b><small>{{p.d}}</small><span class="pay sm"><sc-for list="{{p.pills}}" as="x" hint-placeholder-count="2"><span class="pill dk">{{x}}</span></sc-for></span></span></button></sc-for></div>
+<sc-if value="{{isOnline}}" hint-placeholder-val="{{false}}"><p class="note"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>You'll go to SSLCommerz's secure page to pay, then come straight back here.</p></sc-if>
+</section>
+
+<section class="co-s last"><label class="chk"><input type="checkbox"><span><b>Keep me posted.</b> New drops and members-only deals by email. No spam.</span></label></section>
+
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}"><div class="place"><div class="sum-r big"><span>Total</span><b>{{totF}}</b></div><a class="btn lg full" href="#place" onClick="{{place}}">{{placeLabel}}</a><p class="muted sm">By placing your order you agree to our <a href="#terms">Terms</a> and <a href="#privacy">Privacy policy</a>.</p></div></sc-if>
+</div>
+
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}">
+<aside class="sumc sticky" aria-label="Order summary">
+<h2>Order summary</h2>
+<sc-for list="{{lines}}" as="l" hint-placeholder-count="2"><div class="s-line"><span class="l-th sm"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{l.sil}}" fill="{{l.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg><i>{{l.qty}}</i></span><span class="s-n">{{l.name}}<small>{{l.colour}} · {{l.size}}</small></span><b>{{l.nowF}}</b></div></sc-for>
+<div class="sum-r"><span>Subtotal</span><span>{{subF}}</span></div>
+<div class="sum-r"><span>Delivery ({{zoneName}})</span><span>{{delF}}</span></div>
+<sc-if value="{{hasDisc}}" hint-placeholder-val="{{false}}"><div class="sum-r ok"><span>Discount (VAI10)</span><span>-{{discF}}</span></div></sc-if>
+<div class="sum-r big"><span>Total</span><b>{{totF}}</b></div>
+<a class="btn lg full" href="#place" onClick="{{place}}">{{placeLabel}}</a>
+<p class="muted sm">By placing your order you agree to our <a href="#terms">Terms</a> and <a href="#privacy">Privacy policy</a>.</p>
+<p class="muted sm"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg> Easy 7-day exchange on every item.</p>
+</aside>
+</sc-if>
+</div>
+</div>
+<footer class="co-ft"><div class="wrap co-ft-in"><span>© 2026 Discount Vai</span><span>Need help? WhatsApp 01XXX-XXXXXX</span><a href="#privacy">Privacy</a><a href="#terms">Terms</a></div></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":2050}}'>
+class Component extends DCLogic {
+  set1(k, v) { var u = {}; u[k] = v; this.setState(u); }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var zone = st.zone || 'in';
+    var pay = st.pay || 'cod';
+    var cart = [{ id: 10, size: 'L', qty: 1 }, { id: 13, size: 'M', qty: 1 }];
+    var sub = 0;
+    var lines = cart.map(function (x) { var p = D.item(x.id); sub += p.price * x.qty; return Object.assign({}, p, { size: x.size, qty: x.qty }); });
+    var del = zone === 'in' ? 70 : 130;
+    var disc = st.applied ? Math.round(sub * 0.1) : 0;
+    var tot = sub + del - disc;
+    var sumOpen = !!st.sum;
+    return {
+      rootCls: b.rootCls, W: b.W, bpDk: b.bpDk, notDk: b.notDk,
+      lines: lines, subF: D.taka(sub), delF: D.taka(del), discF: D.taka(disc), totF: D.taka(tot), hasDisc: disc > 0,
+      zoneName: zone === 'in' ? 'Inside Dhaka' : 'Outside Dhaka',
+      sumOpen: sumOpen, sumOpenS: sumOpen ? 'true' : 'false', sumLabel: sumOpen ? 'Hide order summary' : 'Show order summary',
+      toggleSum: function () { self.set1('sum', !sumOpen); },
+      zones: [['in', 'Inside Dhaka', '1 to 2 days', '৳70'], ['out', 'Outside Dhaka', '2 to 4 days', '৳130']].map(function (z) {
+        return { t: z[1], d: z[2], p: z[3], cls: z[0] === zone ? 'ocard on' : 'ocard', sel: z[0] === zone ? 'true' : 'false', pick: function () { self.set1('zone', z[0]); } };
+      }),
+      onDistrict: function (e) { self.set1('zone', e.target.value === 'Dhaka' ? 'in' : 'out'); },
+      pays: [
+        { k: 'cod', t: 'Cash on Delivery', d: 'Pay in cash when your order arrives.', pills: ['Cash'] },
+        { k: 'online', t: 'Pay online', d: 'bKash, Nagad and cards via SSLCommerz.', pills: ['bKash', 'Nagad', 'Visa', 'Mastercard'] }
+      ].map(function (p) { return { t: p.t, d: p.d, pills: p.pills, cls: p.k === pay ? 'ocard big on' : 'ocard big', sel: p.k === pay ? 'true' : 'false', pick: function () { self.set1('pay', p.k); } }; }),
+      isOnline: pay === 'online',
+      code: st.code !== undefined ? st.code : '',
+      onCode: function (e) { self.setState({ code: e.target.value, bad: false }); },
+      applyCode: function () { var c = (st.code || '').trim().toUpperCase(); if (c === 'VAI10') self.setState({ applied: true, bad: false }); else self.setState({ applied: false, bad: true }); },
+      badCode: !!st.bad,
+      placeLabel: pay === 'online' ? 'Pay ' + D.taka(tot) + ' securely' : 'Place order · ' + D.taka(tot),
+      place: go(pay === 'online' ? 'order-failed' : 'order'),
+      goHome: go('home'), goCart: go('cart')
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Email signup popup</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{wrapCls}}" style="width: {{wCss}}">
+<sc-if value="{{closed}}" hint-placeholder-val="{{false}}"><div class="pop-closed"><span>Closed. Hidden for 7 days.</span><button class="lnk" type="button" onClick="{{reopen}}">Show again</button></div></sc-if>
+<sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+<button class="scrim" type="button" aria-label="Close" onClick="{{close}}"></button>
+
+<sc-if value="{{notM}}" hint-placeholder-val="{{true}}">
+<div class="pm" role="dialog" aria-modal="true" aria-label="Join the Vai List">
+<div class="ls pm-img"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silT}}" fill-rule="evenodd"></path></svg><span class="ls-tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Lifestyle photo</span>
+<div class="pm-ben"><p class="pm-bh">Be the first to know</p>
+<span class="ben"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>New drops</span>
+<span class="ben"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5"></circle></svg>Members-only deals</span>
+<span class="ben"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>Early access</span>
+</div></div>
+<div class="pm-body">
+<button class="ib pm-x" type="button" aria-label="Close" onClick="{{close}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+<sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+<span class="eb">The Vai List</span>
+<h2>Join the Vai List</h2>
+<p class="pm-copy">New drops, members-only deals and early access. One email a week, tops.</p>
+<span class="offer">[Offer line, e.g. 10% off your first order]</span>
+<label class="fld {{fldCls}}"><span class="fl">Email address</span><input type="email" value="{{email}}" onChange="{{onEmail}}" placeholder="name@example.com" aria-invalid="{{invalidS}}"></label>
+<sc-if value="{{isError}}" hint-placeholder-val="{{false}}"><p class="err"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>That email doesn't look right. Try name@example.com</p></sc-if>
+<button class="{{btnCls}}" type="button" onClick="{{join}}" aria-busy="{{busyS}}"><sc-if value="{{isLoading}}" hint-placeholder-val="{{false}}"><span class="spin" aria-hidden="true"></span></sc-if>{{btnLabel}}</button>
+<p class="fine">No spam, unsubscribe anytime. <a href="#privacy">Privacy</a></p>
+</sc-if>
+<sc-if value="{{isDone}}" hint-placeholder-val="{{false}}">
+<div class="done"><span class="done-ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><h2>You're on the list!</h2><p class="pm-copy">Welcome to the family, vai. Here's your code for your first order.</p><div class="code"><b>VAI10</b><button class="lnk" type="button">Copy code</button></div><button class="btn lg full" type="button" onClick="{{close}}">Start shopping</button></div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}">
+<div class="psheet" role="dialog" aria-modal="true" aria-label="Join the Vai List">
+<div class="ls ps-strip"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag">Photo strip</span><button class="ps-x" type="button" aria-label="Close" onClick="{{close}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+<div class="ps-body">
+<sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+<h2>Join the Vai List</h2>
+<p class="pm-copy">New drops, members-only deals and early access.</p>
+<span class="offer">[Offer line, e.g. 10% off your first order]</span>
+<label class="fld {{fldCls}}"><span class="fl">Email address</span><input type="email" value="{{email}}" onChange="{{onEmail}}" placeholder="name@example.com" aria-invalid="{{invalidS}}"></label>
+<sc-if value="{{isError}}" hint-placeholder-val="{{false}}"><p class="err"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>That email doesn't look right.</p></sc-if>
+<button class="{{btnCls}}" type="button" onClick="{{join}}" aria-busy="{{busyS}}"><sc-if value="{{isLoading}}" hint-placeholder-val="{{false}}"><span class="spin" aria-hidden="true"></span></sc-if>{{btnLabel}}</button>
+<p class="fine">No spam, unsubscribe anytime. <a href="#privacy">Privacy</a></p>
+</sc-if>
+<sc-if value="{{isDone}}" hint-placeholder-val="{{false}}">
+<div class="done"><span class="done-ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><h2>You're on the list!</h2><p class="pm-copy">Here's your code for your first order.</p><div class="code"><b>VAI10</b><button class="lnk" type="button">Copy code</button></div><button class="btn lg full" type="button" onClick="{{close}}">Start shopping</button></div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"state":{"editor":"enum","options":["default","error","loading","success"],"default":"default"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"inner":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  componentWillUnmount() { if (this._to) clearTimeout(this._to); }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var inner = D.flag(pr.inner);
+    var phase = st.phase || pr.state || 'default';
+    var email = st.email !== undefined ? st.email : (phase === 'error' ? 'rafi@gmail' : (phase === 'default' ? '' : 'rafi@gmail.com'));
+    var closed = !!st.closed;
+    return {
+      wrapCls: inner ? 'pop-layer' : b.rootCls + ' pop-solo',
+      wCss: inner ? 'auto' : b.W + 'px',
+      open: !closed, closed: closed,
+      notM: b.notM, bpM: b.bpM,
+      email: email,
+      onEmail: function (e) { self.setState({ email: e.target.value, phase: phase === 'error' ? 'default' : phase }); },
+      join: function () {
+        if (phase === 'loading') return;
+        if (!/^\S+@\S+\.\S{2,}$/.test(email)) { self.setState({ phase: 'error' }); return; }
+        self.setState({ phase: 'loading' });
+        self._to = setTimeout(function () { self.setState({ phase: 'success' }); }, 1200);
+      },
+      close: function () { self.setState({ closed: true }); },
+      reopen: function () { self.setState({ closed: false, phase: 'default', email: '' }); },
+      isError: phase === 'error', isLoading: phase === 'loading', isDone: phase === 'success', notDone: phase !== 'success',
+      invalidS: phase === 'error' ? 'true' : 'false', busyS: phase === 'loading' ? 'true' : 'false',
+      fldCls: phase === 'error' ? 'is-err' : (phase === 'default' && !inner && pr.state === 'default' ? '' : ''),
+      btnCls: phase === 'loading' ? 'btn lg full is-loading' : 'btn lg full',
+      btnLabel: phase === 'loading' ? 'Joining' : 'Join the Vai List',
+      silP: D.SIL.panjabi, silT: D.SIL.tee
+    };
+  }
+}
+</script>
+</body>
+</html>

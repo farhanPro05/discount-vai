@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Account</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}px">
+<dc-import name="Header" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,108px"></dc-import>
+
+<sc-if value="{{isLogin}}" hint-placeholder-val="{{true}}">
+<div class="wrap auth">
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}"><div class="ls auth-side"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag">Lifestyle photo</span><div class="ov"><span class="eb">Your Vai account</span><h3>Shop faster, track easier.</h3><ul class="ticks"><li>Track every order in one place</li><li>Save addresses for one-tap checkout</li><li>Members-only deals and early access</li></ul></div></div></sc-if>
+<div class="auth-card">
+<div class="tabs" role="tablist"><button class="{{tLogin}}" type="button" role="tab" aria-selected="{{sLogin}}" onClick="{{showLogin}}">Log in</button><button class="{{tReg}}" type="button" role="tab" aria-selected="{{sReg}}" onClick="{{showReg}}">Register</button></div>
+<sc-if value="{{tabLogin}}" hint-placeholder-val="{{true}}">
+<h1 class="pg-h1">Welcome back, vai</h1>
+<label class="fld"><span class="fl">Phone or email</span><input type="text" placeholder="01XXXXXXXXX or name@example.com" autocomplete="username"></label>
+<label class="fld"><span class="fl">Password</span><input type="password" placeholder="Your password" autocomplete="current-password"></label>
+<div class="row-sb"><label class="chk"><input type="checkbox"><span>Keep me logged in</span></label><a class="lnk" href="#forgot">Forgot password?</a></div>
+<a class="btn lg full" href="#orders" onClick="{{goOrders}}">Log in</a>
+<div class="or"><span>or</span></div>
+<button class="btn-o full" type="button"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"></rect><path d="M12 18h.01"></path></svg>Get a one-time code by SMS</button>
+</sc-if>
+<sc-if value="{{tabReg}}" hint-placeholder-val="{{false}}">
+<h1 class="pg-h1">Create your account</h1>
+<label class="fld"><span class="fl">Full name</span><input type="text" placeholder="e.g. Rafi Ahmed" autocomplete="name"></label>
+<label class="fld"><span class="fl">Phone or email</span><input type="text" placeholder="01XXXXXXXXX or name@example.com" autocomplete="username"></label>
+<label class="fld"><span class="fl">Password</span><input type="password" placeholder="At least 8 characters" autocomplete="new-password"><span class="hint">Use 8 or more characters.</span></label>
+<label class="chk"><input type="checkbox"><span>Send me new drops and deals. No spam.</span></label>
+<a class="btn lg full" href="#orders" onClick="{{goOrders}}">Create account</a>
+</sc-if>
+<p class="muted sm center">Just checking out? You don't need an account. <a class="lnk" href="#checkout" onClick="{{goCheckout}}">Continue as guest</a></p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isAcct}}" hint-placeholder-val="{{false}}">
+<div class="wrap acct">
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}">
+<aside class="acct-nav" aria-label="Account"><p class="hi">Hi, Rafi</p><a class="on" href="#orders" onClick="{{goOrders}}">My orders</a><a href="#addresses">Addresses</a><a href="#profile">Profile</a><a href="#wishlist">Wishlist <span class="soon">Soon</span></a><a href="#logout" onClick="{{goLogin}}">Log out</a></aside>
+</sc-if>
+<div class="acct-main">
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}"><div class="chips"><a class="chip on" href="#orders" onClick="{{goOrders}}">My orders</a><a class="chip" href="#addresses">Addresses</a><a class="chip" href="#profile">Profile</a><a class="chip" href="#logout" onClick="{{goLogin}}">Log out</a></div></sc-if>
+
+<sc-if value="{{isOrders}}" hint-placeholder-val="{{true}}">
+<h1 class="pg-h1">My orders</h1>
+<sc-for list="{{orders}}" as="o" hint-placeholder-count="4">
+<a class="ord" href="#order" onClick="{{goDetail}}">
+<span class="ord-th"><sc-for list="{{o.th}}" as="t" hint-placeholder-count="2"><span class="l-th sm"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{t.sil}}" fill="{{t.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg></span></sc-for></span>
+<span class="ord-m"><b>{{o.no}}</b><small>{{o.date}} · {{o.items}}</small></span>
+<span class="{{o.pill}}">{{o.status}}</span>
+<b class="ord-t">{{o.tot}}</b>
+<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+</a>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{isDetail}}" hint-placeholder-val="{{false}}">
+<a class="lnk back" href="#orders" onClick="{{goOrders}}">‹ All orders</a>
+<div class="od-h"><h1 class="pg-h1">Order #DV-24817</h1><span class="pill-s info">Shipped</span></div>
+<p class="muted">Placed 2 Oct 2026, 10:42 pm · Cash on Delivery · 2 items</p>
+<ol class="{{tlCls}}" aria-label="Order status">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4"><li class="{{s.cls}}"><span class="tl-dot"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="{{s.icon}}"></path></svg></span><span class="tl-t"><b>{{s.t}}</b><small>{{s.d}}</small></span></li></sc-for>
+</ol>
+<div class="note info"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg><span>With the courier [Courier name]. Tracking ID <b>[TRACKING-ID]</b>. Expected 4 Oct.</span></div>
+<div class="od-grid">
+<section class="box"><h2>Items</h2><sc-for list="{{lines}}" as="l" hint-placeholder-count="2"><div class="s-line"><span class="l-th sm"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{l.sil}}" fill="{{l.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg><i>{{l.qty}}</i></span><span class="s-n">{{l.name}}<small>{{l.colour}} · {{l.size}}</small></span><b>{{l.nowF}}</b></div></sc-for>
+<div class="sum-r"><span>Subtotal</span><span>{{subF}}</span></div><div class="sum-r"><span>Delivery</span><span>৳70</span></div><div class="sum-r big"><span>Total to pay on delivery</span><b>{{totF}}</b></div></section>
+<section class="box"><h2>Delivery</h2><p class="addr"><b>Rafi Ahmed</b>House 12, Road 5, Dhanmondi, Dhaka<br>01712 345678</p><h2 class="mt">Need a hand?</h2><p class="muted">Change of address or size? Message us before it's delivered.</p><a class="btn-o full" href="#whatsapp">WhatsApp us</a><button class="btn-o full dis" type="button" aria-disabled="true">Request exchange (after delivery)</button></section>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<dc-import name="Footer" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"mode":{"editor":"enum","options":["login","orders","detail"],"default":"login"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var mode = pr.mode || 'login';
+    var tab = st.tab || 'login';
+    var cart = [{ id: 10, size: 'L', qty: 1 }, { id: 13, size: 'M', qty: 1 }];
+    var sub = 0;
+    var lines = cart.map(function (x) { var p = D.item(x.id); sub += p.price * x.qty; return Object.assign({}, p, { size: x.size, qty: x.qty }); });
+    var th = function (ids) { return ids.map(function (id) { var p = D.CAT[id]; return { sil: D.SIL[p.k], fill: p.f }; }); };
+    var CHECK = 'M20 6 9 17l-5-5';
+    return {
+      rootCls: b.rootCls, W: b.W, go: pr.go, bpDk: b.bpDk, notDk: b.notDk,
+      isLogin: mode === 'login', isAcct: mode !== 'login', isOrders: mode === 'orders', isDetail: mode === 'detail',
+      tabLogin: tab === 'login', tabReg: tab === 'reg',
+      tLogin: tab === 'login' ? 'tab on' : 'tab', tReg: tab === 'reg' ? 'tab on' : 'tab',
+      sLogin: tab === 'login' ? 'true' : 'false', sReg: tab === 'reg' ? 'true' : 'false',
+      showLogin: function () { self.setState({ tab: 'login' }); }, showReg: function () { self.setState({ tab: 'reg' }); },
+      silP: D.SIL.panjabi,
+      orders: [
+        { no: '#DV-24817', date: '2 Oct 2026', items: '2 items', tot: '৳1,670', status: 'Shipped', pill: 'pill-s info', th: th([10, 13]) },
+        { no: '#DV-23990', date: '14 Sep 2026', items: '1 item', tot: '৳2,060', status: 'Delivered', pill: 'pill-s ok', th: th([15]) },
+        { no: '#DV-23412', date: '22 Aug 2026', items: '3 items', tot: '৳3,210', status: 'Delivered', pill: 'pill-s ok', th: th([1, 3, 7]) },
+        { no: '#DV-22987', date: '30 Jul 2026', items: '1 item', tot: '৳2,060', status: 'Cancelled', pill: 'pill-s', th: th([19]) }
+      ],
+      tlCls: b.bpM ? 'tl v' : 'tl',
+      steps: [
+        { t: 'Pending', d: '2 Oct, 10:42 pm', cls: 'done', icon: CHECK },
+        { t: 'Confirmed', d: '2 Oct, 11:20 pm · by phone', cls: 'done', icon: CHECK },
+        { t: 'Shipped', d: '3 Oct, 2:15 pm', cls: 'now', icon: 'M5 12h14M13 6l6 6-6 6' },
+        { t: 'Delivered', d: 'Expected 4 Oct', cls: '', icon: 'M5 12h.01' }
+      ],
+      lines: lines, subF: D.taka(sub), totF: D.taka(sub + 70),
+      goOrders: go('orders'), goDetail: go('order-detail'), goLogin: go('login'), goCheckout: go('checkout')
+    };
+  }
+}
+</script>
+</body>
+</html>

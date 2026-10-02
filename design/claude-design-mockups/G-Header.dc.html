@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Global · headers, mega menu, drawer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="board" style="width: 2838px; height: 1680px">
+<div class="board-row">
+<div class="board-col" style="width: 1440px; gap: 40px">
+<div class="board-col"><div class="board-l"><b>Desktop</b><span>Full header · hover Men or Accessories</span></div><div class="frame" style="width: 1440px"><dc-import name="Header" width="1440" palette="{{palette}}" hint-size="1440px,108px"></dc-import></div></div>
+<div class="board-col"><div class="board-l"><b>Desktop</b><span>Sticky header after scroll · announcement bar hidden</span></div><div class="frame" style="width: 1440px"><dc-import name="Header" width="1440" variant="sticky" palette="{{palette}}" hint-size="1440px,56px"></dc-import></div></div>
+<div class="board-col"><div class="board-l"><b>Desktop</b><span>Men mega menu</span></div><div class="frame" style="width: 1440px; height: 520px"><dc-import name="Header" width="1440" open="men" h="520" palette="{{palette}}" hint-size="1440px,520px"></dc-import></div></div>
+<div class="board-col"><div class="board-l"><b>Desktop</b><span>Accessories dropdown</span></div><div class="frame" style="width: 1440px; height: 480px"><dc-import name="Header" width="1440" open="acc" h="480" palette="{{palette}}" hint-size="1440px,480px"></dc-import></div></div>
+</div>
+<div class="board-col" style="width: 768px; gap: 40px">
+<div class="board-col"><div class="board-l"><b>Tablet</b><span>Header</span></div><div class="frame" style="width: 768px"><dc-import name="Header" width="768" palette="{{palette}}" hint-size="768px,96px"></dc-import></div></div>
+<div class="board-col"><div class="board-l"><b>Tablet</b><span>Drawer open</span></div><div class="frame" style="width: 768px; height: 1024px"><dc-import name="Header" width="768" open="drawer" h="1024" palette="{{palette}}" hint-size="768px,1024px"></dc-import></div></div>
+</div>
+<div class="board-col" style="width: 390px; gap: 40px">
+<div class="board-col"><div class="board-l"><b>Mobile</b><span>Header</span></div><div class="frame" style="width: 390px"><dc-import name="Header" width="390" palette="{{palette}}" hint-size="390px,96px"></dc-import></div></div>
+<div class="board-col"><div class="board-l"><b>Mobile</b><span>Drawer · Men expanded</span></div><div class="frame" style="width: 390px; height: 844px"><dc-import name="Header" width="390" open="drawer-men" h="844" palette="{{palette}}" hint-size="390px,844px"></dc-import></div></div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"$preview":{"width":2838,"height":1680}}'>
+class Component extends DCLogic {
+  renderVals() { return { palette: this.props.palette ?? 'sage' }; }
+}
+</script>
+</body>
+</html>

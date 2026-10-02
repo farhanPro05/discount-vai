@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Search with live suggestions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}} srch-page" style="width: {{W}}px">
+<sc-if value="{{notM}}" hint-placeholder-val="{{true}}">
+<dc-import name="Header" width="{{W}}" inner="1" wa="0" go="{{go}}" hint-size="100%,108px"></dc-import>
+<div class="ghost" aria-hidden="true"><div class="wrap"><div class="ghost-b"></div><div class="ghost-row"><span></span><span></span><span></span><span></span></div></div></div>
+<button class="scrim" type="button" aria-label="Close search" onClick="{{goHome}}"></button>
+<div class="srch-ov" role="dialog" aria-modal="true" aria-label="Search">
+<div class="wrap">
+<div class="srch-bar"><label class="field-s big"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg><input type="search" value="{{q}}" onChange="{{onQ}}" placeholder="Search Panjabi, shorts, bags" aria-label="Search"><sc-if value="{{hasQ}}" hint-placeholder-val="{{true}}"><button class="lnk" type="button" onClick="{{clearQ}}">Clear</button></sc-if></label><button class="ib" type="button" aria-label="Close search" onClick="{{goHome}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+<div class="srch-cols">
+<div class="srch-c">
+<p class="ft-h2">{{leftTitle}}</p>
+<sc-for list="{{terms}}" as="t" hint-placeholder-count="4"><a class="term" href="#results" onClick="{{goResults}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg>{{t}}</a></sc-for>
+<p class="ft-h2 mt">Categories</p>
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="2"><a class="term" href="#cat" onClick="{{c.go}}">{{c.label}}<span class="muted">{{c.n}}</span></a></sc-for>
+</div>
+<div class="srch-c wide">
+<p class="ft-h2">Products</p>
+<sc-for list="{{prods}}" as="p" hint-placeholder-count="4"><a class="sp-row" href="#product" onClick="{{goProduct}}"><span class="sp-th"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg></span><span class="sp-t"><b>{{p.name}}</b><small>{{p.colour}}</small></span><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></a></sc-for>
+<sc-if value="{{noMatch}}" hint-placeholder-val="{{false}}"><p class="muted pad">No products match “{{q}}” yet. Press enter to search everything.</p></sc-if>
+<a class="btn-o full" href="#results" onClick="{{goResults}}">See all results for “{{q}}”</a>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{bpM}}" hint-placeholder-val="{{false}}">
+<div class="srch-m" role="dialog" aria-label="Search">
+<div class="srch-mbar"><button class="ib" type="button" aria-label="Back" onClick="{{goHome}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7M19 12H5"></path></svg></button><label class="field-s"><input type="search" value="{{q}}" onChange="{{onQ}}" placeholder="Search Discount Vai" aria-label="Search"><sc-if value="{{hasQ}}" hint-placeholder-val="{{true}}"><button class="ib sm" type="button" aria-label="Clear search" onClick="{{clearQ}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></sc-if></label></div>
+<div class="srch-mb">
+<p class="ft-h2">{{leftTitle}}</p>
+<div class="chip-row"><sc-for list="{{terms}}" as="t" hint-placeholder-count="4"><a class="chip" href="#results" onClick="{{goResults}}">{{t}}</a></sc-for></div>
+<p class="ft-h2 mt">Products</p>
+<sc-for list="{{prods}}" as="p" hint-placeholder-count="4"><a class="sp-row" href="#product" onClick="{{goProduct}}"><span class="sp-th"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{p.sil}}" fill="{{p.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg></span><span class="sp-t"><b>{{p.name}}</b><span class="pr"><span class="{{p.nowCls}}">{{p.nowF}}</span><sc-if value="{{p.onSale}}" hint-placeholder-val="{{true}}"><s class="was">{{p.wasF}}</s></sc-if></span></span></a></sc-for>
+<sc-if value="{{noMatch}}" hint-placeholder-val="{{false}}"><p class="muted pad">No products match “{{q}}” yet.</p></sc-if>
+<p class="ft-h2 mt">Categories</p>
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="2"><a class="term" href="#cat" onClick="{{c.go}}">{{c.label}}<span class="muted">{{c.n}}</span></a></sc-for>
+<a class="btn full lg" href="#results" onClick="{{goResults}}">See all results</a>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var q = st.q !== undefined ? st.q : 'panj';
+    var ql = q.trim().toLowerCase();
+    var ids = Object.keys(D.CAT).map(Number);
+    var prods = ql ? ids.filter(function (id) { var c = D.CAT[id]; return (c.n + ' ' + c.c + ' ' + D.TYPE[c.k]).toLowerCase().indexOf(ql) >= 0; }) : D.LISTS.picks;
+    var allTerms = ['panjabi', 'panjabi white', 'panjabi for eid', 'embroidered panjabi', 'shorts', 'cargo 3/4 pant', 'drop shoulder tee', 'club jersey', 'backpack', 'chino'];
+    var terms = ql ? allTerms.filter(function (t) { return t.indexOf(ql) >= 0; }).slice(0, 4) : ['panjabi', 'shorts', 'backpack', 'club jersey'];
+    var catDefs = [['Panjabi', '24 products', 'panjabi'], ['Men › Panjabi', 'Category', 'panjabi'], ['Shorts', '18 products', 'men'], ['Bags (Unisex)', '9 products', 'bags'], ['Drop T-Shirts', '14 products', 'men'], ['Club Jerseys', '8 products', 'men']];
+    var cats = catDefs.filter(function (c) { return !ql || c[0].toLowerCase().indexOf(ql) >= 0; }).slice(0, 3);
+    return {
+      rootCls: b.rootCls, W: b.W, notM: b.notM, bpM: b.bpM, go: pr.go,
+      q: q, hasQ: q.length > 0,
+      onQ: function (e) { self.setState({ q: e.target.value }); },
+      clearQ: function () { self.setState({ q: '' }); },
+      leftTitle: ql ? 'Suggestions' : 'Popular searches',
+      terms: terms.length ? terms : [q],
+      cats: cats.map(function (c) { return { label: c[0], n: c[1], go: go(c[2]) }; }),
+      prods: D.items(prods.slice(0, 4)), noMatch: prods.length === 0,
+      goHome: go('home'), goResults: go(ql === 'kurta pajama' ? 'search-empty' : 'search-results'), goProduct: go('product')
+    };
+  }
+}
+</script>
+</body>
+</html>

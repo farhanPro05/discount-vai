@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Option D · Hybrid · Panjabi category</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 2838px; height: 2700px; box-sizing: border-box; padding: 40px; display: flex; gap: 80px; align-items: flex-start; background: #ECEAE4; font-family: 'Hanken Grotesk', system-ui, sans-serif; color: #2A2A27">
+<div style="width: 390px; display: flex; flex-direction: column; gap: 16px">
+<div style="height: 40px; display: flex; align-items: baseline; gap: 10px"><span style="font-size: 20px; font-weight: 700">Mobile</span><span style="font-size: 15px; color: #5E5C55">390 px</span></div>
+<div style="width: 390px; box-shadow: 0 2px 6px rgba(0,0,0,.06), 0 18px 48px rgba(0,0,0,.10)"><dc-import name="Options" page="panjabi" layout="D" width="390" palette="{{palette}}" embed="1" hint-size="390px,2050px"></dc-import></div>
+</div>
+<div style="width: 768px; display: flex; flex-direction: column; gap: 16px">
+<div style="height: 40px; display: flex; align-items: baseline; gap: 10px"><span style="font-size: 20px; font-weight: 700">Tablet</span><span style="font-size: 15px; color: #5E5C55">768 px</span></div>
+<div style="width: 768px; box-shadow: 0 2px 6px rgba(0,0,0,.06), 0 18px 48px rgba(0,0,0,.10)"><dc-import name="Options" page="panjabi" layout="D" width="768" palette="{{palette}}" embed="1" hint-size="768px,1930px"></dc-import></div>
+</div>
+<div style="width: 1440px; display: flex; flex-direction: column; gap: 16px">
+<div style="height: 40px; display: flex; align-items: baseline; gap: 10px"><span style="font-size: 20px; font-weight: 700">Desktop</span><span style="font-size: 15px; color: #5E5C55">1440 px</span></div>
+<div style="width: 1440px; box-shadow: 0 2px 6px rgba(0,0,0,.06), 0 18px 48px rgba(0,0,0,.10)"><dc-import name="Options" page="panjabi" layout="D" width="1440" palette="{{palette}}" embed="1" hint-size="1440px,2320px"></dc-import></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"$preview":{"width":2838,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { palette: this.props.palette ?? 'sage' };
+  }
+}
+</script>
+</body>
+</html>

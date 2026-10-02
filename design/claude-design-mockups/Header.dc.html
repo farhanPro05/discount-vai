@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Header, mega menu and drawer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{wrapCls}}" style="width: {{wCss}}; min-height: {{hCss}}" onMouseLeave="{{leave}}">
+
+<sc-if value="{{showAnn}}" hint-placeholder-val="{{true}}">
+<div class="ann ann2"><button class="ann-b" type="button" aria-label="Previous message" onClick="{{msgPrev}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button><span>{{msg}}</span><button class="ann-b" type="button" aria-label="Next message" onClick="{{msgNext}}"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button></div>
+</sc-if>
+
+<header class="{{hdrCls}}"><div class="wrap">
+<sc-if value="{{bpDk}}" hint-placeholder-val="{{true}}">
+<div class="hdr-d">
+<a class="wm" href="#home" onClick="{{goHome}}"><span>Discount</span><b>Vai</b></a>
+<nav class="nav" aria-label="Main">
+<a class="{{cMen}}" href="#men" onClick="{{goMen}}" onMouseEnter="{{enterMen}}">Men<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></a>
+<a class="{{cWomen}}" href="#women" onClick="{{goWomen}}" onMouseEnter="{{leave}}">Women <span class="soon">Soon</span></a>
+<a class="{{cAcc}}" href="#accessories" onClick="{{goBags}}" onMouseEnter="{{enterAcc}}">Accessories<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></a>
+<a class="{{cNew}}" href="#new" onClick="{{goMen}}" onMouseEnter="{{leave}}">New Arrivals</a>
+<a class="{{cSale}}" href="#sale" onClick="{{goSale}}" onMouseEnter="{{leave}}">Sale</a>
+</nav>
+<div class="hicons">
+<button class="ib" type="button" aria-label="Search" onClick="{{goSearch}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg></button>
+<a class="ib" href="#account" aria-label="Account" onClick="{{goAccount}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg></a>
+<a class="ib" href="#cart" aria-label="Cart, {{cart}} items" onClick="{{goCart}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="cnt">{{cart}}</span></a>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{notDk}}" hint-placeholder-val="{{false}}">
+<div class="hdr-s">
+<div class="hl"><button class="ib" type="button" aria-label="Open menu" onClick="{{openDrawer}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div>
+<a class="wm" href="#home" onClick="{{goHome}}"><span>Discount</span><b>Vai</b></a>
+<div class="hicons">
+<button class="ib" type="button" aria-label="Search" onClick="{{goSearch}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg></button>
+<a class="ib" href="#cart" aria-label="Cart, {{cart}} items" onClick="{{goCart}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg><span class="cnt">{{cart}}</span></a>
+</div>
+</div>
+</sc-if>
+</div></header>
+
+<sc-if value="{{menuMen}}" hint-placeholder-val="{{false}}">
+<div class="mega"><div class="wrap mega-in">
+<div class="mcol"><p class="mh">Bottoms</p><a href="#trousers" onClick="{{goMen}}">Trousers</a><a href="#shorts" onClick="{{goMen}}">Shorts</a><a href="#three-quarter" onClick="{{goMen}}">3/4 Pants</a><a href="#half-pants" onClick="{{goMen}}">2/4 Pants</a></div>
+<div class="mcol"><p class="mh">Tops &amp; Outerwear</p><a href="#drop-shoulder" onClick="{{goMen}}">Drop T-Shirts</a><a href="#jerseys" onClick="{{goMen}}">Club Jerseys</a><a href="#jackets" onClick="{{goMen}}">Jackets</a></div>
+<div class="mcol"><p class="mh">Traditional</p><a href="#panjabi" onClick="{{goPanjabi}}">Panjabi</a><p class="mh mt">Quick links</p><a href="#men" onClick="{{goMen}}">Shop All Men</a><a href="#new" onClick="{{goMen}}">New In</a><a class="sale" href="#sale" onClick="{{goSale}}">Sale</a></div>
+<a class="mfeat ls" href="#panjabi" onClick="{{goPanjabi}}"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silP}}" fill-rule="evenodd"></path></svg><span class="ls-tag">Featured image</span><span class="mfeat-t"><span class="eb">The Eid edit</span><b>Panjabi from ৳1,850</b><span class="lnk">Shop now</span></span></a>
+</div></div>
+</sc-if>
+<sc-if value="{{menuAcc}}" hint-placeholder-val="{{false}}">
+<div class="mega"><div class="wrap mega-in acc">
+<div class="mcol"><p class="mh">Accessories</p><a href="#bags" onClick="{{goBags}}">Bags (Unisex)</a><a href="#accessories" onClick="{{goBags}}">Shop All Accessories</a></div>
+<a class="mfeat ls" href="#bags" onClick="{{goBags}}"><svg class="ls-fig" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silB}}" fill-rule="evenodd"></path></svg><svg class="ls-fig f2" viewBox="0 0 100 125" aria-hidden="true"><path d="{{silT}}" fill-rule="evenodd"></path></svg><span class="ls-tag">Featured image</span><span class="mfeat-t"><span class="eb">Carry more</span><b>Bags from ৳650</b><span class="lnk">Shop now</span></span></a>
+</div></div>
+</sc-if>
+
+<sc-if value="{{drawerOn}}" hint-placeholder-val="{{false}}">
+<button class="scrim" type="button" aria-label="Close menu" onClick="{{closeDrawer}}"></button>
+<aside class="drawer" aria-label="Menu">
+<div class="dr-top"><a class="wm" href="#home" onClick="{{goHome}}"><span>Discount</span><b>Vai</b></a><button class="ib" type="button" aria-label="Close menu" onClick="{{closeDrawer}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
+<label class="field-s"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg><input type="search" placeholder="Search Panjabi, shorts, bags" aria-label="Search"></label>
+<nav class="dr-nav" aria-label="Shop">
+<button class="dr-i" type="button" onClick="{{toggleMen}}" aria-expanded="{{menExpS}}">Men<svg class="{{menChev}}" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+<sc-if value="{{menExp}}" hint-placeholder-val="{{false}}"><div class="dr-sub"><sc-for list="{{menCats}}" as="c" hint-placeholder-count="8"><a href="#cat" onClick="{{c.go}}">{{c.label}}</a></sc-for><a class="all" href="#men" onClick="{{goMen}}">Shop All Men</a></div></sc-if>
+<a class="dr-i" href="#women" onClick="{{goWomen}}">Women <span class="soon">Soon</span></a>
+<a class="dr-i" href="#accessories" onClick="{{goBags}}">Accessories<svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a>
+<a class="dr-i" href="#new" onClick="{{goMen}}">New Arrivals</a>
+<a class="dr-i sale" href="#sale" onClick="{{goSale}}">Sale</a>
+</nav>
+<hr class="dr-hr">
+<nav class="dr-nav sm" aria-label="Help">
+<a class="dr-i" href="#account" onClick="{{goAccount}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>Account</a>
+<a class="dr-i" href="#track" onClick="{{goOrders}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg>Track Order</a>
+<a class="dr-i" href="#contact" onClick="{{goContact}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>Help &amp; Contact</a>
+</nav>
+<div class="socials">
+<a class="ib" href="#facebook" aria-label="Facebook"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+<a class="ib" href="#instagram" aria-label="Instagram"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><path d="M17.5 6.5h.01"></path></svg></a>
+<a class="ib" href="#tiktok" aria-label="TikTok"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"></path><path d="M14 3c.6 2.6 2.4 4.4 5 4.6"></path></svg></a>
+<a class="ib" href="#whatsapp" aria-label="WhatsApp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9 9.5c.4 2.3 2.3 4.4 5 5l1.2-1.2 1.6.8-.4 1.4c-3.3.4-7.2-3.3-7-6.8l1.4-.4.8 1.6Z"></path></svg></a>
+</div>
+</aside>
+</sc-if>
+
+<sc-if value="{{showWa}}" hint-placeholder-val="{{false}}">
+<a class="wa" href="#whatsapp" aria-label="Chat with us on WhatsApp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9 9.5c.4 2.3 2.3 4.4 5 5l1.2-1.2 1.6.8-.4 1.4c-3.3.4-7.2-3.3-7-6.8l1.4-.4.8 1.6Z"></path></svg></a>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"variant":{"editor":"enum","options":["full","sticky"],"default":"full"},"open":{"editor":"enum","options":["none","men","acc","drawer","drawer-men"],"default":"none"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"inner":{"editor":null},"active":{"editor":null},"h":{"editor":null},"$preview":{"width":1440,"height":560}}'>
+class Component extends DCLogic {
+  set1(k, v) { var u = {}; u[k] = v; this.setState(u); }
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var st = this.state || {};
+    var self = this;
+    var b = D.base(pr);
+    var inner = D.flag(pr.inner);
+    var open = pr.open || 'none';
+    var menu = st.menu !== undefined ? st.menu : ((open === 'men' || open === 'acc') ? open : 'none');
+    var drawer = st.drawer !== undefined ? st.drawer : (open === 'drawer' || open === 'drawer-men');
+    var menExp = st.menExp !== undefined ? st.menExp : (open === 'drawer-men');
+    var sticky = pr.variant === 'sticky';
+    var msgs = ['Free delivery on orders over ৳2,000', 'Easy 7-day exchange, no questions', 'Cash on Delivery across Bangladesh'];
+    var mi = st.mi || 0;
+    var active = pr.active || '';
+    var go = function (to) { return D.nav(pr, to); };
+    var cats = [['Trousers', 'men'], ['Shorts', 'men'], ['3/4 Pants', 'men'], ['2/4 Pants', 'men'], ['Club Jerseys', 'men'], ['Jackets', 'men'], ['Drop T-Shirts', 'men'], ['Panjabi', 'panjabi']];
+    return {
+      wrapCls: inner ? 'hwrap' : b.rootCls + ' hwrap solo',
+      wCss: inner ? 'auto' : b.W + 'px',
+      hCss: inner ? '0' : (Number(pr.h) || 0) + 'px',
+      showAnn: !sticky,
+      hdrCls: sticky ? 'hdr is-sticky' : 'hdr',
+      msg: msgs[mi],
+      msgNext: function () { self.set1('mi', (mi + 1) % 3); },
+      msgPrev: function () { self.set1('mi', (mi + 2) % 3); },
+      bpDk: b.bpDk, notDk: b.notDk,
+      menuMen: b.bpDk && menu === 'men', menuAcc: b.bpDk && menu === 'acc',
+      drawerOn: b.notDk && drawer,
+      menExp: menExp, menExpS: menExp ? 'true' : 'false', menChev: menExp ? 'ic ic-s rot' : 'ic ic-s',
+      enterMen: function () { if (menu !== 'men') self.set1('menu', 'men'); },
+      enterAcc: function () { if (menu !== 'acc') self.set1('menu', 'acc'); },
+      leave: function () { if (menu !== 'none') self.set1('menu', 'none'); },
+      openDrawer: function () { self.set1('drawer', true); },
+      closeDrawer: function () { self.set1('drawer', false); },
+      toggleMen: function () { self.set1('menExp', !menExp); },
+      cMen: active === 'men' ? 'on' : '', cWomen: active === 'women' ? 'on' : '', cAcc: active === 'acc' ? 'on' : '',
+      cNew: active === 'new' ? 'on' : '', cSale: active === 'sale' ? 'sale on' : 'sale',
+      cart: pr.cart || 2,
+      showWa: inner && pr.wa !== '0',
+      menCats: cats.map(function (c) { return { label: c[0], go: go(c[1]) }; }),
+      silP: D.SIL.panjabi, silB: D.SIL.backpack, silT: D.SIL.tote,
+      goHome: go('home'), goMen: go('men'), goWomen: go('women'), goBags: go('bags'), goSale: go('sale'),
+      goSearch: go('search'), goAccount: go('login'), goCart: go('cart-drawer'), goPanjabi: go('panjabi'),
+      goOrders: go('orders'), goContact: go('contact')
+    };
+  }
+}
+</script>
+</body>
+</html>

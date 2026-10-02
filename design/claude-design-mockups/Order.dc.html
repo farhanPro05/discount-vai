@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Order confirmation and payment failed</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="dv.css">
+<link rel="stylesheet" href="site.css">
+<script src="dvdata.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}px">
+<dc-import name="Header" width="{{W}}" inner="1" go="{{go}}" cart="0" hint-size="100%,108px"></dc-import>
+<div class="wrap narrow res">
+
+<sc-if value="{{ok}}" hint-placeholder-val="{{true}}">
+<span class="res-ic ok"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<h1>Thanks, Rafi! Your order is in.</h1>
+<p class="res-sub">Order <b>#DV-24817</b> · placed 2 Oct 2026, 10:42 pm · Cash on Delivery</p>
+<div class="res-grid">
+<section class="box"><h2>What happens next</h2>
+<ol class="next">
+<li><span class="n">1</span><span><b>We call to confirm</b>Within 2 hours, between 9 am and 10 pm. Keep 01712 345678 handy.</span></li>
+<li><span class="n">2</span><span><b>Packed and shipped</b>Same or next day. You'll get an SMS with a tracking link.</span></li>
+<li><span class="n">3</span><span><b>Delivered in 1 to 2 days</b>Pay {{totF}} in cash to the rider. Check the items before you pay.</span></li>
+</ol></section>
+<section class="box"><h2>Order summary</h2>
+<sc-for list="{{lines}}" as="l" hint-placeholder-count="2"><div class="s-line"><span class="l-th sm"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{l.sil}}" fill="{{l.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg><i>{{l.qty}}</i></span><span class="s-n">{{l.name}}<small>{{l.colour}} · {{l.size}}</small></span><b>{{l.nowF}}</b></div></sc-for>
+<div class="sum-r"><span>Subtotal</span><span>{{subF}}</span></div><div class="sum-r"><span>Delivery (Inside Dhaka)</span><span>৳70</span></div><div class="sum-r big"><span>Total to pay</span><b>{{totF}}</b></div>
+<p class="addr"><b>Delivering to</b>Rafi Ahmed · House 12, Road 5, Dhanmondi, Dhaka · 01712 345678</p>
+</section>
+</div>
+<div class="empty-a"><a class="btn lg" href="#track" onClick="{{goTrack}}">Track your order</a><a class="btn-o" href="#home" onClick="{{goHome}}">Keep shopping</a></div>
+</sc-if>
+
+<sc-if value="{{failed}}" hint-placeholder-val="{{false}}">
+<span class="res-ic bad"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg></span>
+<h1>Payment didn't go through</h1>
+<p class="res-sub">You haven't been charged. Your order <b>#DV-24818</b> is saved for the next 30 minutes.</p>
+<div class="box warn"><b>What SSLCommerz told us</b><p>"Transaction cancelled or timed out." [Message from the payment gateway appears here.]</p></div>
+<div class="empty-a"><a class="btn lg" href="#retry" onClick="{{goOk}}">Retry payment · {{totF}}</a><a class="btn-o" href="#cod" onClick="{{goOk}}">Switch to Cash on Delivery</a></div>
+<p class="res-help">Still stuck? <a class="lnk" href="#whatsapp">Message us on WhatsApp</a> and we'll sort it out.</p>
+<section class="box"><h2>Your saved order</h2>
+<sc-for list="{{lines}}" as="l" hint-placeholder-count="2"><div class="s-line"><span class="l-th sm"><svg viewBox="0 0 100 125" aria-hidden="true"><path d="{{l.sil}}" fill="{{l.fill}}" fill-rule="evenodd" stroke="rgba(0,0,0,.12)" stroke-width=".8"></path></svg><i>{{l.qty}}</i></span><span class="s-n">{{l.name}}<small>{{l.colour}} · {{l.size}}</small></span><b>{{l.nowF}}</b></div></sc-for>
+<div class="sum-r big"><span>Total</span><b>{{totF}}</b></div>
+</section>
+</sc-if>
+
+</div>
+<dc-import name="Footer" width="{{W}}" inner="1" go="{{go}}" hint-size="100%,480px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"width":{"editor":"enum","options":["390","768","1440"],"default":"1440"},"mode":{"editor":"enum","options":["confirmed","failed"],"default":"confirmed"},"palette":{"editor":"enum","options":["sage","harbour","clay","olive"],"default":"sage"},"go":{"editor":null},"$preview":{"width":1440,"height":1700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var D = window.DVD;
+    var pr = this.props || {};
+    var b = D.base(pr);
+    var go = function (to) { return D.nav(pr, to); };
+    var cart = [{ id: 10, size: 'L', qty: 1 }, { id: 13, size: 'M', qty: 1 }];
+    var sub = 0;
+    var lines = cart.map(function (x) { var p = D.item(x.id); sub += p.price * x.qty; return Object.assign({}, p, { size: x.size, qty: x.qty }); });
+    var failed = pr.mode === 'failed';
+    return {
+      rootCls: b.rootCls, W: b.W, go: pr.go,
+      ok: !failed, failed: failed, lines: lines, subF: D.taka(sub), totF: D.taka(sub + 70),
+      goTrack: go('order-detail'), goHome: go('home'), goOk: go('order')
+    };
+  }
+}
+</script>
+</body>
+</html>
