@@ -102,6 +102,7 @@ Use git for every change, so any problem can be traced to the commit that caused
 - **No dead links.** Nothing on the site may be unclickable or point to `#`. Anything not ready shows a friendly **"Coming Soon"** page or badge.
 - **The owner can edit everything from the admin panel.** Don't hard-code text, images, banners, menus or SEO fields the owner might want to change.
 - **Build for SEO on every page:** unique title and meta description, one H1, alt text on images, keyword URLs, and JSON-LD structured data.
+- **Styling must stay changeable at will.** Every colour, font, type size, spacing value, radius and shadow is a design token, defined once in a single theme file (CSS variables, wired into Tailwind). Components never hard-code colours, fonts or sizes. The logo and favicon come from the admin. Changing the palette or fonts should mean editing one file.
 
 ## Project facts
 

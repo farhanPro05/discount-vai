@@ -55,6 +55,11 @@ No website code is written until the user says to start building.
 - **No dead links.** Nothing on the site is unclickable or points to `#`. Anything not ready yet shows **"Coming Soon"** (see §5.3).
 - **The owner can edit everything.** Text, images, banners, menu items, popup copy and SEO fields all come from the admin panel. Nothing the owner might want to change is hard-coded.
 - **Built for SEO** (see §8). Every page ships with proper titles, descriptions, headings, alt text and structured data.
+- **Styling can be changed at any time.** Brand colours, logo and fonts aren't decided yet and may change after launch, so:
+  - Every colour, font, type size, spacing value, corner radius and shadow is a **design token**, defined once in a single theme file (CSS variables, wired into Tailwind).
+  - Components **never hard-code** a colour, font or size; they only use tokens. Changing the palette or fonts means editing one file, not hunting through components.
+  - The logo and favicon are uploaded in the admin, never baked into code.
+  - The approved palettes from Claude Design are saved as ready-made theme presets, so switching between them is a one-line change.
 
 ---
 
@@ -365,6 +370,7 @@ Women Coming Soon page · Info page template (About, FAQ, policies) · Size guid
 | **Pages** | About, FAQ, policies and size guides (rich text editor) |
 | **Media library** | All uploaded images |
 | **Users and roles** | Owner (everything), Staff (products and orders only) |
+| **Brand settings** | Upload the logo and favicon; pick the site palette from the approved presets |
 
 The admin panel must also work well **on a phone**, so the owner can add products and handle orders from anywhere.
 
@@ -373,7 +379,13 @@ The admin panel must also work well **on a phone**, so the owner can add product
 ## 7. Design direction (brief for Claude Design)
 - **Personality:** friendly, value-focused and confident. "Vai" (brother) gives a warm, bro-to-bro tone in copy ("Vai's Picks", "Vai's Deals"). The polish should still feel trustworthy and premium-casual: Le Reve's clean commerce layout, Rebecca Atwood's white space, RaveBD's trust signals.
 - **Logo:** none exists yet. Until there is one, mockups use a simple **text wordmark "Discount Vai"** in the heading font, sized to fit the logo slot in the header and footer. That way a real logo can drop in later without changing any layouts.
-- **Colour:** brand colours are **not decided yet**; the user will choose them. Mockups use a neutral base (off-white or white, near-black text) with **one accent colour** for prices, sale badges and CTAs. Keep the accent in one place (a single colour token or style) so swapping it later changes the whole design at once. Exploring 2–3 accent options side by side in Claude Design (e.g. a confident red, a warm orange, a deep green) will help with the choice.
+- **Colour:** brand colours are **not decided yet**; the user will choose them. Claude Design researches and proposes **4 test palettes**.
+  - **Not flashy:** no bright or pure red, no bright yellow, no neon.
+  - Soft/pastel or balanced mid-tone colours that simply look good. Pastels go on backgrounds and surfaces; deeper shades go on text and buttons, so everything passes WCAG AA contrast.
+  - Sale prices, badges and buttons must still stand out, using a deeper or warmer shade from the palette rather than loud red.
+  - Each palette suits menswear now and womenswear later.
+  - The prototype has a **palette switcher** so every page can be previewed in each option.
+  - The full brief is in [`2026-10-02-claude-design-mockup-prompt.md`](2026-10-02-claude-design-mockup-prompt.md).
 - **Type:** a strong sans-serif for headings and a clean sans-serif for body text. Choose fonts that sit well next to a **Bangla font** added later (e.g. Hind Siliguri or Noto Sans Bengali).
 - **Photography:** all product photos use the **same aspect ratio (4:5)** on a clean, consistent background, with lifestyle shots for banners. The admin will show upload guidance.
 - **Components to design** (each at 390, 768 and 1440):
@@ -428,7 +440,8 @@ The admin panel must also work well **on a phone**, so the owner can add product
 
 ## 9. Technical direction (details go in a separate build plan after the mockups)
 - **Next.js (TypeScript)** storefront, with **Payload CMS** as the admin panel. Payload lives inside the same Next.js app at `/admin`, is free and open-source, and handles image uploads, drafts/scheduling, user roles and a phone-friendly admin.
-- PostgreSQL database; image storage on object storage (e.g. Cloudflare R2 or S3); Tailwind CSS for styling.
+- PostgreSQL database; image storage on object storage (e.g. Cloudflare R2 or S3).
+- Tailwind CSS for styling, driven by **design tokens** (CSS variables in one theme file) so colours, fonts and spacing can be changed at will (see §1.3).
 - **Cash on Delivery** orders are created directly. **SSLCommerz** uses its hosted checkout with server-side payment verification (IPN).
 - Bangla-ready from the start: all text lives in the CMS or a translation file, and the routes allow `/bn/...` later.
 - Everything is tracked in git (§1.2) from the first file.
