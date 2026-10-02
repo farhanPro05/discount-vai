@@ -372,7 +372,8 @@ The admin panel must also work well **on a phone**, so the owner can add product
 
 ## 7. Design direction (brief for Claude Design)
 - **Personality:** friendly, value-focused and confident. "Vai" (brother) gives a warm, bro-to-bro tone in copy ("Vai's Picks", "Vai's Deals"). The polish should still feel trustworthy and premium-casual: Le Reve's clean commerce layout, Rebecca Atwood's white space, RaveBD's trust signals.
-- **Colour:** a neutral base (off-white or white, near-black text) with **one bold accent** for prices, sale badges and CTAs (e.g. a confident red or orange). This will be adjusted to the logo once it's shared.
+- **Logo:** none exists yet. Until there is one, mockups use a simple **text wordmark "Discount Vai"** in the heading font, sized to fit the logo slot in the header and footer. That way a real logo can drop in later without changing any layouts.
+- **Colour:** brand colours are **not decided yet**; the user will choose them. Mockups use a neutral base (off-white or white, near-black text) with **one accent colour** for prices, sale badges and CTAs. Keep the accent in one place (a single colour token or style) so swapping it later changes the whole design at once. Exploring 2–3 accent options side by side in Claude Design (e.g. a confident red, a warm orange, a deep green) will help with the choice.
 - **Type:** a strong sans-serif for headings and a clean sans-serif for body text. Choose fonts that sit well next to a **Bangla font** added later (e.g. Hind Siliguri or Noto Sans Bengali).
 - **Photography:** all product photos use the **same aspect ratio (4:5)** on a clean, consistent background, with lifestyle shots for banners. The admin will show upload guidance.
 - **Components to design** (each at 390, 768 and 1440):
@@ -437,7 +438,7 @@ The admin panel must also work well **on a phone**, so the owner can add product
 ## 10. Open questions (for the user and the owner)
 1. ~~**"2/4 Pants"**: what does it mean?~~ **Answered:** half pants.
 2. ~~**"Drop T-Shirts"**: is that drop-shoulder T-shirts?~~ **Answered:** yes.
-3. Is there a **logo and brand colours** already?
+3. ~~Is there a **logo and brand colours** already?~~ **Answered:** not yet. The user will decide the brand colours, and mockups use a text wordmark with a swappable accent colour until then.
 4. ~~**Cash on Delivery**: offer it alongside SSLCommerz?~~ **Answered:** yes, COD is offered. Still open: should COD orders pay the delivery charge in advance? Also, the owner needs an **SSLCommerz merchant account** (it requires a trade licence).
 5. Which **SSLCommerz methods** to enable (bKash, Nagad, Rocket, cards…)? *Pending.*
 6. **Popup offer**: discount or updates only? *Decide later; it's editable in the admin.*

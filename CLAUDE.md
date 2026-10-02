@@ -110,4 +110,5 @@ Use git for every change, so any problem can be traced to the commit that caused
 - **Launch categories:** MEN (Trousers, Shorts, 3/4 Pants, 2/4 Pants, Club Jerseys, Jackets, Drop T-Shirts, Panjabi) and ACCESSORIES (Bags, unisex). WOMEN is Coming Soon.
   - "2/4 Pants" = half pants; "Drop T-Shirts" = drop-shoulder T-shirts. Menu labels stay as the owner wrote them; URLs and SEO text use "half pants" and "drop shoulder".
 - **Decisions so far:** custom Next.js site with a built-in admin panel; payments by **Cash on Delivery** and **SSLCommerz** (online); English at launch, Bangla-ready; popup offer to be decided later.
+- **Logo and brand colours:** none yet; the user will decide them. Until then, use a text wordmark "Discount Vai" and keep the accent colour in a single token so it can be swapped everywhere at once.
 - **Current stage:** the research and site plan is approved. The user is making mockups in Claude Design. See [`plans/README.md`](plans/README.md).
