@@ -8,6 +8,7 @@
 1. Open Claude Design and start a new project.
 2. Paste everything under **"The prompt"** below. You can also attach the site plan file for extra context, but the prompt works on its own.
 3. When the palettes and the product display options (A / B / C) come back, pick one of each (or ask for changes) and let it finish the pages.
+   - **Decision (2026-10-02):** product display layout is **Option D, the hybrid** (editorial homepage, classic grid on category pages). See the site plan, section on design notes.
 4. **Already pasted the earlier version?** Send the "Product display options" section below as a follow-up message instead of starting over.
 5. Once the mockups are approved, share them back here so the build plan can be written from them.
 

@@ -388,10 +388,11 @@ The admin panel must also work well **on a phone**, so the owner can add product
   - The full brief is in [`2026-10-02-claude-design-mockup-prompt.md`](2026-10-02-claude-design-mockup-prompt.md).
 - **Type:** a strong sans-serif for headings and a clean sans-serif for body text. Choose fonts that sit well next to a **Bangla font** added later (e.g. Hind Siliguri or Noto Sans Bengali).
 - **Photography:** all product photos use the **same aspect ratio (4:5)** on a clean, consistent background, with lifestyle shots for banners. The admin will show upload guidance.
-- **Product display layout: not chosen yet.** Claude Design shows 3 options on the homepage and a category page, and may propose a hybrid; the user picks one after reviewing them. In every option, prices, sale prices and discount badges stay visible on every product card.
-  - **A, classic grid** (RaveBD): uniform rows and columns.
-  - **B, image-first grid** (Le Reve): big swipeable photos with minimal text.
-  - **C, editorial/mixed** (Rebecca Atwood): varied tile sizes, lifestyle images and edge-bleeding carousels.
+- **Product display layout: Option D (hybrid), chosen 2026-10-02.** Claude Design showed A / B / C plus a hybrid D on the homepage and the Panjabi category page; the user picked D. In every view, prices, sale prices and discount badges stay visible on every product card.
+  - **Homepage (editorial feel):** New Arrivals as a carousel where the next card peeks in, with arrows on desktop and swipe on mobile; a full-width "Shop this look" campaign image between sections; the featured collection as a split (big lifestyle image beside a 2x2 product grid); Best Sellers as a 4 / 3 / 2 grid.
+  - **Category, search, sale and bags pages (shopping-first):** the classic 4 / 3 / 2 grid, subcategory chips, and a slim filter bar (Size, Colour, Price, On sale, Sort by). On mobile the bar becomes Filter and Sort buttons that open bottom sheets.
+  - **Product card:** 4:5 photo that swipes (mobile) or hovers (desktop) through 3 shots, with thin indicator bars under it; then name, price (sale price, struck original), and colour swatches with the colour name. Badges top-left: `-19%`, `NEW`, `SOLD OUT`.
+  - Options considered: **A, classic grid** (RaveBD); **B, image-first grid** (Le Reve); **C, editorial/mixed** (Rebecca Atwood). D combines A's grid, B's photo cards and C's homepage.
 - **Components to design** (each at 390, 768 and 1440):
   - Headers: desktop, sticky, and mobile with the drawer open.
   - Mega menu.
