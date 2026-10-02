@@ -1,0 +1,90 @@
+import type { Field, GlobalConfig } from 'payload'
+
+import { anyone, hiddenFromStaff, ownerOnly } from '../access'
+
+const zone = (name: string, label: string, fee: number, eta: string): Field => ({
+  name,
+  type: 'group',
+  label,
+  fields: [
+    {
+      type: 'row',
+      fields: [
+        { name: 'fee', type: 'number', required: true, min: 0, defaultValue: fee, label: 'Charge (৳)', admin: { width: '50%' } },
+        { name: 'eta', type: 'text', required: true, defaultValue: eta, label: 'Delivery time', admin: { width: '50%' } },
+      ],
+    },
+  ],
+})
+
+export const Commerce: GlobalConfig = {
+  slug: 'commerce',
+  label: 'Delivery & payment',
+  admin: { group: 'Settings', hidden: hiddenFromStaff },
+  access: { read: anyone, update: ownerOnly },
+  fields: [
+    {
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Delivery',
+          fields: [
+            zone('inside', 'Inside Dhaka', 70, '1 to 2 days'),
+            zone('outside', 'Outside Dhaka', 130, '2 to 4 days'),
+            {
+              name: 'freeDeliveryOver',
+              type: 'number',
+              min: 0,
+              defaultValue: 2000,
+              label: 'Free delivery on orders over (৳)',
+              admin: { description: 'Leave empty to switch free delivery off.' },
+            },
+            { name: 'exchangeDays', type: 'number', defaultValue: 7, min: 0, label: 'Exchange window (days)' },
+          ],
+        },
+        {
+          label: 'Cash on Delivery',
+          fields: [
+            { name: 'codEnabled', type: 'checkbox', defaultValue: true, label: 'Offer Cash on Delivery' },
+            {
+              name: 'codZones',
+              type: 'select',
+              hasMany: true,
+              defaultValue: ['inside', 'outside'],
+              label: 'Allowed for',
+              options: [
+                { label: 'Inside Dhaka', value: 'inside' },
+                { label: 'Outside Dhaka', value: 'outside' },
+              ],
+            },
+            {
+              name: 'codAdvanceDelivery',
+              type: 'checkbox',
+              defaultValue: false,
+              label: 'Ask for the delivery charge in advance on COD orders',
+              admin: { description: 'Customers pay the delivery charge online first; the rest is paid in cash. Needs online payment switched on.' },
+            },
+          ],
+        },
+        {
+          label: 'Online payment',
+          fields: [
+            {
+              name: 'onlineEnabled',
+              type: 'checkbox',
+              defaultValue: false,
+              label: 'Offer online payment (SSLCommerz)',
+              admin: { description: 'Needs the SSLCommerz store ID and password in the server settings (.env).' },
+            },
+            {
+              name: 'onlineLabels',
+              type: 'text',
+              defaultValue: 'bKash, Nagad, Visa, Mastercard',
+              label: 'Methods to show on the payment card',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
