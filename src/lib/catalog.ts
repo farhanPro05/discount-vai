@@ -250,10 +250,12 @@ export async function relatedProducts(product: Product, limit = 8): Promise<Card
 
 /* ---------- Search suggestions ---------- */
 
-export async function suggest(q: string): Promise<{ products: CardProduct[]; categories: { label: string; href: string; count: string }[]; total: number }> {
+export async function suggest(
+  q: string,
+): Promise<{ products: CardProduct[]; categories: { label: string; href: string; count: string }[]; total: number; terms: string[] }> {
   const term = q.trim()
   const all = await getAllCategories()
-  if (term.length < 2) return { products: [], categories: [], total: 0 }
+  if (term.length < 2) return { products: [], categories: [], total: 0, terms: [] }
   const { cards, total } = await listProducts({ q: term }, 'best', 1, 4)
   const low = term.toLowerCase()
   const categories = all
@@ -263,5 +265,10 @@ export async function suggest(q: string): Promise<{ products: CardProduct[]; cat
       const parent = all.find((x) => x.id === parentId(c))
       return { label: parent ? `${parent.name} › ${c.name}` : c.name, href: categoryHref(c, all), count: c.status === 'soon' ? 'Soon' : 'Category' }
     })
-  return { products: cards, categories, total }
+  // Whole words to suggest while typing (e.g. "panj" → "panjabi", "classic cotton panjabi").
+  const terms = [
+    ...all.filter((c) => c.status === 'live' && c.name.toLowerCase().includes(low)).map((c) => c.name.toLowerCase().replace(/\s*\(.*\)/, '')),
+    ...cards.map((c) => c.name.toLowerCase()),
+  ]
+  return { products: cards, categories, total, terms: [...new Set(terms)].slice(0, 4) }
 }

@@ -12,7 +12,7 @@ import { Sil } from '../ui/Art'
 import { Icon } from '../ui/Icon'
 import { useEscape, useShop } from './ShopProvider'
 
-type Results = { products: CardProduct[]; categories: { label: string; href: string; count: string }[]; total: number }
+type Results = { products: CardProduct[]; categories: { label: string; href: string; count: string }[]; total: number; terms: string[] }
 
 function Row({ p }: { p: CardProduct }) {
   const c = p.colours[0]
@@ -36,7 +36,7 @@ function Row({ p }: { p: CardProduct }) {
 export function SearchOverlay() {
   const { searchOpen, closeSearch } = useShop()
   const [q, setQ] = useState('')
-  const [res, setRes] = useState<Results | null>(null)
+  const [found, setFound] = useState<Results | null>(null)
   const [defaults, setDefaults] = useState<{ picks: CardProduct[]; popular: string[] } | null>(null)
   const input = useRef<HTMLInputElement>(null)
   const router = useRouter()
@@ -50,14 +50,11 @@ export function SearchOverlay() {
 
   useEffect(() => {
     const term = q.trim()
-    if (term.length < 2) {
-      setRes(null)
-      return
-    }
+    if (term.length < 2) return
     let live = true
     const t = setTimeout(() => {
       suggestAction(term)
-        .then((r) => live && setRes(r))
+        .then((r) => live && setFound(r))
         .catch(() => null)
     }, 180)
     return () => {
@@ -68,11 +65,12 @@ export function SearchOverlay() {
 
   if (!searchOpen) return null
   const term = q.trim()
+  const res = term.length >= 2 ? found : null
   const go = (value: string) => {
     closeSearch()
     router.push(`/search?q=${encodeURIComponent(value)}`)
   }
-  const terms = term.length >= 2 ? [term] : (defaults?.popular ?? [])
+  const terms = term.length >= 2 ? (res?.terms.length ? res.terms : [term]) : (defaults?.popular ?? [])
   const products = res ? res.products : (defaults?.picks ?? [])
 
   return (
