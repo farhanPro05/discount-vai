@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react'
 
 import { checkCodeAction, placeOrderAction } from '../../app/(frontend)/actions'
+import { trackBeginCheckout } from '../../lib/analytics'
 import { DHAKA_AREAS, DISTRICTS } from '../../lib/bd'
 import { taka } from '../../lib/format'
 import type { CommerceInfo } from '../../lib/settings'
@@ -48,6 +49,17 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
   const payment = chosenPayment === 'cod' && !codAllowed && commerce.onlineEnabled ? 'online' : chosenPayment
 
   const cartLines = useMemo(() => lines.map((l) => ({ productId: l.productId, colour: l.colour, size: l.size, qty: l.qty })), [lines])
+
+  // Count the checkout once per visit to this page (after the analytics scripts have started).
+  const checkoutSent = useRef(false)
+  useEffect(() => {
+    if (!ready || !lines.length || checkoutSent.current) return
+    const t = setTimeout(() => {
+      checkoutSent.current = true
+      trackBeginCheckout(lines.map((l) => ({ productId: l.productId, name: l.name, colour: l.colour, size: l.size, price: l.price, qty: l.qty })))
+    }, 1500)
+    return () => clearTimeout(t)
+  }, [ready, lines])
 
   // Re-apply a code the shopper entered on the cart page.
   const savedCode = useStoredString(CODE_KEY, 'session')

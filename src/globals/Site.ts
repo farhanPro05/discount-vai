@@ -101,6 +101,35 @@ export const Site: GlobalConfig = {
             },
           ],
         },
+        {
+          label: 'Analytics',
+          description: 'All optional. Leave a box empty to switch that service off. They only run on the live site, never in development.',
+          fields: [
+            {
+              name: 'googleAnalyticsId',
+              type: 'text',
+              label: 'Google Analytics 4 measurement ID',
+              admin: { placeholder: 'G-XXXXXXXXXX', description: 'Google Analytics → Admin → Data streams → your website.' },
+              validate: (v: unknown) => !v || /^G-[A-Z0-9]{4,20}$/.test(String(v)) || 'It looks like G- followed by letters and numbers, e.g. G-AB12CD34EF.',
+            },
+            {
+              name: 'googleVerification',
+              type: 'text',
+              label: 'Google Search Console verification code',
+              admin: {
+                description: 'Search Console → Settings → Ownership verification → HTML tag. Paste only the code inside content="…".',
+              },
+              validate: (v: unknown) => !v || /^[A-Za-z0-9_-]{10,100}$/.test(String(v)) || 'Paste only the code (letters, numbers, - and _), not the whole tag.',
+            },
+            {
+              name: 'metaPixelId',
+              type: 'text',
+              label: 'Meta (Facebook) Pixel ID',
+              admin: { placeholder: '123456789012345', description: 'Events Manager → Data sources → your Pixel. Tracks page views, add to cart, checkout and purchases.' },
+              validate: (v: unknown) => !v || /^\d{8,20}$/.test(String(v)) || 'A Pixel ID is numbers only.',
+            },
+          ],
+        },
       ],
     },
   ],

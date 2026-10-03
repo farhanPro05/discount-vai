@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
+import { PurchaseEvent } from '../../../../../components/analytics/PurchaseEvent'
 import { OrderLines, paymentLabel } from '../../../../../components/shop/OrderBits'
 import { Icon } from '../../../../../components/ui/Icon'
 import { getCustomer } from '../../../../../lib/customer'
@@ -30,6 +31,21 @@ export default async function OrderPage({ params, searchParams }: Props) {
 
   return (
     <div className="wrap narrow res">
+      {awaiting ? null : (
+        <PurchaseEvent
+          number={order.orderNumber}
+          total={order.total}
+          delivery={order.delivery}
+          items={order.items.map((i) => ({
+            productId: typeof i.product === 'object' && i.product ? i.product.id : Number(i.product) || 0,
+            name: i.name,
+            colour: i.colour,
+            size: i.size,
+            price: i.unitPrice,
+            qty: i.qty,
+          }))}
+        />
+      )}
       <span className="res-ic ok">
         <Icon name="check" />
       </span>

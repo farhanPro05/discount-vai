@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
+import { trackAddToCart } from '../../lib/analytics'
 import type { CartLine } from '../../lib/types'
 import { useHydrated } from './storage'
 
@@ -115,6 +116,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, added]
     })
+    trackAddToCart({ productId: line.productId, name: line.name, colour: line.colour, size: line.size, price: line.price, qty: line.qty })
     setToast({ line: added })
     if (toastTimer.current) clearTimeout(toastTimer.current)
     toastTimer.current = setTimeout(() => setToast(null), 6000)

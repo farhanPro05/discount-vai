@@ -1965,6 +1965,18 @@ export interface Site {
   instagram?: string | null;
   tiktok?: string | null;
   messenger?: string | null;
+  /**
+   * Google Analytics → Admin → Data streams → your website.
+   */
+  googleAnalyticsId?: string | null;
+  /**
+   * Search Console → Settings → Ownership verification → HTML tag. Paste only the code inside content="…".
+   */
+  googleVerification?: string | null;
+  /**
+   * Events Manager → Data sources → your Pixel. Tracks page views, add to cart, checkout and purchases.
+   */
+  metaPixelId?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1987,6 +1999,10 @@ export interface Commerce {
    */
   freeDeliveryOver?: number | null;
   exchangeDays?: number | null;
+  nextSteps?: {
+    call?: string | null;
+    ship?: string | null;
+  };
   codEnabled?: boolean | null;
   codZones?: ('inside' | 'outside')[] | null;
   /**
@@ -2225,6 +2241,9 @@ export interface SiteSelect<T extends boolean = true> {
   instagram?: T;
   tiktok?: T;
   messenger?: T;
+  googleAnalyticsId?: T;
+  googleVerification?: T;
+  metaPixelId?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2248,6 +2267,12 @@ export interface CommerceSelect<T extends boolean = true> {
       };
   freeDeliveryOver?: T;
   exchangeDays?: T;
+  nextSteps?:
+    | T
+    | {
+        call?: T;
+        ship?: T;
+      };
   codEnabled?: T;
   codZones?: T;
   codAdvanceDelivery?: T;

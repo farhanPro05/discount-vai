@@ -3,10 +3,12 @@ import { Archivo, Hanken_Grotesk } from 'next/font/google'
 
 import '../../styles/globals.css'
 
+import { Analytics } from '../../components/analytics/Analytics'
 import { ShopProvider } from '../../components/shop/ShopProvider'
+import { cleanGa, cleanPixel } from '../../lib/analytics'
 import { SITE_URL } from '../../lib/format'
 import { toImg } from '../../lib/media'
-import { getBrand } from '../../lib/settings'
+import { getBrand, getSite } from '../../lib/settings'
 
 /* Fonts are provisional; swap them here and in styles/tokens.css. */
 const display = Archivo({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-archivo', display: 'swap' })
@@ -19,8 +21,9 @@ const body = Hanken_Grotesk({
 })
 
 export async function generateMetadata(): Promise<Metadata> {
-  const brand = await getBrand()
+  const [brand, site] = await Promise.all([getBrand(), getSite()])
   const favicon = toImg(brand.favicon)
+  const verification = site.googleVerification && /^[A-Za-z0-9_-]{10,100}$/.test(site.googleVerification) ? site.googleVerification : null
   return {
     metadataBase: new URL(SITE_URL),
     title: { default: 'Discount Vai | Men’s Clothing Online in Bangladesh', template: '%s | Discount Vai' },
@@ -33,6 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: { siteName: 'Discount Vai', locale: 'en_BD', type: 'website' },
     twitter: { card: 'summary_large_image' },
     formatDetection: { telephone: false },
+    ...(verification ? { verification: { google: verification } } : {}),
   }
 }
 
@@ -43,11 +47,16 @@ export const dynamic = 'force-dynamic'
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 }
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
-  const brand = await getBrand()
+  const [brand, site] = await Promise.all([getBrand(), getSite()])
+  // Analytics only on the live site, so testing never pollutes the numbers.
+  const live = process.env.NODE_ENV === 'production'
+  const ga = live ? cleanGa(site.googleAnalyticsId) : null
+  const pixel = live ? cleanPixel(site.metaPixelId) : null
   return (
-    <html lang="en" data-palette={brand.palette ?? 'sage'} className={`${display.variable} ${body.variable}`}>
+    <html lang="en" data-palette={brand.palette ?? 'sage'} data-scroll-behavior="smooth" className={`${display.variable} ${body.variable}`}>
       <body>
         <ShopProvider>{children}</ShopProvider>
+        {ga || pixel ? <Analytics ga={ga} pixel={pixel} /> : null}
       </body>
     </html>
   )
