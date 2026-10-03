@@ -135,7 +135,11 @@ export const Products: CollectionConfig = {
           name: 'sizes',
           type: 'array',
           labels: { singular: 'Size', plural: 'Sizes' },
-          admin: { description: 'Stock for each size. Set stock to 0 when a size sells out.' },
+          admin: {
+            description: 'Stock for each size. Set stock to 0 when a size sells out.',
+            initCollapsed: true,
+            components: { RowLabel: '/admin/ColourRowLabel#SizeRowLabel' },
+          },
           fields: [
             {
               type: 'row',
