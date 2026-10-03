@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -227,4 +228,49 @@ export async function trackOrderAction(_prev: AuthState, form: FormData): Promis
   if (!order || normalisePhone(order.contact.phone) !== phone)
     return { error: "We couldn't find an order with that number and phone. Check both and try again.", fields }
   redirect(`/order/${order.orderNumber}?t=${order.accessToken}`)
+}
+
+/* ---------- Account: profile and addresses ---------- */
+
+export async function updateProfileAction(_prev: AuthState, form: FormData): Promise<AuthState & { ok?: boolean }> {
+  const customer = await getCustomer()
+  if (!customer) redirect('/account')
+  const name = String(form.get('name') ?? '').trim().slice(0, 120)
+  const email = String(form.get('email') ?? '').trim().toLowerCase()
+  if (!name) return { error: 'Please enter your name.' }
+  if (email && !EMAIL.test(email)) return { error: "That email doesn't look right." }
+  const payload = await getClient()
+  try {
+    await payload.update({ collection: 'customers', id: customer.id, overrideAccess: true, data: { name, email: email || undefined } })
+  } catch {
+    return { error: 'That email is already used by another account.' }
+  }
+  revalidatePath('/account', 'layout')
+  return { ok: true }
+}
+
+export async function saveAddressAction(_prev: AuthState, form: FormData): Promise<AuthState & { ok?: boolean }> {
+  const customer = await getCustomer()
+  if (!customer) redirect('/account')
+  const address = {
+    label: String(form.get('label') ?? '').trim().slice(0, 40) || 'Home',
+    district: String(form.get('district') ?? '').trim(),
+    area: String(form.get('area') ?? '').trim().slice(0, 80),
+    line: String(form.get('line') ?? '').trim().slice(0, 300),
+  }
+  if (!address.district || !address.area || address.line.length < 6) return { error: 'Fill in the district, area and full address.' }
+  const payload = await getClient()
+  const existing = (customer.addresses ?? []).map(({ label, district, area, line }) => ({ label, district, area, line }))
+  await payload.update({ collection: 'customers', id: customer.id, overrideAccess: true, data: { addresses: [address, ...existing].slice(0, 5) } })
+  revalidatePath('/account/addresses')
+  return { ok: true }
+}
+
+export async function deleteAddressAction(index: number) {
+  const customer = await getCustomer()
+  if (!customer) redirect('/account')
+  const payload = await getClient()
+  const next = (customer.addresses ?? []).filter((_, i) => i !== index).map(({ label, district, area, line }) => ({ label, district, area, line }))
+  await payload.update({ collection: 'customers', id: customer.id, overrideAccess: true, data: { addresses: next } })
+  revalidatePath('/account/addresses')
 }
