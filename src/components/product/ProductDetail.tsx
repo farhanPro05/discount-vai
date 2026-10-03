@@ -171,7 +171,8 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
               >
                 {Array.from({ length: views }, (_, i) => (
                   <div className="ph" key={i}>
-                    {photo(i, '100vw', i === 0)}
+                    {/* Hidden on desktop: tiny size there, so desktop doesn't download a second full-width copy. */}
+                    {photo(i, '(min-width: 1024px) 1px, 100vw', i === 0)}
                   </div>
                 ))}
               </div>
