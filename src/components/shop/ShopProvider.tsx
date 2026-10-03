@@ -16,6 +16,7 @@ type Shop = {
   subtotal: number
   add: (line: Omit<CartLine, 'key'>) => void
   setQty: (key: string, qty: number) => void
+  patch: (key: string, change: Partial<Pick<CartLine, 'price' | 'was' | 'qty' | 'image'>>) => void
   remove: (key: string) => void
   clear: () => void
   drawerOpen: boolean
@@ -116,6 +117,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       subtotal: lines.reduce((n, l) => n + l.qty * l.price, 0),
       add,
       setQty: (key, qty) => setLines((prev) => prev.map((l) => (l.key === key ? { ...l, qty: Math.max(1, Math.min(MAX_QTY, qty)) } : l))),
+      patch: (key, change) => setLines((prev) => prev.map((l) => (l.key === key ? { ...l, ...change } : l))),
       remove: (key) => setLines((prev) => prev.filter((l) => l.key !== key)),
       clear: () => setLines([]),
       drawerOpen,
