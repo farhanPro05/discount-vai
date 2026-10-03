@@ -62,7 +62,7 @@ Turn the approved Claude Design mockups (Option D, in `design/claude-design-mock
 ## Progress
 Two branches, neither merged yet (the git rule: merge after you approve):
 - `feature/foundation` (5 commits): milestone 1.
-- `feature/storefront` (built on top of foundation, 29 more commits): milestones 2–8.
+- `feature/storefront` (built on top of foundation): milestones 2–8.
 
 | Milestone | State |
 |---|---|
