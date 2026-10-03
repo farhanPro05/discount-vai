@@ -4230,6 +4230,14 @@ body.lock {
   margin: 8px 0 0;
   font-size: 30px;
 }
+/* Forgot / reset password: the card on its own, centred. */
+.auth.one {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 50vh;
+}
+.auth.one .auth-card > p {
+  margin: 0;
+}
 .row-sb {
   display: flex;
   justify-content: space-between;

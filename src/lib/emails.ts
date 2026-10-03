@@ -129,3 +129,17 @@ ${textTotals(o)}
 Open in admin: ${link}`
   return { subject: `New order ${o.orderNumber} · ${taka(o.total)} · ${method}`, html, text }
 }
+
+/** Password reset for a shopper's account (used by the Customers collection's forgot-password flow). */
+export function passwordResetEmail(token: string, name?: string | null): { subject: string; html: string } {
+  const link = `${SITE_URL}/account/reset?token=${encodeURIComponent(token)}`
+  const first = (name ?? '').split(' ')[0]
+  const html = shell(
+    'Reset your Discount Vai password',
+    `<h1 style="margin:0 0 8px;font-size:22px;color:${INK}">${first ? `Hi ${esc(first)}, reset` : 'Reset'} your password</h1>
+<p style="margin:0 0 24px;font-size:15px;line-height:1.5;color:${MUTED}">Someone (hopefully you) asked to reset the password for your Discount Vai account. The link works for 1 hour.</p>
+${button(link, 'Choose a new password')}
+<p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:${MUTED}">Didn't ask for this? You can ignore this email; your password stays the same.</p>`,
+  )
+  return { subject: 'Reset your Discount Vai password', html }
+}

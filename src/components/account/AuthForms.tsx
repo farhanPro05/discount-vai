@@ -46,7 +46,7 @@ export function AuthForms({ next = '/account/orders', startTab = 'login' }: { ne
               <input type="checkbox" name="remember" defaultChecked />
               <span>Keep me logged in</span>
             </label>
-            <Link className="lnk" href="/contact?topic=password">
+            <Link className="lnk" href="/account/forgot">
               Forgot password?
             </Link>
           </div>

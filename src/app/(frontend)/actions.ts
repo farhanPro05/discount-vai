@@ -215,6 +215,37 @@ export async function logoutAction() {
   redirect('/account')
 }
 
+export type ForgotState = { error?: string; sent?: boolean; email?: string } | undefined
+
+/** Email a password-reset link. Always answers the same way, so it never reveals who has an account. */
+export async function forgotPasswordAction(_prev: ForgotState, form: FormData): Promise<ForgotState> {
+  const email = String(form.get('email') ?? '').trim().toLowerCase().slice(0, 200)
+  if (!EMAIL.test(email)) return { error: "That email doesn't look right. Try name@example.com", email }
+  const payload = await getClient()
+  try {
+    await payload.forgotPassword({ collection: 'customers', data: { email } })
+  } catch (err) {
+    payload.logger.error({ err }, 'Password reset email failed')
+  }
+  return { sent: true, email }
+}
+
+/** Set a new password from the emailed link, then log the shopper in. */
+export async function resetPasswordAction(_prev: AuthState, form: FormData): Promise<AuthState> {
+  const token = String(form.get('token') ?? '')
+  const password = String(form.get('password') ?? '')
+  if (password.length < 8) return { error: 'Use 8 or more characters for your password.' }
+  if (password !== String(form.get('confirm') ?? '')) return { error: "The two passwords don't match." }
+  const payload = await getClient()
+  try {
+    const res = await payload.resetPassword({ collection: 'customers', data: { token, password }, overrideAccess: true })
+    if (res.token) await setCustomerCookie(res.token, true)
+  } catch {
+    return { error: 'expired' }
+  }
+  redirect('/account/orders')
+}
+
 /** Track Order: find an order by its number and the phone used to place it. */
 export async function trackOrderAction(_prev: AuthState, form: FormData): Promise<AuthState> {
   const raw = String(form.get('order') ?? '').trim().toUpperCase().replace(/^#/, '')
