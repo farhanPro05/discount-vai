@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 
 import { checkCodeAction } from '../../app/(frontend)/actions'
 import { taka } from '../../lib/format'
@@ -10,6 +10,7 @@ import { ProductCard } from '../product/ProductCard'
 import { Icon } from '../ui/Icon'
 import { FreeDelivery, LineThumb, Qty } from './CartBits'
 import { useShop } from './ShopProvider'
+import { useStoredString } from './storage'
 import { useCartSync } from './useCartSync'
 
 export const CODE_KEY = 'dv-code'
@@ -17,14 +18,9 @@ export const CODE_KEY = 'dv-code'
 export function CartView({ insideFee, freeOver, picks, payLabels }: { insideFee: number; freeOver: number | null; picks: CardProduct[]; payLabels: string[] }) {
   const { lines, ready, count, subtotal, remove } = useShop()
   const { problems } = useCartSync()
-  const [code, setCode] = useState('')
-  useEffect(() => {
-    try {
-      setCode(window.sessionStorage.getItem(CODE_KEY) ?? '')
-    } catch {
-      /* ignore */
-    }
-  }, [])
+  const saved = useStoredString(CODE_KEY, 'session')
+  const [typed, setCode] = useState<string | null>(null)
+  const code = typed ?? saved
   const [disc, setDisc] = useState<{ amount: number; code: string } | null>(null)
   const [codeMsg, setCodeMsg] = useState('')
   const [pending, start] = useTransition()

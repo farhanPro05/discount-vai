@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 
 import { loadMoreAction } from '../../app/(frontend)/actions'
 import type { ListFilters, SortKey } from '../../lib/sorts'
@@ -30,10 +30,13 @@ export function ProductGrid({
   const [last, setLast] = useState(page)
   const [pending, start] = useTransition()
 
-  useEffect(() => {
+  // New page or filters from the server: start again from them.
+  const [lastInitial, setLastInitial] = useState(initial)
+  if (initial !== lastInitial) {
+    setLastInitial(initial)
     setCards(initial)
     setLast(page)
-  }, [initial, page])
+  }
 
   const shownTo = Math.min(total, (page - 1) * 12 + cards.length)
   const more = () =>

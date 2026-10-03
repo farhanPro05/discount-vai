@@ -11,6 +11,7 @@ import type { CommerceInfo } from '../../lib/settings'
 import { Icon } from '../ui/Icon'
 import { LineThumb } from './CartBits'
 import { CODE_KEY } from './CartView'
+import { useStoredString } from './storage'
 import { useShop } from './ShopProvider'
 import { useCartSync } from './useCartSync'
 
@@ -30,7 +31,7 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
   const [address, setAddress] = useState(prefill.address ?? '')
   const [zone, setZone] = useState<'inside' | 'outside'>((prefill.district ?? 'Dhaka') === 'Dhaka' ? 'inside' : 'outside')
   const [notes, setNotes] = useState('')
-  const [code, setCode] = useState('')
+  const [typed, setCode] = useState<string | null>(null)
   const [disc, setDisc] = useState<{ code: string; amount: number } | null>(null)
   const [codeMsg, setCodeMsg] = useState('')
   const [subscribe, setSubscribe] = useState(false)
@@ -42,28 +43,24 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
   const [checking, startCheck] = useTransition()
 
   const codAllowed = commerce.codEnabled && commerce.codZones.includes(zone)
-  const [payment, setPayment] = useState<'cod' | 'online'>(commerce.codEnabled ? 'cod' : 'online')
-  useEffect(() => {
-    if (payment === 'cod' && !codAllowed && commerce.onlineEnabled) setPayment('online')
-  }, [payment, codAllowed, commerce.onlineEnabled])
+  const [chosenPayment, setPayment] = useState<'cod' | 'online'>(commerce.codEnabled ? 'cod' : 'online')
+  // COD isn't allowed for this zone: fall back to online payment when it's available.
+  const payment = chosenPayment === 'cod' && !codAllowed && commerce.onlineEnabled ? 'online' : chosenPayment
 
   const cartLines = useMemo(() => lines.map((l) => ({ productId: l.productId, colour: l.colour, size: l.size, qty: l.qty })), [lines])
 
   // Re-apply a code the shopper entered on the cart page.
+  const savedCode = useStoredString(CODE_KEY, 'session')
+  const code = typed ?? savedCode
   useEffect(() => {
-    if (!ready || !lines.length) return
-    let saved = ''
-    try {
-      saved = window.sessionStorage.getItem(CODE_KEY) ?? ''
-    } catch {
-      /* ignore */
-    }
-    if (saved && !disc) {
-      setCode(saved)
-      checkCodeAction(saved, cartLines).then((r) => r.ok && setDisc({ code: r.code, amount: r.discount }))
+    if (!ready || !lines.length || !savedCode) return
+    let live = true
+    checkCodeAction(savedCode, cartLines).then((r) => live && r.ok && setDisc({ code: r.code, amount: r.discount }))
+    return () => {
+      live = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready])
+  }, [ready, savedCode])
 
   const fee = zone === 'inside' ? commerce.inside.fee : commerce.outside.fee
   const delivery = commerce.freeOver && subtotal >= commerce.freeOver ? 0 : fee

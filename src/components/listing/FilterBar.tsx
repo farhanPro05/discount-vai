@@ -50,10 +50,13 @@ export function FilterBar({
   useEscape(!!open, () => setOpen(''))
 
   // Reset the draft whenever the applied filters change.
-  useEffect(() => {
+  const applied = JSON.stringify([state.sizes, state.colours, state.min, state.max, state.sale, total])
+  const [lastApplied, setLastApplied] = useState(applied)
+  if (applied !== lastApplied) {
+    setLastApplied(applied)
     setDraft({ sizes: state.sizes, colours: state.colours, min: state.min, max: state.max, sale: state.sale })
     setCount(total)
-  }, [state.sizes, state.colours, state.min, state.max, state.sale, total])
+  }
 
   // Live result count for the draft.
   useEffect(() => {

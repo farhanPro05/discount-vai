@@ -18,10 +18,7 @@ export function useCartSync() {
   useEffect(() => {
     if (!ready || done.current) return
     done.current = true
-    if (!lines.length) {
-      setSynced(true)
-      return
-    }
+    if (!lines.length) return
     priceCartAction(lines.map((l) => ({ productId: l.productId, colour: l.colour, size: l.size, qty: l.qty })))
       .then((res) => {
         const seen = new Set<string>()
@@ -41,5 +38,5 @@ export function useCartSync() {
       .finally(() => setSynced(true))
   }, [ready, lines, patch, remove])
 
-  return { problems, synced }
+  return { problems, synced: synced || (ready && !lines.length) }
 }

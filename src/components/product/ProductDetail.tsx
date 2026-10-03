@@ -8,6 +8,7 @@ import type { ShapeKey } from '../../fields/shapes'
 import { taka } from '../../lib/format'
 import type { CardProduct, Img } from '../../lib/types'
 import { useEscape, useShop } from '../shop/ShopProvider'
+import { useStoredJSON } from '../shop/storage'
 import { Sil } from '../ui/Art'
 import { Accordion } from '../ui/Accordion'
 import { Icon } from '../ui/Icon'
@@ -412,16 +413,11 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
 }
 
 /** "Recently viewed" from this browser (stored locally, never sent anywhere). */
+const NONE: CardProduct[] = []
+
 export function RecentlyViewed({ currentId }: { currentId: number }) {
-  const [items, setItems] = useState<CardProduct[]>([])
-  useEffect(() => {
-    try {
-      const list = JSON.parse(window.localStorage.getItem('dv-recent') || '[]') as CardProduct[]
-      setItems(list.filter((c) => c.id !== currentId).slice(0, 4))
-    } catch {
-      setItems([])
-    }
-  }, [currentId])
+  const list = useStoredJSON<CardProduct[]>('dv-recent', NONE)
+  const items = Array.isArray(list) ? list.filter((c) => c.id !== currentId).slice(0, 4) : NONE
   if (!items.length) return null
   return (
     <section className="sec sec-t" aria-labelledby="h-recent">

@@ -107,7 +107,12 @@ export function HeaderClient({
   const router = useRouter()
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => setOpen(null), [pathname])
+  // Close the mega menu when the page changes.
+  const [lastPath, setLastPath] = useState(pathname)
+  if (pathname !== lastPath) {
+    setLastPath(pathname)
+    setOpen(null)
+  }
   useEffect(() => {
     const onScroll = () => setSticky(window.scrollY > 40)
     onScroll()

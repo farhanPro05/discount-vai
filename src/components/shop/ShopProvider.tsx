@@ -1,11 +1,54 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { CartLine } from '../../lib/types'
+import { useHydrated } from './storage'
 
 const KEY = 'dv-cart-v1'
+const EMPTY: CartLine[] = []
+
+/* The cart lives in localStorage, read through a tiny external store (also keeps tabs in sync). */
+const cartStore = (() => {
+  let lines: CartLine[] | null = null
+  const listeners = new Set<() => void>()
+  const load = (): CartLine[] => {
+    if (lines) return lines
+    try {
+      lines = JSON.parse(window.localStorage.getItem(KEY) || '[]') as CartLine[]
+    } catch {
+      lines = []
+    }
+    return lines
+  }
+  return {
+    subscribe(cb: () => void) {
+      listeners.add(cb)
+      const onStorage = (e: StorageEvent) => {
+        if (e.key !== KEY) return
+        lines = null
+        cb()
+      }
+      window.addEventListener('storage', onStorage)
+      return () => {
+        listeners.delete(cb)
+        window.removeEventListener('storage', onStorage)
+      }
+    },
+    get: load,
+    getServer: () => EMPTY,
+    set(update: (prev: CartLine[]) => CartLine[]) {
+      lines = update(load())
+      try {
+        window.localStorage.setItem(KEY, JSON.stringify(lines))
+      } catch {
+        /* private mode: keep it in memory */
+      }
+      listeners.forEach((l) => l())
+    },
+  }
+})()
 
 type Toast = { line: CartLine } | null
 
@@ -37,8 +80,9 @@ const ShopContext = createContext<Shop | null>(null)
 export const MAX_QTY = 9
 
 export function ShopProvider({ children }: { children: React.ReactNode }) {
-  const [lines, setLines] = useState<CartLine[]>([])
-  const [ready, setReady] = useState(false)
+  const lines = useSyncExternalStore(cartStore.subscribe, cartStore.get, cartStore.getServer)
+  const ready = useHydrated()
+  const setLines = cartStore.set
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -46,47 +90,14 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pathname = usePathname()
 
-  // Load the saved cart once (localStorage can be unavailable in private mode).
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(KEY)
-      if (raw) setLines(JSON.parse(raw) as CartLine[])
-    } catch {
-      /* ignore */
-    }
-    setReady(true)
-  }, [])
-
-  useEffect(() => {
-    if (!ready) return
-    try {
-      window.localStorage.setItem(KEY, JSON.stringify(lines))
-    } catch {
-      /* ignore */
-    }
-  }, [lines, ready])
-
-  // Keep tabs in sync.
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === KEY && e.newValue) {
-        try {
-          setLines(JSON.parse(e.newValue) as CartLine[])
-        } catch {
-          /* ignore */
-        }
-      }
-    }
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
-  }, [])
-
-  // Close overlays when the page changes.
-  useEffect(() => {
+  // Close overlays when the page changes (adjusting state during render, as React recommends).
+  const [lastPath, setLastPath] = useState(pathname)
+  if (pathname !== lastPath) {
+    setLastPath(pathname)
     setDrawerOpen(false)
     setSearchOpen(false)
     setMenuOpen(false)
-  }, [pathname])
+  }
 
   // Lock page scroll while an overlay is open.
   useEffect(() => {
@@ -96,7 +107,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   const add = useCallback((line: Omit<CartLine, 'key'>) => {
     const key = `${line.productId}|${line.colour}|${line.size}`
     let added: CartLine = { ...line, key }
-    setLines((prev) => {
+    cartStore.set((prev) => {
       const found = prev.find((l) => l.key === key)
       if (found) {
         added = { ...found, ...line, key, qty: Math.min(MAX_QTY, found.qty + line.qty) }
@@ -119,7 +130,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       setQty: (key, qty) => setLines((prev) => prev.map((l) => (l.key === key ? { ...l, qty: Math.max(1, Math.min(MAX_QTY, qty)) } : l))),
       patch: (key, change) => setLines((prev) => prev.map((l) => (l.key === key ? { ...l, ...change } : l))),
       remove: (key) => setLines((prev) => prev.filter((l) => l.key !== key)),
-      clear: () => setLines([]),
+      clear: () => setLines(() => []),
       drawerOpen,
       openDrawer: () => {
         setToast(null)
@@ -138,7 +149,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       toast,
       hideToast: () => setToast(null),
     }),
-    [lines, ready, add, drawerOpen, searchOpen, menuOpen, toast],
+    [lines, ready, add, setLines, drawerOpen, searchOpen, menuOpen, toast],
   )
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>
