@@ -1,25 +1,18 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { cache } from 'react'
 
-import { CategoryComingSoon } from '../../../../components/content/ComingSoon'
-import { InfoLayout } from '../../../../components/content/InfoLayout'
-import { PageBlocks } from '../../../../components/content/PageBlocks'
-import { ListingView } from '../../../../components/listing/ListingView'
-import type { ShapeKey } from '../../../../fields/shapes'
-import { categoryIdsFor, getCategory } from '../../../../lib/catalog'
-import { toImg } from '../../../../lib/media'
-import { getClient } from '../../../../lib/payload'
-import { findRedirect } from '../../../../lib/redirects'
-import { snippet } from '../../../../lib/seo'
+import { CategoryComingSoon } from '../../../../../components/content/ComingSoon'
+import { InfoLayout } from '../../../../../components/content/InfoLayout'
+import { PageBlocks } from '../../../../../components/content/PageBlocks'
+import { ListingView } from '../../../../../components/listing/ListingView'
+import type { ShapeKey } from '../../../../../fields/shapes'
+import { categoryIdsFor, getCategory } from '../../../../../lib/catalog'
+import { toImg } from '../../../../../lib/media'
+import { findRedirect } from '../../../../../lib/redirects'
+import { getPage } from '../../../../../lib/routes'
+import { snippet } from '../../../../../lib/seo'
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }
-
-const getPage = cache(async (slug: string) => {
-  const payload = await getClient()
-  const res = await payload.find({ collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 2 })
-  return res.docs[0] ?? null
-})
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params

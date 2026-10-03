@@ -4832,3 +4832,63 @@ button.term {
 .hwrap.open {
   z-index: 100;
 }
+
+/* ---------- Loading skeletons ---------- */
+.sk-page {
+  padding-top: 16px;
+  padding-bottom: var(--sec);
+}
+.sk {
+  display: block;
+  max-width: 100%;
+  border-radius: var(--r-xs);
+  background: var(--sunk);
+  animation: sk-pulse 1.4s ease-in-out infinite;
+}
+.sk-ph {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  border-radius: var(--r-sm);
+}
+.sk-pill {
+  border-radius: 999px;
+}
+.sk-bc {
+  margin: 8px 0 16px;
+}
+.sk-t {
+  margin: 14px 0 8px;
+}
+.sk-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.sk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.sk-col .sk-row {
+  margin-bottom: 0;
+}
+.sk-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+@keyframes sk-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sk {
+    animation: none;
+  }
+}
