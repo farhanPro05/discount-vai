@@ -42,7 +42,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await getPage(slug)
   if (page) {
     return {
-      title: page.seo?.title || page.title,
+      // Avoid "About Discount Vai | Discount Vai".
+      title: page.seo?.title || (page.title.includes('Discount Vai') ? { absolute: page.title } : page.title),
       description: page.seo?.description || snippet(page.lead) || undefined,
       alternates: { canonical: `/${slug}` },
     }
