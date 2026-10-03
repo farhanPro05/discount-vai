@@ -45,7 +45,7 @@ const LOW = 3
 function rememberViewed(card: CardProduct) {
   try {
     const list = JSON.parse(window.localStorage.getItem('dv-recent') || '[]') as CardProduct[]
-    const next = [card, ...list.filter((c) => c.id !== card.id)].slice(0, 9)
+    const next = [card, ...list.filter((c) => c.href !== card.href)].slice(0, 9)
     window.localStorage.setItem('dv-recent', JSON.stringify(next))
   } catch {
     /* ignore */
@@ -415,9 +415,10 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
 /** "Recently viewed" from this browser (stored locally, never sent anywhere). */
 const NONE: CardProduct[] = []
 
-export function RecentlyViewed({ currentId }: { currentId: number }) {
+export function RecentlyViewed({ current }: { current: string }) {
   const list = useStoredJSON<CardProduct[]>('dv-recent', NONE)
-  const items = Array.isArray(list) ? list.filter((c) => c.id !== currentId).slice(0, 4) : NONE
+  // Matched by link, so entries stay correct even if a product is re-created with a new id.
+  const items = Array.isArray(list) ? list.filter((c, i) => c.href !== current && list.findIndex((o) => o.href === c.href) === i).slice(0, 4) : NONE
   if (!items.length) return null
   return (
     <section className="sec sec-t" aria-labelledby="h-recent">

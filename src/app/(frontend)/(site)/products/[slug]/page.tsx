@@ -137,7 +137,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
           <Carousel title="You may also like" items={related} link={category ? categoryHref(category, all) : null} linkLabel={`More ${category?.name ?? ''}`.trim()} />
         </section>
       ) : null}
-      <RecentlyViewed currentId={p.id} />
+      <RecentlyViewed current={card.href} />
     </div>
   )
 }
