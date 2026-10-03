@@ -1425,11 +1425,13 @@ body.lock {
 .bars {
   display: flex;
   gap: 4px;
+  min-height: 24px; /* same height with or without bars, so names line up across the row */
   padding: 0 4px;
 }
 .bar {
   flex: 1;
-  height: 14px;
+  /* Tall enough to tap (24px minimum); the visible line stays thin. */
+  height: 24px;
   position: relative;
 }
 .bar::after {
