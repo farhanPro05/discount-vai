@@ -66,14 +66,14 @@ Two branches, neither merged yet (the git rule: merge after you approve):
 
 | Milestone | State |
 |---|---|
-| 1. Foundation | Done. Scaffold, branding off, all collections and settings, theme tokens, seed |
+| 1. Foundation | Done. Scaffold, branding off, all collections and settings, theme tokens, seed (full demo, or structure-only for a live shop), **scheduled publishing** for products |
 | 2. Global layout | Done. Announcement bar, header + mega menus, mobile/tablet drawer, footer, WhatsApp button, email pop-up with its frequency rules, Coming Soon pages |
-| 3. Shopping pages | Done. Home (sections reorderable in the admin), Men / subcategories / Bags / Sale / New Arrivals with filters and sort, search overlay with suggestions and results page, product page (gallery, colours, sizes, size guide, sticky add-to-cart, recently viewed) |
-| 4. Cart and checkout | Done. Cart drawer and page, checkout with districts/areas and zones, discount codes, Cash on Delivery orders (stock taken, code use counted), confirmation and payment-failed pages, **order emails** (confirmation to the customer, alert to the shop) |
+| 3. Shopping pages | Done. Home (sections reorderable in the admin), Men / subcategories / Bags / Sale / New Arrivals with filters and sort, search overlay with suggestions and results page, product page (gallery, colours, sizes, size guide, sticky add-to-cart, recently viewed), **loading skeletons** on listing and product pages |
+| 4. Cart and checkout | Done. Cart drawer and page, checkout with districts/areas and zones, discount codes, Cash on Delivery orders (stock taken, code use counted), confirmation and payment-failed pages (next-step text editable in the admin), **order emails** (confirmation to the customer, alert to the shop), **printable invoice** from the order screen (shows the cash to collect) |
 | 5. Content and account | Done. About, FAQ, policies, Contact (saved to Messages), Track order, Size guide, Women + Style Guide Coming Soon, 404 / error pages, customer register / login / orders / addresses / profile / wishlist, **password reset by email** |
-| 6. SEO | Done. Templated titles and descriptions (admin can override), keyword titles for every category, JSON-LD (OnlineStore, WebSite + search, BreadcrumbList, Product, ItemList, FAQPage), sitemap, robots, `noindex` on Coming Soon / account pages, redirects when a slug changes, `/favicon.ico` |
+| 6. SEO | Done. Templated titles and descriptions (admin can override), keyword titles for every category, JSON-LD (OnlineStore, WebSite + search, BreadcrumbList, Product, ItemList, FAQPage), sitemap, robots, `noindex` on Coming Soon / account pages, redirects when a slug changes, `/favicon.ico`, **Google preview** under every Search & sharing section in the admin, **Google Analytics 4, Search Console and Meta Pixel** settings (off until IDs are entered; track page views, add to cart, checkout and purchase) |
 | 7. SSLCommerz | Built, not yet tested end to end. Init, success / fail / cancel / IPN with server-side validation, retry from the payment-failed page; switched off (shows "Soon") until credentials are in `.env` |
-| 8. QA and launch prep | Done locally (see Verification). Deployment steps below; Lighthouse is to be run on the hosted site, where the numbers are real |
+| 8. QA and launch prep | Done locally (see Verification), including Lighthouse. Deployment steps below; re-run Lighthouse on the hosted site |
 
 **Still placeholders (the owner fills these in the admin; the code doesn't change):**
 - Products and photos: 35 dummy products with generated photos.
@@ -96,7 +96,7 @@ Two branches, neither merged yet (the git rule: merge after you approve):
 
 ## Deployment
 **Recommended setup:** one small Linux server (VPS) in **Singapore**, the closest major region to Bangladesh. Give it 2 GB RAM or more, running Node.js 20+, PostgreSQL 17 and the site, behind Caddy or Nginx for HTTPS. Uploaded images stay on the server's disk (`media/`) and are backed up nightly with the database. Put Cloudflare (free plan) in front for DNS and caching.
-- **Alternative (managed):** Railway or Render for the app plus their managed Postgres. Their disks are wiped on every deploy, so images must then go to object storage (Cloudflare R2 or S3) through `@payloadcms/storage-s3`. That package isn't installed yet: add it to `payload.config.ts` before launching this way.
+- **Alternative (managed):** Railway or Render for the app plus their managed Postgres. Their disks are wiped on every deploy, so images must then go to object storage (Cloudflare R2 or S3) through `@payloadcms/storage-s3`. That package isn't installed yet: add it to `payload.config.ts` before launching this way. Scheduled publishing also needs a long-running server; on serverless hosting, call `/api/payload-jobs/run` from a cron every minute instead.
 
 **Production settings (`.env` on the server):**
 - `DATABASE_URL`: the production database.
@@ -117,7 +117,7 @@ Two branches, neither merged yet (the git rule: merge after you approve):
 4. Open `/admin`. On an empty database it asks you to create the first owner account.
 5. In the admin, fill in every placeholder listed above. Add products, upload the logo and favicon, and set the delivery charges and order-email address.
 6. In the SSLCommerz merchant panel, register the IPN URL `https://<domain>/payment/sslcommerz/ipn`. Place a sandbox order, then switch `SSLCOMMERZ_SANDBOX=false` and turn on "Offer online payment".
-7. Add the site to Google Search Console and submit `https://<domain>/sitemap.xml`. Run Lighthouse and the Rich Results Test on the live pages.
+7. Add the site to Google Search Console (paste the verification code into Header, footer & contact → Analytics) and submit `https://<domain>/sitemap.xml`. Add the Google Analytics 4 ID and, if you run Facebook ads, the Meta Pixel ID in the same tab; mention them in the Privacy policy. Run Lighthouse and the Rich Results Test on the live pages.
 
 **Every later deploy:**
 ```bash
@@ -138,4 +138,14 @@ Checked on `feature/storefront` (2026-10-03):
 - **Pop-up:** closing it keeps it hidden after a reload.
 - **Access:** `/api/orders`, `/api/subscribers` and other private data return 403 without login.
 - **Branding:** no `X-Powered-By` header and no framework branding on the site or in the admin.
+- **Lighthouse (mobile, production build, local server):**
+  - Home, category and product pages score Accessibility 100, Best Practices 100 and SEO 100.
+  - With real 4G throttling, Performance is 91–98, the main content shows in 1.7–2.0 s, and nothing shifts as the page loads.
+  - On desktop, Performance is 100.
+- **Structured data:** every JSON-LD block parses and has Google's required fields (Product: name, image, price, currency, availability).
+- **Status codes with loading skeletons:** missing pages still return 404 and renamed ones a 308 permanent redirect, for browsers and Googlebot.
+- **Admin:**
+  - The Google preview matches the live title and description.
+  - The invoice is staff-only (customers and logged-out visitors are sent to the admin login).
+  - A product change scheduled from the admin went live within a minute.
 - **Not yet verified:** SSLCommerz end to end (needs sandbox credentials), real email delivery (needs SMTP), and Lighthouse and Rich Results on the hosted site.

@@ -66,6 +66,7 @@ You need Node.js 20.9 or newer and PostgreSQL (17 is used in development).
 | `src/app/(frontend)/(site)` | Storefront pages (home, categories, product, cart, account, info pages) |
 | `src/app/(frontend)/checkout` | Checkout, with its own minimal header |
 | `src/app/(frontend)/actions.ts` | Server actions (cart pricing, orders, sign-up, account) |
+| `src/app/(print)` | Printable staff pages (order invoice), opened from the admin |
 | `src/collections`, `src/globals` | Everything the admin panel manages |
 | `src/components` | UI, grouped by area (layout, shop, product, listing, home, content, account) |
 | `src/lib` | Data access, pricing and orders, SEO, emails, SSLCommerz |
