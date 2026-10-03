@@ -50,13 +50,15 @@ export default async function OrderPage({ params, searchParams }: Props) {
             <li>
               <span className="n">1</span>
               <span>
-                <b>We call to confirm</b>Within 2 hours, between 9 am and 10 pm. Keep {order.contact.phone} handy.
+                <b>We call to confirm</b>
+                {commerce.nextSteps.call} Keep {order.contact.phone} handy.
               </span>
             </li>
             <li>
               <span className="n">2</span>
               <span>
-                <b>Packed and shipped</b>Same or next day. You&apos;ll get an SMS with a tracking link.
+                <b>Packed and shipped</b>
+                {commerce.nextSteps.ship}
               </span>
             </li>
             <li>

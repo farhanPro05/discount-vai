@@ -641,6 +641,7 @@ async function run() {
       codAdvanceDelivery: false,
       onlineEnabled: false,
       onlineLabels: 'bKash, Nagad, Visa, Mastercard',
+      nextSteps: { call: 'Within 2 hours, between 9 am and 10 pm.', ship: 'Same or next day. The courier contacts you before delivering.' },
     },
   })
   await payload.updateGlobal({

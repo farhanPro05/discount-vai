@@ -40,6 +40,15 @@ export const Commerce: GlobalConfig = {
               admin: { description: 'Leave empty to switch free delivery off.' },
             },
             { name: 'exchangeDays', type: 'number', defaultValue: 7, min: 0, label: 'Exchange window (days)' },
+            {
+              name: 'nextSteps',
+              type: 'group',
+              label: 'What happens next (shown on the order confirmation page)',
+              fields: [
+                { name: 'call', type: 'text', label: 'We call to confirm', defaultValue: 'Within 2 hours, between 9 am and 10 pm.' },
+                { name: 'ship', type: 'text', label: 'Packed and shipped', defaultValue: 'Same or next day. The courier contacts you before delivering.' },
+              ],
+            },
           ],
         },
         {

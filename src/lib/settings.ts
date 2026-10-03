@@ -28,6 +28,7 @@ export type CommerceInfo = {
   codAdvance: boolean
   onlineEnabled: boolean
   onlineLabels: string[]
+  nextSteps: { call: string; ship: string }
 }
 
 /** Plain version of the delivery & payment settings for client components. */
@@ -47,5 +48,9 @@ export async function getCommerceInfo(): Promise<CommerceInfo> {
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean),
+    nextSteps: {
+      call: c.nextSteps?.call || 'Within 2 hours, between 9 am and 10 pm.',
+      ship: c.nextSteps?.ship || 'Same or next day. The courier contacts you before delivering.',
+    },
   }
 }

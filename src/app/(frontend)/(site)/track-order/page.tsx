@@ -18,7 +18,7 @@ export default async function TrackOrderPage({ searchParams }: Props) {
         <Icon name="truck" />
       </span>
       <h1>Track your order</h1>
-      <p className="res-sub">Enter your order number (it&apos;s in your confirmation and SMS) and the phone number you ordered with.</p>
+      <p className="res-sub">Enter your order number (it&apos;s on your order confirmation page and in the confirmation email) and the phone number you ordered with.</p>
       <TrackForm order={order} />
       <p className="res-help">
         {customer ? (
