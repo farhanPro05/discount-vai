@@ -84,6 +84,24 @@ export const Commerce: GlobalConfig = {
             },
           ],
         },
+        {
+          label: 'Order emails',
+          fields: [
+            {
+              name: 'orderAlertEmail',
+              type: 'email',
+              label: 'Send new-order alerts to',
+              admin: { description: 'Leave empty to use the shop email in Header, footer & contact → Contact & social.' },
+            },
+            {
+              name: 'customerEmails',
+              type: 'checkbox',
+              defaultValue: true,
+              label: 'Email customers an order confirmation (when they give an email at checkout)',
+              admin: { description: 'Emails are sent through the mail server set in the server settings (.env: SMTP_HOST and friends).' },
+            },
+          ],
+        },
       ],
     },
   ],

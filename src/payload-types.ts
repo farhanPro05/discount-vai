@@ -1998,6 +1998,14 @@ export interface Commerce {
    */
   onlineEnabled?: boolean | null;
   onlineLabels?: string | null;
+  /**
+   * Leave empty to use the shop email in Header, footer & contact → Contact & social.
+   */
+  orderAlertEmail?: string | null;
+  /**
+   * Emails are sent through the mail server set in the server settings (.env: SMTP_HOST and friends).
+   */
+  customerEmails?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2245,6 +2253,8 @@ export interface CommerceSelect<T extends boolean = true> {
   codAdvanceDelivery?: T;
   onlineEnabled?: T;
   onlineLabels?: T;
+  orderAlertEmail?: T;
+  customerEmails?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
