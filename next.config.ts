@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   // No framework branding: drop the "X-Powered-By: Next.js" header and the dev-mode badge.
   poweredByHeader: false,
   devIndicators: false,
+  // Our own 404 for addresses that match no route (instead of the framework default).
+  experimental: { globalNotFound: true },
   images: {
     localPatterns: [{ pathname: '/api/media/file/**' }],
     formats: ['image/avif', 'image/webp'],
