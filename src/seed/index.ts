@@ -28,7 +28,7 @@ import {
   type SeedProduct,
 } from './data'
 import { monogramSvg, placeholderPhoto } from './images'
-import { doc, h, p, ul } from './lexical'
+import { doc, p, ul } from './lexical'
 import { HOME_SECTIONS } from '../globals/homeSections'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -183,6 +183,16 @@ async function run() {
       },
     ],
   ]
+  const SEO: Record<string, { title: string; description: string }> = {
+    trousers: { title: "Men's Trousers & Chinos Online in Bangladesh", description: "Shop men's chinos and twill trousers at fair prices. Waist 28 to 40, Cash on Delivery across Bangladesh and easy 7-day exchange." },
+    shorts: { title: "Men's Shorts Online in Bangladesh", description: 'Cotton and linen-blend shorts for men, S to XXL. Cash on Delivery across Bangladesh and easy 7-day exchange.' },
+    '3-4-pants': { title: '3/4 Pants for Men: Cargo & Jogger 3/4 Pants in BD', description: 'Cargo and jogger 3/4 pants for men at fair prices. Cash on Delivery across Bangladesh and easy 7-day exchange.' },
+    'half-pants': { title: 'Half Pants for Men (2/4 Pants) in Bangladesh', description: "Shop men's half pants (2/4 pants) in soft cotton, S to XXL. Cash on Delivery across Bangladesh and easy 7-day exchange." },
+    'club-jerseys': { title: 'Club Jersey Price in Bangladesh: 25/26 Jerseys', description: 'Lightweight, quick-dry 25/26 club jerseys at fair prices. Cash on Delivery across Bangladesh and easy 7-day exchange.' },
+    jackets: { title: 'Jackets for Men in Bangladesh: Bomber & Denim', description: "Men's bomber and denim jackets at fair prices. Cash on Delivery across Bangladesh and easy 7-day exchange." },
+    'drop-shoulder-t-shirts': { title: 'Drop Shoulder T-Shirts for Men in Bangladesh', description: 'Oversized drop-shoulder tees in heavy cotton, S to XXL. Cash on Delivery across Bangladesh and easy 7-day exchange.' },
+    panjabi: { title: 'Panjabi for Men in Bangladesh: Cotton & Festive', description: 'Shop cotton, linen and festive Panjabi for Eid and every day. Panjabi price from ৳1,850, Cash on Delivery across Bangladesh.' },
+  }
   const catIds: Record<string, number> = {}
   for (const [i, [name, slug, menuGroup, shape, tileText, extra]] of subs.entries()) {
     catIds[slug] = await cat({
@@ -194,6 +204,7 @@ async function run() {
       shape,
       tileText,
       intro: `Shop men's ${name.toLowerCase()} at fair prices, with Cash on Delivery across Bangladesh.`,
+      seo: SEO[slug],
       ...extra,
     })
   }
@@ -205,6 +216,7 @@ async function run() {
     shape: 'backpack',
     tileText: 'Totes, backpacks, slings',
     heading: 'Bags (Unisex)',
+    seo: { title: 'Unisex Bags in Bangladesh: Totes, Backpacks & Slings', description: 'Tough canvas totes, backpacks, sling and duffel bags for everyone, from ৳650. Cash on Delivery across Bangladesh.' },
     intro: 'Totes, backpacks, slings and duffels for everyone.',
     introMore: ' One size, tough canvas and padded straps, built to carry a lot.',
   })
