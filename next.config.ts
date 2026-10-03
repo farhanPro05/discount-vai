@@ -29,4 +29,17 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+const withAdmin = withPayload(nextConfig, { devBundleServerPackages: false })
+const payloadHeaders = withAdmin.headers
+
+export default {
+  ...withAdmin,
+  // Payload asks every browser for a colour-scheme hint (for the admin's light/dark theme). Its Critical-CH header
+  // makes Chrome re-request the first page of every visit to send it (~0.6 s), so keep it to the admin only.
+  headers: async () => {
+    const rules = (await payloadHeaders?.()) ?? []
+    return rules.map((rule) =>
+      rule.source === '/:path*' && rule.headers.some((h) => h.key === 'Critical-CH') ? { ...rule, source: '/admin/:path*' } : rule,
+    )
+  },
+} satisfies NextConfig
