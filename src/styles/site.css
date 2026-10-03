@@ -4820,3 +4820,7 @@ button.term {
   border: 0;
   padding: 0;
 }
+/* The mobile menu lives inside the sticky header; lift the header above everything while it's open. */
+.hwrap.open {
+  z-index: 100;
+}

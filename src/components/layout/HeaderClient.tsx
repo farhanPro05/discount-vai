@@ -136,7 +136,7 @@ export function HeaderClient({
   }
 
   return (
-    <div className="hwrap" onMouseLeave={leave}>
+    <div className={`hwrap${menuOpen ? ' open' : ''}`} onMouseLeave={leave}>
       <header className={`hdr${sticky ? ' is-sticky' : ''}`}>
         <div className="wrap">
           <div className="hdr-d">
