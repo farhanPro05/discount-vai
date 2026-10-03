@@ -35,7 +35,7 @@ type Item = { product?: number | { id: number } | null; colour?: string | null; 
 const restock: CollectionAfterChangeHook = async ({ doc, previousDoc, req, operation }) => {
   if (operation !== 'update') return doc
   const back = ['cancelled', 'returned']
-  if (!back.includes(doc.status) || back.includes(previousDoc?.status)) return doc
+  if (!doc.stockCommitted || !back.includes(doc.status) || back.includes(previousDoc?.status)) return doc
   for (const item of (doc.items ?? []) as Item[]) {
     const id = typeof item.product === 'object' ? item.product?.id : item.product
     if (!id) continue
@@ -213,6 +213,8 @@ export const Orders: CollectionConfig = {
       ],
     },
     { name: 'customer', type: 'relationship', relationTo: 'customers', admin: { position: 'sidebar', readOnly: true } },
+    // Set once the items have been taken out of stock (COD: when placed; online: when paid).
+    { name: 'stockCommitted', type: 'checkbox', defaultValue: false, admin: { hidden: true } },
     {
       name: 'accessToken',
       type: 'text',

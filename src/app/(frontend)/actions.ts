@@ -1,0 +1,230 @@
+'use server'
+
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+
+import { buildWhere, getNav, listProducts, suggest, type ListFilters, type SortKey } from '../../lib/catalog'
+import { CUSTOMER_COOKIE, getCustomer, isBdPhone, normalisePhone } from '../../lib/customer'
+import {
+  beginPayment,
+  checkCode,
+  commitStock,
+  getOrderForViewer,
+  placeOrder,
+  priceCart,
+  type CheckoutInput,
+  type CheckoutLine,
+} from '../../lib/orders'
+import { getClient } from '../../lib/payload'
+import { getCommerceInfo } from '../../lib/settings'
+
+type SubscriberSource = 'popup' | 'footer' | 'home-teaser' | 'coming-soon' | 'checkout' | 'account'
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+/** Join the Vai List (pop-up, footer, Coming Soon pages, homepage teaser). */
+export async function subscribeAction(
+  email: string,
+  source: SubscriberSource,
+  interest?: string,
+): Promise<{ ok: boolean; message?: string }> {
+  const clean = String(email ?? '').trim().toLowerCase().slice(0, 200)
+  if (!EMAIL.test(clean)) return { ok: false, message: "That email doesn't look right. Try name@example.com" }
+  const payload = await getClient()
+  const existing = await payload.find({ collection: 'subscribers', where: { email: { equals: clean } }, limit: 1, depth: 0 })
+  if (existing.docs[0]) {
+    if (interest && existing.docs[0].interest !== interest) {
+      await payload.update({ collection: 'subscribers', id: existing.docs[0].id, data: { interest }, overrideAccess: true })
+    }
+    return { ok: true }
+  }
+  await payload.create({ collection: 'subscribers', data: { email: clean, source, interest: interest ?? null }, overrideAccess: true })
+  return { ok: true }
+}
+
+export async function suggestAction(q: string) {
+  return suggest(String(q ?? '').slice(0, 80))
+}
+
+/** What the search box shows before anything is typed: best sellers and popular words. */
+export async function searchDefaultsAction() {
+  const [{ cards }, nav] = await Promise.all([listProducts({}, 'best', 1, 4), getNav()])
+  const popular = nav
+    .flatMap((t) => t.children.filter((c) => !c.soon).map((c) => c.label.replace(/\s*\(.*\)/, '').toLowerCase()))
+    .slice(0, 6)
+  return { picks: cards, popular }
+}
+
+export async function loadMoreAction(filters: ListFilters, sort: SortKey, page: number) {
+  return listProducts(filters, sort, Math.max(1, Math.floor(page)))
+}
+
+/** Live "Show N results" count while choosing filters. */
+export async function countAction(filters: ListFilters): Promise<number> {
+  const payload = await getClient()
+  const res = await payload.count({ collection: 'products', where: buildWhere(filters) })
+  return res.totalDocs
+}
+
+/** Re-check the cart against current prices and stock. */
+export async function priceCartAction(lines: CheckoutLine[]) {
+  return priceCart(Array.isArray(lines) ? lines.slice(0, 50) : [])
+}
+
+export async function checkCodeAction(code: string, lines: CheckoutLine[]) {
+  const { subtotal } = await priceCart(Array.isArray(lines) ? lines.slice(0, 50) : [])
+  return checkCode(String(code ?? '').slice(0, 40), subtotal)
+}
+
+export async function placeOrderAction(input: CheckoutInput) {
+  const customer = await getCustomer()
+  return placeOrder(input, customer?.id ?? null)
+}
+
+/** "Retry payment" on the payment-failed page. */
+export async function retryPaymentAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
+  const order = await getOrderForViewer(orderNumber, token)
+  if (!order) return { ok: false, message: 'We could not find that order.' }
+  const commerce = await getCommerceInfo()
+  if (!commerce.onlineEnabled) return { ok: false, message: 'Online payment is not available right now. Please switch to Cash on Delivery.' }
+  const amount = order.paymentMethod === 'online' ? order.total : order.delivery
+  const res = await beginPayment(order, amount)
+  if (!res.ok) return { ok: false, message: res.message }
+  redirect(res.url)
+}
+
+/** "Switch to Cash on Delivery" on the payment-failed page. */
+export async function switchToCodAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
+  const order = await getOrderForViewer(orderNumber, token)
+  if (!order) return { ok: false, message: 'We could not find that order.' }
+  if (order.paymentStatus === 'paid') redirect(`/order/${order.orderNumber}?t=${token}`)
+  const commerce = await getCommerceInfo()
+  if (!commerce.codEnabled || !commerce.codZones.includes(order.zone))
+    return { ok: false, message: 'Cash on Delivery is not available for this address.' }
+  const payload = await getClient()
+  const updated = await payload.update({
+    collection: 'orders',
+    id: order.id,
+    overrideAccess: true,
+    data: { paymentMethod: 'cod', paymentStatus: 'unpaid_cod' },
+  })
+  await commitStock(updated)
+  redirect(`/order/${order.orderNumber}?t=${token}`)
+}
+
+/** Contact page form. */
+export async function sendMessageAction(data: {
+  name: string
+  phone: string
+  email?: string
+  orderNumber?: string
+  topic: string
+  message: string
+}): Promise<{ ok: boolean; errors?: Record<string, string> }> {
+  const errors: Record<string, string> = {}
+  if (!data.name?.trim()) errors.name = 'Please tell us your name.'
+  if (!isBdPhone(data.phone ?? '') && !EMAIL.test(data.email ?? '')) errors.phone = 'Add a phone number (or an email) so we can reply.'
+  if (data.email && !EMAIL.test(data.email.trim())) errors.email = "That email doesn't look right."
+  if (!data.message?.trim() || data.message.trim().length < 5) errors.message = "Tell us what's up."
+  if (Object.keys(errors).length) return { ok: false, errors }
+  const payload = await getClient()
+  await payload.create({
+    collection: 'messages',
+    overrideAccess: true,
+    data: {
+      name: data.name.trim().slice(0, 120),
+      phone: data.phone ? normalisePhone(data.phone) : null,
+      email: data.email?.trim() || null,
+      orderNumber: data.orderNumber?.trim().slice(0, 30) || null,
+      topic: data.topic?.slice(0, 60) || null,
+      message: data.message.trim().slice(0, 4000),
+    },
+  })
+  return { ok: true }
+}
+
+/* ---------- Customer accounts ---------- */
+
+type AuthState = { error?: string; fields?: Record<string, string> } | undefined
+
+async function setCustomerCookie(token: string, remember: boolean) {
+  ;(await cookies()).set(CUSTOMER_COOKIE, token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    ...(remember ? { maxAge: 60 * 60 * 24 * 30 } : {}),
+  })
+}
+
+export async function loginAction(_prev: AuthState, form: FormData): Promise<AuthState> {
+  const id = String(form.get('identifier') ?? '').trim()
+  const password = String(form.get('password') ?? '')
+  const remember = form.get('remember') === 'on'
+  const next = String(form.get('next') ?? '/account/orders')
+  if (!id || !password) return { error: 'Enter your phone or email and your password.', fields: { identifier: id } }
+  const payload = await getClient()
+  try {
+    const data = id.includes('@') ? { email: id.toLowerCase(), password } : { username: normalisePhone(id), password }
+    const res = await payload.login({ collection: 'customers', data })
+    if (!res.token) throw new Error('no token')
+    await setCustomerCookie(res.token, remember)
+  } catch {
+    return { error: "That phone/email and password don't match. Try again or reset your password.", fields: { identifier: id } }
+  }
+  redirect(next.startsWith('/') ? next : '/account/orders')
+}
+
+export async function registerAction(_prev: AuthState, form: FormData): Promise<AuthState> {
+  const name = String(form.get('name') ?? '').trim()
+  const id = String(form.get('identifier') ?? '').trim()
+  const password = String(form.get('password') ?? '')
+  const news = form.get('news') === 'on'
+  const fields = { name, identifier: id }
+  if (!name) return { error: 'Please enter your full name.', fields }
+  const isEmail = id.includes('@')
+  if (isEmail ? !EMAIL.test(id) : !isBdPhone(id)) return { error: 'Enter a Bangladeshi mobile number (01XXXXXXXXX) or an email.', fields }
+  if (password.length < 8) return { error: 'Use 8 or more characters for your password.', fields }
+  const payload = await getClient()
+  const username = isEmail ? id.toLowerCase() : normalisePhone(id)
+  const taken = await payload.find({
+    collection: 'customers',
+    where: { or: [{ username: { equals: username } }, ...(isEmail ? [{ email: { equals: id.toLowerCase() } }] : [])] },
+    limit: 1,
+    depth: 0,
+  })
+  if (taken.docs[0]) return { error: 'There is already an account with that phone or email. Try logging in.', fields }
+  try {
+    await payload.create({
+      collection: 'customers',
+      overrideAccess: true,
+      data: { name, username, email: isEmail ? id.toLowerCase() : undefined, password },
+    })
+    const res = await payload.login({ collection: 'customers', data: { username, password } })
+    if (res.token) await setCustomerCookie(res.token, true)
+    if (news && isEmail) await subscribeAction(id, 'account')
+  } catch {
+    return { error: 'Something went wrong creating your account. Please try again.', fields }
+  }
+  redirect('/account/orders')
+}
+
+export async function logoutAction() {
+  ;(await cookies()).delete(CUSTOMER_COOKIE)
+  redirect('/account')
+}
+
+/** Track Order: find an order by its number and the phone used to place it. */
+export async function trackOrderAction(_prev: AuthState, form: FormData): Promise<AuthState> {
+  const raw = String(form.get('order') ?? '').trim().toUpperCase().replace(/^#/, '')
+  const number = raw.startsWith('DV-') ? raw : `DV-${raw.replace(/\D/g, '')}`
+  const phone = normalisePhone(String(form.get('phone') ?? ''))
+  const fields = { order: raw, phone: String(form.get('phone') ?? '') }
+  if (!raw || !phone) return { error: 'Enter your order number and phone number.', fields }
+  const payload = await getClient()
+  const res = await payload.find({ collection: 'orders', where: { orderNumber: { equals: number } }, limit: 1, depth: 0 })
+  const order = res.docs[0]
+  if (!order || normalisePhone(order.contact.phone) !== phone)
+    return { error: "We couldn't find an order with that number and phone. Check both and try again.", fields }
+  redirect(`/order/${order.orderNumber}?t=${order.accessToken}`)
+}

@@ -542,6 +542,7 @@ export interface Order {
     message?: string | null;
   };
   customer?: (number | null) | Customer;
+  stockCommitted?: boolean | null;
   accessToken?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1372,6 +1373,7 @@ export interface OrdersSelect<T extends boolean = true> {
         message?: T;
       };
   customer?: T;
+  stockCommitted?: T;
   accessToken?: T;
   updatedAt?: T;
   createdAt?: T;
