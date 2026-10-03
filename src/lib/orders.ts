@@ -250,7 +250,7 @@ export async function beginPayment(order: Order, amount: number): Promise<{ ok: 
 /** Load an order for its public pages: the access token from the link, or the signed-in owner. */
 export async function getOrderForViewer(orderNumber: string, token?: string | null, customerId?: number | null): Promise<Order | null> {
   const payload = await getClient()
-  const res = await payload.find({ collection: 'orders', where: { orderNumber: { equals: orderNumber } }, limit: 1, depth: 1 })
+  const res = await payload.find({ collection: 'orders', where: { orderNumber: { equals: orderNumber } }, limit: 1, depth: 2 })
   const order = res.docs[0]
   if (!order) return null
   const ownerId = typeof order.customer === 'object' ? order.customer?.id : order.customer
