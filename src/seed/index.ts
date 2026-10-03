@@ -83,6 +83,29 @@ async function writeIcons() {
   await sharp(Buffer.from(svg)).resize(180, 180).png().toFile(path.join(publicDir, 'apple-touch-icon.png'))
   await sharp(Buffer.from(svg)).resize(192, 192).png().toFile(path.join(publicDir, 'icon-192.png'))
   await sharp(Buffer.from(svg)).resize(512, 512).png().toFile(path.join(publicDir, 'icon-512.png'))
+  await fs.writeFile(path.join(publicDir, 'favicon-dv.ico'), await icoFromSvg(svg))
+}
+
+/** A .ico holding 16, 32 and 48px PNGs (served at /favicon.ico until a favicon is uploaded in the admin). */
+async function icoFromSvg(svg: string): Promise<Buffer> {
+  const sizes = [16, 32, 48]
+  const pngs = await Promise.all(sizes.map((s) => sharp(Buffer.from(svg), { density: 384 }).resize(s, s).png().toBuffer()))
+  const header = Buffer.alloc(6)
+  header.writeUInt16LE(1, 2)
+  header.writeUInt16LE(sizes.length, 4)
+  let offset = 6 + 16 * sizes.length
+  const entries = sizes.map((s, i) => {
+    const e = Buffer.alloc(16)
+    e.writeUInt8(s, 0)
+    e.writeUInt8(s, 1)
+    e.writeUInt16LE(1, 4)
+    e.writeUInt16LE(32, 6)
+    e.writeUInt32LE(pngs[i].length, 8)
+    e.writeUInt32LE(offset, 12)
+    offset += pngs[i].length
+    return e
+  })
+  return Buffer.concat([header, ...entries, ...pngs])
 }
 
 /** The Sunday at least a week from now, 23:59 Bangladesh time. */
