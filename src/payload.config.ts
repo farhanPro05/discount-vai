@@ -53,6 +53,15 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   graphQL: { disable: true },
+  // Background jobs (scheduled publishing) run every minute on the server. Only staff may queue or run them.
+  jobs: {
+    autoRun: [{ cron: '* * * * *', queue: 'default' }],
+    access: {
+      queue: ({ req }) => isStaff(req),
+      run: ({ req }) => isStaff(req),
+      cancel: ({ req }) => isStaff(req),
+    },
+  },
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URL || '' },
