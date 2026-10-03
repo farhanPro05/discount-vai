@@ -93,23 +93,59 @@ function nextSundayNight(): string {
   return d.toISOString()
 }
 
+/**
+ * SEED_ONLY=structure (npm run seed:structure) loads only what a live shop starts from: categories with
+ * their SEO text, size guides, pages and settings. No dummy products, reviews, codes or orders, and it never
+ * deletes anything, so it's the one to run once on a new, empty production database.
+ */
+const STRUCTURE_ONLY = process.env.SEED_ONLY === 'structure'
+
+/** The full seed deletes products, orders and subscribers, so it refuses to touch a live database unless forced. */
+function guardLiveDatabase() {
+  if (STRUCTURE_ONLY || process.env.SEED_FORCE === 'true') return
+  const host = (() => {
+    try {
+      return new URL(process.env.DATABASE_URL || '').hostname
+    } catch {
+      return ''
+    }
+  })()
+  const local = ['localhost', '127.0.0.1', '::1', ''].includes(host)
+  if (process.env.NODE_ENV === 'production' || !local) {
+    throw new Error(
+      `Refusing to seed: it wipes products, orders and subscribers, and this looks like a live database (${host || 'production'}). Set SEED_FORCE=true to run it anyway.`,
+    )
+  }
+}
+
 async function run() {
+  guardLiveDatabase()
   const payload = await getPayload({ config })
   const log = (m: string) => payload.logger.info(`[seed] ${m}`)
 
   const adminEmail = process.env.SEED_ADMIN_EMAIL
   const adminPassword = process.env.SEED_ADMIN_PASSWORD
-  if (!adminEmail || !adminPassword) throw new Error('Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD in .env first.')
+  if (!STRUCTURE_ONLY && (!adminEmail || !adminPassword)) throw new Error('Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD in .env first.')
 
-  log('Clearing old seed data')
-  for (const collection of WIPE) {
-    await payload.delete({ collection, where: { id: { exists: true } }, overrideAccess: true })
+  if (STRUCTURE_ONLY) {
+    for (const collection of ['categories', 'products', 'pages'] as const) {
+      const { totalDocs } = await payload.count({ collection, overrideAccess: true })
+      if (totalDocs) throw new Error(`The database already has ${collection}; the structure seed only runs on an empty database.`)
+    }
+  } else {
+    log('Clearing old seed data')
+    for (const collection of WIPE) {
+      await payload.delete({ collection, where: { id: { exists: true } }, overrideAccess: true })
+    }
   }
 
-  log('Admin user')
-  const admins = await payload.find({ collection: 'users', where: { email: { equals: adminEmail } }, limit: 1 })
-  if (!admins.docs[0]) {
-    await payload.create({ collection: 'users', data: { email: adminEmail, password: adminPassword, name: 'Shop owner', role: 'owner' } })
+  // With no admin in .env (structure seed), /admin asks for the first owner account instead.
+  if (adminEmail && adminPassword) {
+    log('Admin user')
+    const admins = await payload.find({ collection: 'users', where: { email: { equals: adminEmail } }, limit: 1 })
+    if (!admins.docs[0]) {
+      await payload.create({ collection: 'users', data: { email: adminEmail, password: adminPassword, name: 'Shop owner', role: 'owner' } })
+    }
   }
 
   log('Icons')
@@ -221,14 +257,14 @@ async function run() {
     introMore: ' One size, tough canvas and padded straps, built to carry a lot.',
   })
 
-  log('Products and photos (this takes a minute)')
+  if (!STRUCTURE_ONLY) log('Products and photos (this takes a minute)')
   const productIds: Record<number, number> = {}
   // Older products first, then new arrivals from oldest to newest, so "Newest" sorting matches the mockups.
   const order = [
     ...CATALOGUE.filter((p) => !NEW_ARRIVALS.includes(p.id)),
     ...[...NEW_ARRIVALS].reverse().map((id) => CATALOGUE.find((p) => p.id === id) as SeedProduct),
   ]
-  for (const product of order) {
+  for (const product of STRUCTURE_ONLY ? [] : order) {
     const copy = TYPE_COPY[product.k]
     const r = rng(product.id * 97)
     const names = new Set<string>()
@@ -287,8 +323,9 @@ async function run() {
     productIds[product.id] = created.id
   }
 
-  log('Reviews')
-  const reviews = [
+  // Sample reviews are only for local testing: never publish made-up reviews on the live shop.
+  if (!STRUCTURE_ONLY) log('Reviews')
+  const reviews = STRUCTURE_ONLY ? [] : [
     ['Rafi', 'Dhaka', 'Ordered the white Panjabi for Eid. Fabric is soft, stitching is neat and it arrived in a day.', 'Classic Cotton Panjabi', 'panjabi'],
     ['Arif', 'Chattogram', 'Exchanged a size with zero hassle. The chinos fit better than brands twice the price.', 'Slim Fit Cotton Chino', 'trouser'],
     ['Nayeem', 'Sylhet', 'Paid cash on delivery, got a call to confirm first. The backpack has survived a month of commuting.', 'Urban Backpack', 'backpack'],
@@ -495,7 +532,7 @@ async function run() {
       ],
       categoriesHeading: 'Shop by Category',
       newArrivals: { heading: 'New Arrivals', count: 8 },
-      bestSellers: { heading: "Vai's Best Sellers", products: BEST_SELLERS.map((id) => productIds[id]) },
+      bestSellers: { heading: "Vai's Best Sellers", products: BEST_SELLERS.map((id) => productIds[id]).filter(Boolean) },
       deal: {
         eyebrow: 'Ends Sunday, 11:59 pm',
         heading: "Vai's Deals of the Week",
@@ -511,7 +548,7 @@ async function run() {
         eyebrow: 'Featured collection',
         title: 'Dressed for Eid',
         text: 'From ৳1,850. Free delivery over ৳2,000.',
-        products: FEATURED.map((id) => productIds[id]),
+        products: FEATURED.map((id) => productIds[id]).filter(Boolean),
       },
       bags: {
         eyebrow: 'Bags · Unisex',
@@ -590,6 +627,11 @@ async function run() {
       groups: FAQ_GROUPS.map((g) => ({ title: g.title, questions: g.questions.map(([question, answer]) => ({ question, answer })) })),
     },
   })
+
+  if (STRUCTURE_ONLY) {
+    log('Done (structure only: add products, then check every page, setting and placeholder in the admin)')
+    process.exit(0)
+  }
 
   log('Discount code')
   await payload.create({ collection: 'discount-codes', data: { code: 'VAI10', type: 'percent', value: 10, active: true } })
