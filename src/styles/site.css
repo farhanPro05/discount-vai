@@ -3060,7 +3060,7 @@ body.lock {
   }
   .srch-cols {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: 6px;
     margin-top: 0;
     padding: 16px;
@@ -4785,4 +4785,39 @@ body.lock {
   .mt-tile {
     height: 200px;
   }
+}
+
+/* ---------- Small additions for the live site ---------- */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .ga.bs > :nth-child(n + 4) {
+    display: none;
+  }
+}
+button.term {
+  width: 100%;
+  text-align: left;
+}
+.wm img {
+  max-width: 180px;
+  object-fit: contain;
+}
+[hidden] {
+  display: none !important;
+}
+@media (min-width: 1024px) {
+  /* Keep slide text clear of the arrows. */
+  .hero .hero-in {
+    padding-left: calc(var(--pad) + 64px);
+    padding-right: calc(var(--pad) + 64px);
+  }
+}
+@media (max-width: 767.98px) {
+  .ga.rv2 > :nth-child(n + 3) {
+    display: none;
+  }
+}
+.gal-main .ph {
+  display: flex;
+  border: 0;
+  padding: 0;
 }
