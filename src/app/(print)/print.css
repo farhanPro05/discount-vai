@@ -1,0 +1,197 @@
+/* Printable invoice. Colours and fonts come from the theme tokens. */
+.pr {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fb);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.pr-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+  background: var(--surface);
+}
+.pr p {
+  margin: 0;
+}
+.pr-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.pr-btn {
+  min-height: var(--tap);
+  padding: 0 24px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--primary);
+  color: var(--on-primary);
+  font: 600 15px/1 var(--fb);
+  cursor: pointer;
+}
+.pr-lnk {
+  color: var(--text2);
+  text-decoration: underline;
+}
+.pr-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--text);
+}
+.pr-wm {
+  font-family: var(--fd);
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.pr-wm span {
+  font-weight: 500;
+}
+.pr-wm b {
+  font-weight: 800;
+}
+.pr-logo {
+  display: block;
+  max-height: 48px;
+  width: auto;
+}
+.pr-meta {
+  text-align: right;
+}
+.pr-h {
+  font-family: var(--fd);
+  font-size: 24px;
+  font-weight: 700;
+}
+.pr-muted {
+  color: var(--text2);
+  font-size: 13px;
+}
+.pr-lbl {
+  margin-bottom: 4px !important;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.pr-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
+  gap: 24px;
+  margin: 20px 0;
+}
+.pr-due {
+  padding: 16px;
+  border: 2px solid var(--text);
+  border-radius: var(--r-sm);
+}
+.pr-due.paid {
+  border-style: dashed;
+}
+.pr-big {
+  font-family: var(--fd);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.pr-tbl {
+  width: 100%;
+  border-collapse: collapse;
+}
+.pr-tbl th {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.pr-tbl td {
+  padding: 10px 0 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.pr-tbl th {
+  padding-left: 12px;
+}
+.pr-tbl th:first-child,
+.pr-tbl td:first-child {
+  padding-left: 0;
+}
+.pr-tbl .r {
+  text-align: right;
+  white-space: nowrap;
+}
+.pr-sum {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: end;
+  gap: 4px 32px;
+  margin: 16px 0 24px;
+}
+.pr-sum dt {
+  color: var(--text2);
+}
+.pr-sum dd {
+  margin: 0;
+  text-align: right;
+}
+.pr-sum .tot {
+  padding-top: 8px;
+  border-top: 1px solid var(--text);
+  color: var(--text);
+  font-weight: 700;
+}
+.pr-note {
+  margin-bottom: 12px !important;
+  padding: 12px;
+  border-radius: var(--r-sm);
+  background: var(--sunk);
+}
+.pr-foot {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 13px;
+}
+
+@media (max-width: 599.98px) {
+  .pr-page {
+    padding: 20px 16px 32px;
+  }
+  .pr-top,
+  .pr-cols {
+    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
+  }
+  .pr-meta {
+    text-align: left;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  .pr,
+  .pr-page {
+    background: var(--surface);
+  }
+  .pr-page {
+    max-width: none;
+    padding: 0;
+  }
+  .pr-bar {
+    display: none;
+  }
+}

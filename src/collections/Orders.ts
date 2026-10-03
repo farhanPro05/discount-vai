@@ -104,6 +104,7 @@ export const Orders: CollectionConfig = {
   },
   hooks: { beforeChange: [trackStatus], afterChange: [restock, notify] },
   fields: [
+    { name: 'invoice', type: 'ui', admin: { position: 'sidebar', components: { Field: '/admin/PrintInvoice#PrintInvoice' } } },
     {
       type: 'row',
       fields: [
