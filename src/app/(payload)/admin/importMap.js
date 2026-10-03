@@ -1,5 +1,6 @@
 import { SizeRowLabel as SizeRowLabel_78c7c2b7272d7003b2e2fb930012d892 } from '../../../admin/ColourRowLabel'
 import { ColourRowLabel as ColourRowLabel_78c7c2b7272d7003b2e2fb930012d892 } from '../../../admin/ColourRowLabel'
+import { SeoPreview as SeoPreview_b00f62ba431a459ed79d2a8843835f38 } from '../../../admin/SeoPreview'
 import { ExportListMenuItem as ExportListMenuItem_cdf7e044479f899a31f804427d568b36 } from '@payloadcms/plugin-import-export/rsc'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -46,6 +47,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 export const importMap = {
   "/admin/ColourRowLabel#SizeRowLabel": SizeRowLabel_78c7c2b7272d7003b2e2fb930012d892,
   "/admin/ColourRowLabel#ColourRowLabel": ColourRowLabel_78c7c2b7272d7003b2e2fb930012d892,
+  "/admin/SeoPreview#SeoPreview": SeoPreview_b00f62ba431a459ed79d2a8843835f38,
   "@payloadcms/plugin-import-export/rsc#ExportListMenuItem": ExportListMenuItem_cdf7e044479f899a31f804427d568b36,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
