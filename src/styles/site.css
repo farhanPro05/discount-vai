@@ -3814,10 +3814,9 @@ body.lock {
   position: sticky;
   top: 24px;
 }
-.sumc p.muted {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.muted .ic-s,
+.sm .ic-s {
+  vertical-align: -3px;
 }
 @media (max-width: 1023.98px) {
   .cart-l {
