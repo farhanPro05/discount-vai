@@ -138,7 +138,20 @@ export function CartView({ insideFee, freeOver, picks, payLabels }: { insideFee:
           <label className="fld">
             <span className="fl">Discount code</span>
             <span className="fld-row">
-              <input type="text" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="e.g. VAI10" aria-label="Discount code" autoCapitalize="characters" />
+              <input
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                onKeyDown={(e) => {
+                  if (e.key !== 'Enter') return
+                  e.preventDefault()
+                  if (code.trim() && !pending) apply()
+                }}
+                placeholder="e.g. VAI10"
+                aria-label="Discount code"
+                autoCapitalize="characters"
+                enterKeyHint="done"
+              />
               <button className="btn-o" type="button" onClick={apply} disabled={pending || !code.trim()}>
                 {pending ? '…' : 'Apply'}
               </button>

@@ -347,7 +347,21 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
             <label className={`fld${errors.code ? ' is-err' : ''}`}>
               <span className="fl">Discount code</span>
               <span className="fld-row">
-                <input id="co-code" type="text" placeholder="e.g. VAI10" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} autoCapitalize="characters" />
+                <input
+                  id="co-code"
+                  type="text"
+                  placeholder="e.g. VAI10"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    // Enter applies the code instead of submitting the whole order.
+                    if (e.key !== 'Enter') return
+                    e.preventDefault()
+                    if (code.trim() && !checking) applyCode()
+                  }}
+                  autoCapitalize="characters"
+                  enterKeyHint="done"
+                />
                 <button className="btn-o" type="button" onClick={applyCode} disabled={checking || !code.trim()}>
                   {checking ? '…' : 'Apply'}
                 </button>
