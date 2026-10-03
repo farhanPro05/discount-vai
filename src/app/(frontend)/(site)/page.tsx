@@ -88,6 +88,7 @@ export default async function HomePage() {
 
     newArrivals: async () => {
       const { cards } = await listProducts({}, 'newest', 1, home.newArrivals?.count ?? 8)
+      if (!cards.length) return null
       return (
         <section className="sec sec-t" aria-label={home.newArrivals?.heading || 'New Arrivals'}>
           <div className="wrap">
@@ -112,7 +113,9 @@ export default async function HomePage() {
     featured: async () => {
       const f = home.featured
       if (!f?.heading) return null
+      // The layout pairs the photo with product cards, so it waits until the collection has products.
       const cards = await getCards(f.products)
+      if (!cards.length) return null
       return (
         <section className="sec sec-t" aria-labelledby="h-feat">
           <div className="wrap">
