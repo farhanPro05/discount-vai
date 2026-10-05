@@ -12,5 +12,6 @@ export const seoField: Field = {
     { name: 'title', type: 'text', label: 'Page title', maxLength: 70 },
     { name: 'description', type: 'textarea', label: 'Meta description', maxLength: 170 },
     { name: 'image', type: 'upload', relationTo: 'media', label: 'Share image' },
+    { name: 'preview', type: 'ui', admin: { components: { Field: '/admin/SeoPreview#SeoPreview' } } },
   ],
 }

@@ -1425,11 +1425,13 @@ body.lock {
 .bars {
   display: flex;
   gap: 4px;
+  min-height: 24px; /* same height with or without bars, so names line up across the row */
   padding: 0 4px;
 }
 .bar {
   flex: 1;
-  height: 14px;
+  /* Tall enough to tap (24px minimum); the visible line stays thin. */
+  height: 24px;
   position: relative;
 }
 .bar::after {
@@ -3060,7 +3062,7 @@ body.lock {
   }
   .srch-cols {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: 6px;
     margin-top: 0;
     padding: 16px;
@@ -3814,10 +3816,9 @@ body.lock {
   position: sticky;
   top: 24px;
 }
-.sumc p.muted {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.muted .ic-s,
+.sm .ic-s {
+  vertical-align: -3px;
 }
 @media (max-width: 1023.98px) {
   .cart-l {
@@ -4230,6 +4231,14 @@ body.lock {
 .auth-card .pg-h1 {
   margin: 8px 0 0;
   font-size: 30px;
+}
+/* Forgot / reset password: the card on its own, centred. */
+.auth.one {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 50vh;
+}
+.auth.one .auth-card > p {
+  margin: 0;
 }
 .row-sb {
   display: flex;
@@ -4784,5 +4793,104 @@ body.lock {
   }
   .mt-tile {
     height: 200px;
+  }
+}
+
+/* ---------- Small additions for the live site ---------- */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .ga.bs > :nth-child(n + 4) {
+    display: none;
+  }
+}
+button.term {
+  width: 100%;
+  text-align: left;
+}
+.wm img {
+  max-width: 180px;
+  object-fit: contain;
+}
+[hidden] {
+  display: none !important;
+}
+@media (min-width: 1024px) {
+  /* Keep slide text clear of the arrows. */
+  .hero .hero-in {
+    padding-left: calc(var(--pad) + 64px);
+    padding-right: calc(var(--pad) + 64px);
+  }
+}
+@media (max-width: 767.98px) {
+  .ga.rv2 > :nth-child(n + 3) {
+    display: none;
+  }
+}
+.gal-main .ph {
+  display: flex;
+  border: 0;
+  padding: 0;
+}
+/* The mobile menu lives inside the sticky header; lift the header above everything while it's open. */
+.hwrap.open {
+  z-index: 100;
+}
+
+/* ---------- Loading skeletons ---------- */
+.sk-page {
+  padding-top: 16px;
+  padding-bottom: var(--sec);
+}
+.sk {
+  display: block;
+  max-width: 100%;
+  border-radius: var(--r-xs);
+  background: var(--sunk);
+  animation: sk-pulse 1.4s ease-in-out infinite;
+}
+.sk-ph {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  border-radius: var(--r-sm);
+}
+.sk-pill {
+  border-radius: 999px;
+}
+.sk-bc {
+  margin: 8px 0 16px;
+}
+.sk-t {
+  margin: 14px 0 8px;
+}
+.sk-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.sk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.sk-col .sk-row {
+  margin-bottom: 0;
+}
+.sk-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+@keyframes sk-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sk {
+    animation: none;
   }
 }

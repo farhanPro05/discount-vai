@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -52,11 +53,33 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   graphQL: { disable: true },
+  // Background jobs (scheduled publishing) run every minute on the server. Only staff may queue or run them.
+  jobs: {
+    autoRun: [{ cron: '* * * * *', queue: 'default' }],
+    access: {
+      queue: ({ req }) => isStaff(req),
+      run: ({ req }) => isStaff(req),
+      cancel: ({ req }) => isStaff(req),
+    },
+  },
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URL || '' },
   }),
   sharp,
+  // Without SMTP settings Payload prints emails to the server log instead of sending them.
+  email: process.env.SMTP_HOST
+    ? nodemailerAdapter({
+        defaultFromAddress: process.env.EMAIL_FROM || process.env.SMTP_USER || '',
+        defaultFromName: 'Discount Vai',
+        transportOptions: {
+          host: process.env.SMTP_HOST,
+          port: Number(process.env.SMTP_PORT) || 587,
+          secure: Number(process.env.SMTP_PORT) === 465,
+          auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        },
+      })
+    : undefined,
   plugins: [
     redirectsPlugin({
       collections: ['products', 'categories', 'pages'],

@@ -1,6 +1,9 @@
 import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { isOwner, isStaff } from '../access'
+import { newOrderAlertEmail, orderConfirmationEmail } from '../lib/emails'
+import { isPlaceholder } from '../lib/format'
+import type { Order } from '../payload-types'
 
 export const ORDER_STATUSES = [
   { label: 'Pending', value: 'pending' },
@@ -35,7 +38,7 @@ type Item = { product?: number | { id: number } | null; colour?: string | null; 
 const restock: CollectionAfterChangeHook = async ({ doc, previousDoc, req, operation }) => {
   if (operation !== 'update') return doc
   const back = ['cancelled', 'returned']
-  if (!back.includes(doc.status) || back.includes(previousDoc?.status)) return doc
+  if (!doc.stockCommitted || !back.includes(doc.status) || back.includes(previousDoc?.status)) return doc
   for (const item of (doc.items ?? []) as Item[]) {
     const id = typeof item.product === 'object' ? item.product?.id : item.product
     if (!id) continue
@@ -46,6 +49,34 @@ const restock: CollectionAfterChangeHook = async ({ doc, previousDoc, req, opera
         : { ...c, sizes: (c.sizes ?? []).map((s) => (s.size === item.size ? { ...s, stock: (s.stock ?? 0) + (item.qty ?? 0) } : s)) },
     )
     await req.payload.update({ collection: 'products', id, data: { colours }, req, overrideAccess: true })
+  }
+  return doc
+}
+
+/**
+ * Email the customer and the shop once an order is real: stock is taken when a COD order is placed
+ * or when an online payment is validated, so that's the moment to send. A failed email never
+ * blocks the order; it's logged instead.
+ */
+const notify: CollectionAfterChangeHook = async ({ doc, previousDoc, req, operation }) => {
+  if (operation !== 'update' || !doc.stockCommitted || previousDoc?.stockCommitted) return doc
+  const order = doc as Order
+  try {
+    const [commerce, site] = await Promise.all([
+      req.payload.findGlobal({ slug: 'commerce', depth: 0, req }),
+      req.payload.findGlobal({ slug: 'site', depth: 0, req }),
+    ])
+    const sends: Promise<unknown>[] = []
+    if (commerce.customerEmails !== false && order.contact.email) {
+      const mail = orderConfirmationEmail(order, isPlaceholder(site.phone) ? null : site.phone)
+      sends.push(req.payload.sendEmail({ to: order.contact.email, ...(site.email && !isPlaceholder(site.email) ? { replyTo: site.email } : {}), ...mail }))
+    }
+    const shop = commerce.orderAlertEmail || site.email
+    if (shop) sends.push(req.payload.sendEmail({ to: shop, ...newOrderAlertEmail(order) }))
+    const results = await Promise.allSettled(sends)
+    for (const r of results) if (r.status === 'rejected') req.payload.logger.error({ err: r.reason }, `Order email for ${order.orderNumber} failed`)
+  } catch (err) {
+    req.payload.logger.error({ err }, `Order emails for ${order.orderNumber} failed`)
   }
   return doc
 }
@@ -71,8 +102,9 @@ export const Orders: CollectionConfig = {
     update: ({ req }) => isStaff(req),
     delete: ({ req }) => isOwner(req),
   },
-  hooks: { beforeChange: [trackStatus], afterChange: [restock] },
+  hooks: { beforeChange: [trackStatus], afterChange: [restock, notify] },
   fields: [
+    { name: 'invoice', type: 'ui', admin: { position: 'sidebar', components: { Field: '/admin/PrintInvoice#PrintInvoice' } } },
     {
       type: 'row',
       fields: [
@@ -213,6 +245,8 @@ export const Orders: CollectionConfig = {
       ],
     },
     { name: 'customer', type: 'relationship', relationTo: 'customers', admin: { position: 'sidebar', readOnly: true } },
+    // Set once the items have been taken out of stock (COD: when placed; online: when paid).
+    { name: 'stockCommitted', type: 'checkbox', defaultValue: false, admin: { hidden: true } },
     {
       name: 'accessToken',
       type: 'text',

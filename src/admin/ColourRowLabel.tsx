@@ -17,3 +17,11 @@ export const ColourRowLabel = () => {
     </span>
   )
 }
+
+/** Shows "M · 6 in stock" on each size row instead of "Size 01". */
+export const SizeRowLabel = () => {
+  const { data, rowNumber } = useRowLabel<{ size?: string; stock?: number }>()
+  if (!data?.size) return <span>{`Size ${String((rowNumber ?? 0) + 1).padStart(2, '0')}`}</span>
+  const n = Number(data.stock) || 0
+  return <span>{`${data.size} · ${n > 0 ? `${n} in stock` : 'sold out'}`}</span>
+}

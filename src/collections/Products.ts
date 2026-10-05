@@ -46,7 +46,8 @@ export const Products: CollectionConfig = {
     listSearchableFields: ['name', 'slug'],
     description: 'Each product can have several colours. Each colour has its own photos and stock per size.',
   },
-  versions: { drafts: true },
+  // Editors can schedule a product to go live (or come down) at a set time; see jobs in payload.config.ts.
+  versions: { drafts: { schedulePublish: true } },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },
   hooks: { beforeChange: [computeHelpers], afterChange: [redirectOnSlugChange('products')] },
   fields: [
@@ -135,7 +136,11 @@ export const Products: CollectionConfig = {
           name: 'sizes',
           type: 'array',
           labels: { singular: 'Size', plural: 'Sizes' },
-          admin: { description: 'Stock for each size. Set stock to 0 when a size sells out.' },
+          admin: {
+            description: 'Stock for each size. Set stock to 0 when a size sells out.',
+            initCollapsed: true,
+            components: { RowLabel: '/admin/ColourRowLabel#SizeRowLabel' },
+          },
           fields: [
             {
               type: 'row',

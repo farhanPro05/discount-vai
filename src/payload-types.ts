@@ -141,6 +141,7 @@ export interface Config {
     tasks: {
       createCollectionExport: TaskCreateCollectionExport;
       createCollectionImport: TaskCreateCollectionImport;
+      schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
         output: unknown;
@@ -542,6 +543,7 @@ export interface Order {
     message?: string | null;
   };
   customer?: (number | null) | Customer;
+  stockCommitted?: boolean | null;
   accessToken?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -968,7 +970,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'createCollectionExport' | 'createCollectionImport';
+        taskSlug: 'inline' | 'createCollectionExport' | 'createCollectionImport' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -1001,7 +1003,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'createCollectionExport' | 'createCollectionImport') | null;
+  taskSlug?: ('inline' | 'createCollectionExport' | 'createCollectionImport' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -1372,6 +1374,7 @@ export interface OrdersSelect<T extends boolean = true> {
         message?: T;
       };
   customer?: T;
+  stockCommitted?: T;
   accessToken?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1963,6 +1966,18 @@ export interface Site {
   instagram?: string | null;
   tiktok?: string | null;
   messenger?: string | null;
+  /**
+   * Google Analytics → Admin → Data streams → your website.
+   */
+  googleAnalyticsId?: string | null;
+  /**
+   * Search Console → Settings → Ownership verification → HTML tag. Paste only the code inside content="…".
+   */
+  googleVerification?: string | null;
+  /**
+   * Events Manager → Data sources → your Pixel. Tracks page views, add to cart, checkout and purchases.
+   */
+  metaPixelId?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1985,6 +2000,10 @@ export interface Commerce {
    */
   freeDeliveryOver?: number | null;
   exchangeDays?: number | null;
+  nextSteps?: {
+    call?: string | null;
+    ship?: string | null;
+  };
   codEnabled?: boolean | null;
   codZones?: ('inside' | 'outside')[] | null;
   /**
@@ -1996,6 +2015,14 @@ export interface Commerce {
    */
   onlineEnabled?: boolean | null;
   onlineLabels?: string | null;
+  /**
+   * Leave empty to use the shop email in Header, footer & contact → Contact & social.
+   */
+  orderAlertEmail?: string | null;
+  /**
+   * Emails are sent through the mail server set in the server settings (.env: SMTP_HOST and friends).
+   */
+  customerEmails?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2215,6 +2242,9 @@ export interface SiteSelect<T extends boolean = true> {
   instagram?: T;
   tiktok?: T;
   messenger?: T;
+  googleAnalyticsId?: T;
+  googleVerification?: T;
+  metaPixelId?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2238,11 +2268,19 @@ export interface CommerceSelect<T extends boolean = true> {
       };
   freeDeliveryOver?: T;
   exchangeDays?: T;
+  nextSteps?:
+    | T
+    | {
+        call?: T;
+        ship?: T;
+      };
   codEnabled?: T;
   codZones?: T;
   codAdvanceDelivery?: T;
   onlineEnabled?: T;
   onlineLabels?: T;
+  orderAlertEmail?: T;
+  customerEmails?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2319,6 +2357,31 @@ export interface TaskCreateCollectionImport {
     debug?: boolean | null;
     defaultVersionStatus?: ('draft' | 'published') | null;
     maxLimit?: number | null;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSchedulePublish".
+ */
+export interface TaskSchedulePublish {
+  input: {
+    type?: ('publish' | 'unpublish') | null;
+    locale?: string | null;
+    doc?: {
+      relationTo: 'products';
+      value: number | Product;
+    } | null;
+    global?: string | null;
+    user?:
+      | ({
+          relationTo: 'customers';
+          value: number | Customer;
+        } | null)
+      | ({
+          relationTo: 'users';
+          value: number | User;
+        } | null);
   };
   output?: unknown;
 }
