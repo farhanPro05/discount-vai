@@ -59,6 +59,10 @@ Turn the approved Claude Design mockups (Option D, in `design/claude-design-mock
 7. **SSLCommerz:** sandbox integration (init, success / fail / cancel, IPN validation), behind the admin switch.
 8. **QA and launch prep:** every page at 390 / 768 / 1440, Lighthouse, link check, deployment plan (hosting, Postgres, image storage, domain).
 
+## Progress (branch `feature/foundation`)
+- **Done (milestone 1, back end):** scaffold, branding off, all collections and settings in the admin, theme tokens + ported styles (`src/styles/`), seed with dummy catalogue and placeholder photos (`npm run seed`).
+- **Next:** storefront pages. Start with `src/lib` (Payload client, catalogue queries, formatting), then `src/app/(frontend)/layout.tsx` (fonts, `data-palette`, cart provider) and a `(site)` layout with header, footer and pop-up; then milestones 2–8 above. Use `app/global-not-found.tsx` so unknown URLs never show the default framework 404.
+
 ## Open questions
 - Courier, real delivery charges and free-delivery threshold (placeholders: ৳70 / ৳130 / ৳2,000).
 - Should COD orders pay the delivery charge in advance? (Admin switch, off by default.)

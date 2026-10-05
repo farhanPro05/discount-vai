@@ -1,0 +1,36 @@
+/* Discount Vai admin branding. Uses the admin's own theme variables so light and dark mode both work. */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&display=swap');
+
+.dv-admin-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.22em;
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--theme-text);
+
+  span {
+    font-weight: 500;
+  }
+
+  b {
+    font-weight: 800;
+  }
+}
+
+.dv-admin-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--theme-text);
+  color: var(--theme-bg);
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
