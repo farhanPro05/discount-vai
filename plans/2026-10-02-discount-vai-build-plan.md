@@ -1,7 +1,7 @@
 # Discount Vai Build Plan
 
 - **Date:** 2026-10-02
-- **Status:** In development: all 8 milestones built, waiting for your review before merging to `main`
+- **Status:** Done: all 8 milestones built, approved and merged into `main` on 2026-10-06 (tag `v0.9-build-complete`). Launch is still pending: see Deployment.
 - **Related plans:** [Research and Site Plan](2026-10-02-discount-vai-website-research-and-site-plan.md) · [Claude Design Mockup Prompt](2026-10-02-claude-design-mockup-prompt.md)
 
 ## Goal
@@ -60,7 +60,7 @@ Turn the approved Claude Design mockups (Option D, in `design/claude-design-mock
 8. **QA and launch prep:** every page at 390 / 768 / 1440, Lighthouse, link check, deployment plan (hosting, Postgres, image storage, domain).
 
 ## Progress
-Two branches, neither merged yet (the git rule: merge after you approve):
+Built on two branches, both approved and merged into `main` on 2026-10-06 and tagged `v0.9-build-complete`:
 - `feature/foundation` (5 commits): milestone 1.
 - `feature/storefront` (built on top of foundation): milestones 2–8.
 
