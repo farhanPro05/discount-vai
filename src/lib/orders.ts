@@ -131,8 +131,10 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
   if (input.zone !== 'inside' && input.zone !== 'outside') errors.zone = 'Choose a delivery zone.'
   if (Object.keys(errors).length) return { ok: false, errors, message: 'Please check the highlighted fields.' }
 
+  // Inside-Dhaka delivery (and its lower charge) is only for addresses in Dhaka.
+  const zone: CheckoutInput['zone'] = input.district.trim() === 'Dhaka' ? input.zone : 'outside'
   const commerce = await getCommerceInfo()
-  if (input.payment === 'cod' && (!commerce.codEnabled || !commerce.codZones.includes(input.zone)))
+  if (input.payment === 'cod' && (!commerce.codEnabled || !commerce.codZones.includes(zone)))
     return {
       ok: false,
       message: commerce.onlineEnabled
@@ -153,7 +155,7 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
     discount = c.discount
     code = c.code
   }
-  const fee = input.zone === 'inside' ? commerce.inside.fee : commerce.outside.fee
+  const fee = zone === 'inside' ? commerce.inside.fee : commerce.outside.fee
   const delivery = commerce.freeOver && subtotal >= commerce.freeOver ? 0 : fee
   const total = Math.max(0, subtotal - discount + delivery)
 
@@ -173,7 +175,7 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
     customer: customerId ?? null,
     contact: { name: input.name.trim(), phone: normalisePhone(input.phone), email: input.email?.trim() || null },
     address: { district: input.district.trim(), area: input.area.trim(), line: input.address.trim() },
-    zone: input.zone,
+    zone,
     items: items.map((i) => ({
       product: i.productId,
       name: i.name,
