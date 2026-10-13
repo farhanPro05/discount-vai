@@ -109,7 +109,7 @@ Built on two branches, both approved and merged into `main` on 2026-10-06 and ta
 
 **First launch:**
 1. Create an empty production database.
-2. Run these on the server. Keep the app running with pm2 in **fork mode (one instance)** or systemd. The stock lock and background jobs (abandoned-payment release, scheduled publishing) assume a single app process, so don't use pm2 cluster mode or several containers:
+2. Run these on the server. Keep the app running with pm2 in **fork mode (one instance)** or systemd. The stock lock and background jobs (abandoned-payment release, scheduled publishing) assume a single app process, so don't use pm2 cluster mode or several containers. The reverse proxy must pass the visitor's IP (Nginx: `proxy_set_header X-Real-IP $remote_addr;`; Caddy and Cloudflare do this already), since the public forms are rate-limited per visitor:
    ```bash
    npm ci && npm run migrate && npm run build && npm run start
    ```
