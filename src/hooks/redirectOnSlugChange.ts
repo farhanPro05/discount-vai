@@ -1,4 +1,4 @@
-import type { CollectionAfterChangeHook, Payload } from 'payload'
+import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, Payload } from 'payload'
 
 type Slugged = { id: number; slug?: string | null; parent?: number | { id: number; slug?: string | null } | null }
 
@@ -19,6 +19,23 @@ export async function pathFor(
   return parent?.slug ? `/${parent.slug}/${doc.slug}` : `/${doc.slug}`
 }
 
+const liveKey = (id: number | string) => `liveSlug:${id}`
+
+/**
+ * For collections with drafts (products): before a publish, note the address that is live right now.
+ * Payload's `previousDoc` is the latest version, which may be a draft that already carries the new
+ * slug, so comparing with it would miss the change (draft saved first, published later).
+ */
+export const rememberLiveSlug: CollectionBeforeChangeHook = async ({ data, operation, originalDoc, req, context, collection }) => {
+  if (operation !== 'update' || !originalDoc?.id || context?.stockUpdate || data?._status === 'draft') return data
+  const live = await req.payload
+    .findByID({ collection: collection.slug as 'products', id: originalDoc.id, depth: 0, draft: false, overrideAccess: true, req })
+    .catch(() => null)
+  // req.context, not the hook's `context` argument: the after-change hook doesn't always get the same object.
+  req.context[liveKey(originalDoc.id)] = live && live._status === 'published' ? { slug: live.slug } : null
+  return data
+}
+
 /**
  * When a slug changes, keep the old web address working: add a redirect from the old path
  * to the document (the redirect follows the document if it moves again).
@@ -28,9 +45,12 @@ export const redirectOnSlugChange =
   async ({ doc, previousDoc, operation, req, context }) => {
     // Stock-only saves (orders) never change the address.
     if (context?.stockUpdate) return doc
-    if (operation !== 'update' || !previousDoc?.slug || previousDoc.slug === doc.slug) return doc
-    if ((doc as { _status?: string })._status === 'draft') return doc
-    const from = await pathFor(collection, previousDoc as Slugged, req.payload)
+    if (operation !== 'update' || (doc as { _status?: string })._status === 'draft') return doc
+    // Drafts: compare with what was live before this publish (rememberLiveSlug), not the latest draft.
+    const key = liveKey(doc.id)
+    const before = key in req.context ? (req.context[key] as { slug?: string | null } | null) : previousDoc
+    if (!before?.slug || before.slug === doc.slug) return doc
+    const from = await pathFor(collection, { ...(previousDoc as Slugged), slug: before.slug }, req.payload)
     if (!from) return doc
     const existing = await req.payload.find({ collection: 'redirects', where: { from: { equals: from } }, limit: 1, req })
     const data = { from, to: { type: 'reference' as const, reference: { relationTo: collection, value: doc.id } } }

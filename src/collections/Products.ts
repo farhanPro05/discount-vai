@@ -4,7 +4,7 @@ import { publishedOrStaff, staffOnly } from '../access'
 import { seoField } from '../fields/seo'
 import { shapeField } from '../fields/shapes'
 import { slugField } from '../fields/slug'
-import { redirectOnSlugChange } from '../hooks/redirectOnSlugChange'
+import { redirectOnSlugChange, rememberLiveSlug } from '../hooks/redirectOnSlugChange'
 import { variantKey } from '../lib/sorts'
 
 type ColourRow = { name?: string | null; sizes?: { size?: string | null; stock?: number | null }[] | null }
@@ -62,7 +62,7 @@ export const Products: CollectionConfig = {
   // Editors can schedule a product to go live (or come down) at a set time; see jobs in payload.config.ts.
   versions: { drafts: { schedulePublish: true } },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },
-  hooks: { beforeChange: [computeHelpers], afterChange: [redirectOnSlugChange('products')] },
+  hooks: { beforeChange: [computeHelpers, rememberLiveSlug], afterChange: [redirectOnSlugChange('products')] },
   fields: [
     { name: 'name', type: 'text', required: true },
     slugField('name'),
