@@ -55,6 +55,7 @@ You need Node.js 20.9 or newer and PostgreSQL (17 is used in development).
 | `npm run lint` / `npm run typecheck` | Code checks |
 | `npm run seed` | Reset the local database to the dummy catalogue (refuses live databases) |
 | `npm run seed:structure` | Load only categories, size guides, pages and settings into an empty database (for a new live shop) |
+| `npm run check:shop` | Check the stock and order rules against the local database (places, cancels and deletes test orders, then restores everything) |
 | `npm run migrate` | Apply database migrations (production) |
 | `npm run migrate:create <name>` | Record a migration after changing collections or settings fields |
 | `npm run generate:types` | Refresh `src/payload-types.ts` after changing collections |
