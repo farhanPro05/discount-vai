@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { buildWhere, getNav, listProducts, suggest, type ListFilters, type SortKey } from '../../lib/catalog'
+import { buildWhere, getNav, listProducts, suggest, toCard, type ListFilters, type SortKey } from '../../lib/catalog'
 import { CUSTOMER_COOKIE, getCustomer, isBdPhone, normalisePhone } from '../../lib/customer'
 import {
   beginPayment,
@@ -17,6 +17,7 @@ import {
 } from '../../lib/orders'
 import { getClient } from '../../lib/payload'
 import { getCommerceInfo } from '../../lib/settings'
+import type { CardProduct } from '../../lib/types'
 import { holdOrder } from '../../lib/stock'
 
 type SubscriberSource = 'popup' | 'footer' | 'home-teaser' | 'coming-soon' | 'checkout' | 'account'
@@ -54,6 +55,22 @@ export async function searchDefaultsAction() {
     .flatMap((t) => t.children.filter((c) => !c.soon).map((c) => c.label.replace(/\s*\(.*\)/, '').toLowerCase()))
     .slice(0, 6)
   return { picks: cards, popular }
+}
+
+/** Current cards (price, stock) for products remembered in the browser, in the same order; removed ones are dropped. */
+export async function freshCardsAction(slugs: string[]): Promise<CardProduct[]> {
+  const list = (Array.isArray(slugs) ? slugs : []).filter((s): s is string => typeof s === 'string' && s.length < 200).slice(0, 12)
+  if (!list.length) return []
+  const payload = await getClient()
+  const res = await payload.find({
+    collection: 'products',
+    where: { and: [{ _status: { equals: 'published' } }, { slug: { in: list } }] },
+    depth: 1,
+    limit: list.length,
+    pagination: false,
+  })
+  const bySlug = new Map(res.docs.map((p) => [p.slug, toCard(p)]))
+  return list.map((s) => bySlug.get(s)).filter((c): c is CardProduct => !!c)
 }
 
 export async function loadMoreAction(filters: ListFilters, sort: SortKey, page: number) {

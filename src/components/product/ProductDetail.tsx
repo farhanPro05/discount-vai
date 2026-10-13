@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
+import { freshCardsAction } from '../../app/(frontend)/actions'
 import type { ShapeKey } from '../../fields/shapes'
 import { taka } from '../../lib/format'
 import type { CardProduct, Img } from '../../lib/types'
@@ -110,19 +111,22 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
       return
     }
     if (stock <= 0) return
-    add({
-      productId: p.id,
-      slug: p.slug,
-      name: p.name,
-      colour: colour.name,
-      size: chosen,
-      qty: Math.min(qty, stock),
-      price: p.price,
-      was: p.was,
-      image: photos[0] ?? null,
-      shape: p.shape,
-      hex: colour.hex,
-    })
+    add(
+      {
+        productId: p.id,
+        slug: p.slug,
+        name: p.name,
+        colour: colour.name,
+        size: chosen,
+        qty: Math.min(qty, stock),
+        price: p.price,
+        was: p.was,
+        image: photos[0] ?? null,
+        shape: p.shape,
+        hex: colour.hex,
+      },
+      stock,
+    )
     if (thenCheckout) router.push('/checkout')
   }
 
@@ -428,7 +432,21 @@ const NONE: CardProduct[] = []
 export function RecentlyViewed({ current }: { current: string }) {
   const list = useStoredJSON<CardProduct[]>('dv-recent', NONE)
   // Matched by link, so entries stay correct even if a product is re-created with a new id.
-  const items = Array.isArray(list) ? list.filter((c, i) => c.href !== current && list.findIndex((o) => o.href === c.href) === i).slice(0, 4) : NONE
+  const saved = Array.isArray(list) ? list.filter((c, i) => c.href !== current && list.findIndex((o) => o.href === c.href) === i).slice(0, 4) : NONE
+  // The saved cards can be days old: show them at once, then swap in current prices and stock.
+  const key = saved.map((c) => c.slug).join(',')
+  const [fresh, setFresh] = useState<{ key: string; cards: CardProduct[] } | null>(null)
+  useEffect(() => {
+    if (!key) return
+    let live = true
+    freshCardsAction(key.split(','))
+      .then((cards) => live && setFresh({ key, cards }))
+      .catch(() => null)
+    return () => {
+      live = false
+    }
+  }, [key])
+  const items = fresh?.key === key ? fresh.cards : saved
   if (!items.length) return null
   return (
     <section className="sec sec-t" aria-labelledby="h-recent">
