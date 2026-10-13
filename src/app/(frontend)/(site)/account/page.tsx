@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { AuthForms } from '../../../../components/account/AuthForms'
 import { Lifestyle } from '../../../../components/ui/Art'
 import { getCustomer } from '../../../../lib/customer'
+import { safePath } from '../../../../lib/format'
 
 export const metadata: Metadata = { title: 'Log in or register', robots: { index: false, follow: false } }
 
@@ -11,7 +12,8 @@ type Props = { searchParams: Promise<{ next?: string; tab?: string }> }
 
 export default async function AccountPage({ searchParams }: Props) {
   const { next, tab } = await searchParams
-  if (await getCustomer()) redirect(next?.startsWith('/') ? next : '/account/orders')
+  const back = safePath(next, '/account/orders')
+  if (await getCustomer()) redirect(back)
   return (
     <div className="wrap auth">
       <Lifestyle className="auth-side show-d" shapes={['panjabi', 'tee']} sizes="50vw">
@@ -25,7 +27,7 @@ export default async function AccountPage({ searchParams }: Props) {
           </ul>
         </div>
       </Lifestyle>
-      <AuthForms next={next?.startsWith('/') ? next : '/account/orders'} startTab={tab === 'register' ? 'reg' : 'login'} />
+      <AuthForms next={back} startTab={tab === 'register' ? 'reg' : 'login'} />
     </div>
   )
 }

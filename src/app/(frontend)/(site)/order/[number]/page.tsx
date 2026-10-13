@@ -20,7 +20,7 @@ export default async function OrderPage({ params, searchParams }: Props) {
   const customer = await getCustomer()
   const order = await getOrderForViewer(number, t, customer?.id)
   if (!order) notFound()
-  if (order.paymentStatus === 'failed') redirect(`/order/${order.orderNumber}/payment-failed?t=${t ?? ''}`)
+  if (order.paymentStatus === 'failed') redirect(`/order/${order.orderNumber}/payment-failed?t=${encodeURIComponent(t ?? '')}`)
   const commerce = await getCommerceInfo()
   const eta = order.zone === 'inside' ? commerce.inside.eta : commerce.outside.eta
   const first = order.contact.name.split(' ')[0]

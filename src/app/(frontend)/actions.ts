@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 
 import { buildWhere, getNav, listProducts, suggest, toCard, type ListFilters, type SortKey } from '../../lib/catalog'
 import { CUSTOMER_COOKIE, getCustomer, isBdPhone, normalisePhone } from '../../lib/customer'
+import { safePath } from '../../lib/format'
 import {
   beginPayment,
   checkCode,
@@ -107,7 +108,7 @@ const paidUp = (o: { paymentStatus: string; paymentMethod: string; advancePaid?:
 export async function retryPaymentAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
   const order = await getOrderForViewer(orderNumber, token)
   if (!order) return { ok: false, message: 'We could not find that order.' }
-  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${token}`)
+  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${encodeURIComponent(token)}`)
   if (CLOSED.includes(order.status)) return { ok: false, message: 'This order was cancelled. Please place a new order.' }
   const commerce = await getCommerceInfo()
   if (!commerce.onlineEnabled) return { ok: false, message: 'Online payment is not available right now. Please switch to Cash on Delivery.' }
@@ -125,7 +126,7 @@ export async function retryPaymentAction(orderNumber: string, token: string): Pr
 export async function switchToCodAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
   const order = await getOrderForViewer(orderNumber, token)
   if (!order) return { ok: false, message: 'We could not find that order.' }
-  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${token}`)
+  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${encodeURIComponent(token)}`)
   if (CLOSED.includes(order.status)) return { ok: false, message: 'This order was cancelled. Please place a new order.' }
   const commerce = await getCommerceInfo()
   if (!commerce.codEnabled || !commerce.codZones.includes(order.zone))
@@ -136,7 +137,7 @@ export async function switchToCodAction(orderNumber: string, token: string): Pro
   const payload = await getClient()
   const held = await holdOrder(payload, order.id, { paymentMethod: 'cod', paymentStatus: 'unpaid_cod' })
   if (!held.ok) return { ok: false, message: `Sorry, part of this order sold out in the meantime. ${held.problems.join(' ')}` }
-  redirect(`/order/${order.orderNumber}?t=${token}`)
+  redirect(`/order/${order.orderNumber}?t=${encodeURIComponent(token)}`)
 }
 
 /** Contact page form. */
@@ -188,7 +189,7 @@ export async function loginAction(_prev: AuthState, form: FormData): Promise<Aut
   const id = String(form.get('identifier') ?? '').trim()
   const password = String(form.get('password') ?? '')
   const remember = form.get('remember') === 'on'
-  const next = String(form.get('next') ?? '/account/orders')
+  const next = safePath(form.get('next'), '/account/orders')
   if (!id || !password) return { error: 'Enter your phone or email and your password.', fields: { identifier: id } }
   const payload = await getClient()
   try {
@@ -199,7 +200,7 @@ export async function loginAction(_prev: AuthState, form: FormData): Promise<Aut
   } catch {
     return { error: "That phone/email and password don't match. Try again or reset your password.", fields: { identifier: id } }
   }
-  redirect(next.startsWith('/') ? next : '/account/orders')
+  redirect(next)
 }
 
 export async function registerAction(_prev: AuthState, form: FormData): Promise<AuthState> {
