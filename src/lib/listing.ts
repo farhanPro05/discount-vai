@@ -34,7 +34,7 @@ export function parseListing(sp: SearchParams, defaultSort: SortKey = 'newest'):
     min: num(sp.min),
     max: num(sp.max),
     sale: one(sp.sale) === '1',
-    sort: sort in SORTS ? sort : defaultSort,
+    sort: Object.hasOwn(SORTS, sort) ? sort : defaultSort,
     page: Math.max(1, num(sp.page) ?? 1),
     q: one(sp.q).trim().slice(0, 80),
   }
