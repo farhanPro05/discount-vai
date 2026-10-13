@@ -39,4 +39,20 @@ A review of the rest of the codebase. Each finding is listed below with its fix.
 - Order emails and discount-code counting happen when an order is **confirmed**: COD placed, or online/advance payment validated.
 
 ## Progress
-(updated as each item is committed)
+**Part 1: done** (branch `feature/stock-fixes`)
+
+| Item | Commit |
+|---|---|
+| 1. Draft-safe stock updates | `254daa5` (with item 2) |
+| 2. Reserve at checkout, release on failed/abandoned payment, flag late payments, cancel/return/delete/re-open | `254daa5` |
+| Retry payment / Switch to COD checks | `254daa5` |
+| Online payment "Coming soon" everywhere; COD only (user request) | `f17c2e1` |
+| 3. Product page sold-out display | `9156ca8` |
+| 4a + 4d. Sold-out last in listings; filters by real stock; admin stock warning | `fdeba12` |
+| 4b, 4c, 4e. Search marks sold out; recently viewed refreshed; cart capped at stock | `f806524` |
+
+Tested on the local database:
+- A 23-step stock test: simultaneous checkouts, pending drafts, COD order with a code, cancel twice, stale admin form, re-open (with and without stock), abandoned payment, retry, double release.
+- In the browser: product page states, cart cap, recently viewed refresh, search, filters, and sold-out sorting.
+
+**Part 2: code audit** (findings and fixes listed below as they're made)
