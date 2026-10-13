@@ -88,10 +88,15 @@ export async function checkCode(raw: string, subtotal: number): Promise<{ ok: tr
   return { ok: true, code, discount, label: d.type === 'percent' ? `${d.value}% off` : `৳${d.value} off` }
 }
 
+/** Order numbers only go up: the highest ever issued is remembered, so deleting an order never frees its number. */
 async function nextOrderNumber(): Promise<string> {
   const payload = await getClient()
-  const last = await payload.find({ collection: 'orders', sort: '-createdAt', limit: 1, depth: 0, select: { orderNumber: true } })
-  const n = Number((last.docs[0]?.orderNumber ?? 'DV-24817').replace(/\D/g, '')) || 24817
+  const [last, commerce] = await Promise.all([
+    payload.find({ collection: 'orders', sort: '-createdAt', limit: 1, depth: 0, select: { orderNumber: true } }),
+    payload.findGlobal({ slug: 'commerce', depth: 0 }),
+  ])
+  const latest = Number((last.docs[0]?.orderNumber ?? '').replace(/\D/g, '')) || 0
+  const n = Math.max(latest, commerce.lastOrderNumber ?? 0, 24817)
   for (let i = 1; i < 50; i++) {
     const candidate = `DV-${n + i}`
     const exists = await payload.find({ collection: 'orders', where: { orderNumber: { equals: candidate } }, limit: 1, depth: 0 })
@@ -206,6 +211,12 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
     }
   }
   const { orderNumber } = order
+  // Remember the highest number issued (see nextOrderNumber).
+  const issued = Number(orderNumber.replace(/\D/g, '')) || 0
+  const commerceNow = await payload.findGlobal({ slug: 'commerce', depth: 0 })
+  if (issued > (commerceNow.lastOrderNumber ?? 0)) {
+    await payload.updateGlobal({ slug: 'commerce', data: { lastOrderNumber: issued }, overrideAccess: true }).catch(() => null)
+  }
 
   if (input.subscribe && input.email?.trim()) {
     await payload

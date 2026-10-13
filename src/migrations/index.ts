@@ -5,6 +5,7 @@ import * as migration_20261003_073103_scheduled_publishing from './20261003_0731
 import * as migration_20261013_064024_stock_holds from './20261013_064024_stock_holds';
 import * as migration_20261013_065314_drop_footer_payment_labels from './20261013_065314_drop_footer_payment_labels';
 import * as migration_20261013_065821_stock_flags_for_listings from './20261013_065821_stock_flags_for_listings';
+import * as migration_20261013_234544_order_number_mark from './20261013_234544_order_number_mark';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261013_065821_stock_flags_for_listings.up,
     down: migration_20261013_065821_stock_flags_for_listings.down,
-    name: '20261013_065821_stock_flags_for_listings'
+    name: '20261013_065821_stock_flags_for_listings',
+  },
+  {
+    up: migration_20261013_234544_order_number_mark.up,
+    down: migration_20261013_234544_order_number_mark.down,
+    name: '20261013_234544_order_number_mark'
   },
 ];
