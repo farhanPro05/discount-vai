@@ -265,7 +265,8 @@ export const Orders: CollectionConfig = {
       name: 'payment',
       type: 'group',
       label: 'Online payment details',
-      admin: { condition: (data) => data?.paymentMethod === 'online' },
+      // Online orders, and COD orders that paid the delivery charge in advance.
+      admin: { condition: (data) => data?.paymentMethod === 'online' || !!data?.payment?.tranId },
       fields: [
         { name: 'tranId', type: 'text', label: 'Transaction ID', index: true, admin: { readOnly: true } },
         { name: 'valId', type: 'text', label: 'Validation ID', admin: { readOnly: true } },
