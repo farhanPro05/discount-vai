@@ -14,6 +14,8 @@ const fillFrom =
   (source: string): FieldHook =>
   ({ value, data, originalDoc }) => {
     if (typeof value === 'string' && value.trim()) return toSlug(value)
+    // Not sent at all (e.g. a scheduled publish only changes the status): keep the current address.
+    if (value === undefined && typeof originalDoc?.slug === 'string' && originalDoc.slug) return originalDoc.slug
     const from = data?.[source] ?? originalDoc?.[source]
     return typeof from === 'string' ? toSlug(from) : value
   }
