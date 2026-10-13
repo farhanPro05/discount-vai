@@ -250,7 +250,7 @@ export const Orders: CollectionConfig = {
         },
       ],
     },
-    { name: 'staffNotes', type: 'textarea', label: 'Staff notes (private)' },
+    { name: 'staffNotes', type: 'textarea', label: 'Staff notes (private)', access: { read: ({ req }) => isStaff(req) } },
     {
       name: 'timeline',
       type: 'array',
@@ -281,6 +281,7 @@ export const Orders: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       label: 'Holding stock',
+      access: { read: ({ req }) => isStaff(req) },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -291,6 +292,7 @@ export const Orders: CollectionConfig = {
       name: 'stockProblem',
       type: 'textarea',
       label: 'Stock problem',
+      access: { read: ({ req }) => isStaff(req) },
       admin: {
         readOnly: true,
         position: 'sidebar',
