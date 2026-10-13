@@ -9,7 +9,6 @@ import { CUSTOMER_COOKIE, getCustomer, isBdPhone, normalisePhone } from '../../l
 import {
   beginPayment,
   checkCode,
-  commitStock,
   getOrderForViewer,
   placeOrder,
   priceCart,
@@ -18,6 +17,7 @@ import {
 } from '../../lib/orders'
 import { getClient } from '../../lib/payload'
 import { getCommerceInfo } from '../../lib/settings'
+import { holdOrder } from '../../lib/stock'
 
 type SubscriberSource = 'popup' | 'footer' | 'home-teaser' | 'coming-soon' | 'checkout' | 'account'
 
@@ -82,14 +82,24 @@ export async function placeOrderAction(input: CheckoutInput) {
   return placeOrder(input, customer?.id ?? null)
 }
 
+const CLOSED = ['cancelled', 'returned']
+const paidUp = (o: { paymentStatus: string; paymentMethod: string; advancePaid?: number | null }) =>
+  o.paymentStatus === 'paid' || (o.paymentMethod === 'cod' && (o.advancePaid ?? 0) > 0)
+
 /** "Retry payment" on the payment-failed page. */
 export async function retryPaymentAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
   const order = await getOrderForViewer(orderNumber, token)
   if (!order) return { ok: false, message: 'We could not find that order.' }
+  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${token}`)
+  if (CLOSED.includes(order.status)) return { ok: false, message: 'This order was cancelled. Please place a new order.' }
   const commerce = await getCommerceInfo()
   if (!commerce.onlineEnabled) return { ok: false, message: 'Online payment is not available right now. Please switch to Cash on Delivery.' }
+  // Its items may have been released while the payment was pending: take them again first.
+  const payload = await getClient()
+  const held = await holdOrder(payload, order.id)
+  if (!held.ok) return { ok: false, message: `Sorry, part of this order sold out in the meantime. ${held.problems.join(' ')}` }
   const amount = order.paymentMethod === 'online' ? order.total : order.delivery
-  const res = await beginPayment(order, amount)
+  const res = await beginPayment({ ...order, stockCommitted: true }, amount)
   if (!res.ok) return { ok: false, message: res.message }
   redirect(res.url)
 }
@@ -98,18 +108,17 @@ export async function retryPaymentAction(orderNumber: string, token: string): Pr
 export async function switchToCodAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
   const order = await getOrderForViewer(orderNumber, token)
   if (!order) return { ok: false, message: 'We could not find that order.' }
-  if (order.paymentStatus === 'paid') redirect(`/order/${order.orderNumber}?t=${token}`)
+  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${token}`)
+  if (CLOSED.includes(order.status)) return { ok: false, message: 'This order was cancelled. Please place a new order.' }
   const commerce = await getCommerceInfo()
   if (!commerce.codEnabled || !commerce.codZones.includes(order.zone))
     return { ok: false, message: 'Cash on Delivery is not available for this address.' }
+  if (commerce.codAdvance && order.delivery > 0)
+    return { ok: false, message: 'Cash on Delivery needs the delivery charge paid online first. Please retry the payment.' }
+  // Take the items again (they may have been released) and confirm the order as COD in one step.
   const payload = await getClient()
-  const updated = await payload.update({
-    collection: 'orders',
-    id: order.id,
-    overrideAccess: true,
-    data: { paymentMethod: 'cod', paymentStatus: 'unpaid_cod' },
-  })
-  await commitStock(updated)
+  const held = await holdOrder(payload, order.id, { paymentMethod: 'cod', paymentStatus: 'unpaid_cod' })
+  if (!held.ok) return { ok: false, message: `Sorry, part of this order sold out in the meantime. ${held.problems.join(' ')}` }
   redirect(`/order/${order.orderNumber}?t=${token}`)
 }
 

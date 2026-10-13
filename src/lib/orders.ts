@@ -5,6 +5,7 @@ import { normalisePhone, isBdPhone } from './customer'
 import { getClient } from './payload'
 import { getCommerceInfo } from './settings'
 import { startPayment } from './sslcommerz'
+import { releaseOrder, releaseStock, reserveStock } from './stock'
 
 export type CheckoutLine = { productId: number; colour: string; size: string; qty: number }
 
@@ -98,30 +99,6 @@ async function nextOrderNumber(): Promise<string> {
   return `DV-${Date.now().toString().slice(-7)}`
 }
 
-/** Take the ordered items out of stock (once per order) and count them as sold. */
-export async function commitStock(order: Order): Promise<void> {
-  if (order.stockCommitted) return
-  const payload = await getClient()
-  for (const item of order.items) {
-    const id = typeof item.product === 'object' ? item.product?.id : item.product
-    if (!id) continue
-    const p = await payload.findByID({ collection: 'products', id, depth: 0, draft: true }).catch(() => null)
-    if (!p) continue
-    const colours = (p.colours ?? []).map((c) =>
-      c.name !== item.colour
-        ? c
-        : { ...c, sizes: (c.sizes ?? []).map((s) => (s.size === item.size ? { ...s, stock: Math.max(0, (s.stock ?? 0) - item.qty) } : s)) },
-    )
-    await payload.update({ collection: 'products', id, data: { colours, salesCount: (p.salesCount ?? 0) + item.qty }, overrideAccess: true })
-  }
-  await payload.update({ collection: 'orders', id: order.id, data: { stockCommitted: true }, overrideAccess: true })
-  if (order.discountCode) {
-    const res = await payload.find({ collection: 'discount-codes', where: { code: { equals: order.discountCode } }, limit: 1, depth: 0 })
-    const d = res.docs[0]
-    if (d) await payload.update({ collection: 'discount-codes', id: d.id, data: { used: (d.used ?? 0) + 1 }, overrideAccess: true })
-  }
-}
-
 export type CheckoutInput = {
   lines: CheckoutLine[]
   name: string
@@ -175,6 +152,11 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
   const total = Math.max(0, subtotal - discount + delivery)
 
   const payload = await getClient()
+  // Take the stock now, in the same step as the final check, so two shoppers can't both buy the last one.
+  // Online orders hold it while the customer pays; it's given back if the payment fails or is abandoned.
+  const held = await reserveStock(payload, items)
+  if (!held.ok) return { ok: false, message: 'Some items sold out while you were checking out. Please review your cart.', problems: held.problems }
+
   const orderNumber = await nextOrderNumber()
   const accessToken = randomBytes(16).toString('hex')
   const needsGateway = input.payment === 'online' || (input.payment === 'cod' && commerce.codAdvance && delivery > 0)
@@ -207,7 +189,11 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
       discountCode: code,
       total,
       notes: input.notes?.trim() || null,
+      stockCommitted: true,
     },
+  }).catch(async (err) => {
+    await releaseStock(payload, items)
+    throw err
   })
 
   if (input.subscribe && input.email?.trim()) {
@@ -217,10 +203,7 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
   }
 
   const confirmUrl = `/order/${orderNumber}?t=${accessToken}`
-  if (!needsGateway) {
-    await commitStock(order)
-    return { ok: true, redirect: confirmUrl }
-  }
+  if (!needsGateway) return { ok: true, redirect: confirmUrl }
   const amount = input.payment === 'online' ? total : delivery
   const pay = await beginPayment(order, amount)
   return pay.ok ? { ok: true, redirect: pay.url } : { ok: true, redirect: `/order/${orderNumber}/payment-failed?t=${accessToken}` }
@@ -238,12 +221,8 @@ export async function beginPayment(order: Order, amount: number): Promise<{ ok: 
   })
   const res = await startPayment(order, amount, tranId)
   if ('url' in res) return { ok: true, url: res.url }
-  await payload.update({
-    collection: 'orders',
-    id: order.id,
-    overrideAccess: true,
-    data: { paymentStatus: 'failed', payment: { ...(order.payment ?? {}), tranId, message: res.error } },
-  })
+  // The gateway didn't open: give the stock back until the customer retries or switches to COD.
+  await releaseOrder(payload, order.id, { paymentStatus: 'failed', payment: { ...(order.payment ?? {}), tranId, message: res.error } })
   return { ok: false, message: res.error }
 }
 

@@ -110,6 +110,7 @@ export function newOrderAlertEmail(o: Order): Mail {
     `${o.contact.name}, ${taka(o.total)}, ${method}`,
     `<h1 style="margin:0 0 8px;font-size:22px;color:${INK}">New order ${esc(o.orderNumber)}</h1>
 <p style="margin:0 0 20px;font-size:15px;line-height:1.5;color:${MUTED}">${esc(taka(o.total))} · ${esc(paymentLine(o))}</p>
+${o.stockProblem ? `<p style="margin:0 0 20px;padding:12px;border:2px solid ${INK};font-size:14px;line-height:1.5;color:${INK}"><b>Stock problem:</b> ${esc(o.stockProblem)}</p>` : ''}
 <p style="margin:0 0 4px;font-size:13px;color:${MUTED};text-transform:uppercase;letter-spacing:.06em">Customer</p>
 <p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:${INK}">${esc(o.contact.name)}<br>${esc(o.contact.phone)}${o.contact.email ? `<br>${esc(o.contact.email)}` : ''}<br>${esc(address)} (${esc(zoneLabel(o.zone))})</p>
 ${o.notes ? `<p style="margin:0 0 4px;font-size:13px;color:${MUTED};text-transform:uppercase;letter-spacing:.06em">Notes</p><p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:${INK}">${esc(o.notes)}</p>` : ''}
@@ -117,7 +118,7 @@ ${o.notes ? `<p style="margin:0 0 4px;font-size:13px;color:${MUTED};text-transfo
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:12px 0 24px">${totalRows(o)}</table>
 ${button(link, 'Open in admin')}`,
   )
-  const text = `New order ${o.orderNumber}: ${taka(o.total)}, ${paymentLine(o)}
+  const text = `New order ${o.orderNumber}: ${taka(o.total)}, ${paymentLine(o)}${o.stockProblem ? `\nSTOCK PROBLEM: ${o.stockProblem}` : ''}
 
 Customer: ${o.contact.name}, ${o.contact.phone}${o.contact.email ? `, ${o.contact.email}` : ''}
 Address: ${address} (${zoneLabel(o.zone)})${o.notes ? `\nNotes: ${o.notes}` : ''}

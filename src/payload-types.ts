@@ -123,6 +123,7 @@ export interface Config {
     brand: Brand;
     site: Site;
     commerce: Commerce;
+    'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
@@ -131,6 +132,7 @@ export interface Config {
     brand: BrandSelect<false> | BrandSelect<true>;
     site: SiteSelect<false> | SiteSelect<true>;
     commerce: CommerceSelect<false> | CommerceSelect<true>;
+    'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -139,6 +141,7 @@ export interface Config {
   user: Customer | User;
   jobs: {
     tasks: {
+      releaseUnpaidOrders: TaskReleaseUnpaidOrders;
       createCollectionExport: TaskCreateCollectionExport;
       createCollectionImport: TaskCreateCollectionImport;
       schedulePublish: TaskSchedulePublish;
@@ -543,7 +546,14 @@ export interface Order {
     message?: string | null;
   };
   customer?: (number | null) | Customer;
+  /**
+   * Ticked while this order holds its items. Cancelling or returning the order gives them back automatically.
+   */
   stockCommitted?: boolean | null;
+  /**
+   * The customer paid, but these items had sold out. Refund them or restock before shipping.
+   */
+  stockProblem?: string | null;
   accessToken?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -970,7 +980,8 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'createCollectionExport' | 'createCollectionImport' | 'schedulePublish';
+        taskSlug:
+          'inline' | 'releaseUnpaidOrders' | 'createCollectionExport' | 'createCollectionImport' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -1003,10 +1014,20 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'createCollectionExport' | 'createCollectionImport' | 'schedulePublish') | null;
+  taskSlug?:
+    ('inline' | 'releaseUnpaidOrders' | 'createCollectionExport' | 'createCollectionImport' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1375,6 +1396,7 @@ export interface OrdersSelect<T extends boolean = true> {
       };
   customer?: T;
   stockCommitted?: T;
+  stockProblem?: T;
   accessToken?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1675,6 +1697,7 @@ export interface PayloadJobsSelect<T extends boolean = true> {
   queue?: T;
   waitUntil?: T;
   processing?: T;
+  meta?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2028,6 +2051,24 @@ export interface Commerce {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats".
+ */
+export interface PayloadJobsStat {
+  id: number;
+  stats?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
@@ -2287,6 +2328,16 @@ export interface CommerceSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats_select".
+ */
+export interface PayloadJobsStatsSelect<T extends boolean = true> {
+  stats?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -2294,6 +2345,14 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskReleaseUnpaidOrders".
+ */
+export interface TaskReleaseUnpaidOrders {
+  input?: unknown;
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

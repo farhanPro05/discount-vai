@@ -27,6 +27,7 @@ import { Faq } from './globals/Faq'
 import { Home } from './globals/Home'
 import { Popup } from './globals/Popup'
 import { Site } from './globals/Site'
+import { releaseUnpaidOrders } from './jobs/releaseUnpaidOrders'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -56,6 +57,7 @@ export default buildConfig({
   // Background jobs (scheduled publishing) run every minute on the server. Only staff may queue or run them.
   jobs: {
     autoRun: [{ cron: '* * * * *', queue: 'default' }],
+    tasks: [releaseUnpaidOrders],
     access: {
       queue: ({ req }) => isStaff(req),
       run: ({ req }) => isStaff(req),
