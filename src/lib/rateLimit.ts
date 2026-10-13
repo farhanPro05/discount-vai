@@ -47,7 +47,7 @@ const MIN = 60_000
 export const LIMITS = {
   order: { max: 10, windowMs: 60 * MIN },
   payment: { max: 20, windowMs: 60 * MIN },
-  code: { max: 30, windowMs: 10 * MIN },
+  code: { max: 60, windowMs: 10 * MIN },
   subscribe: { max: 10, windowMs: 60 * MIN },
   message: { max: 5, windowMs: 60 * MIN },
   login: { max: 20, windowMs: 15 * MIN },
