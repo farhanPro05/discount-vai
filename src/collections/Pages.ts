@@ -76,7 +76,7 @@ export const Pages: CollectionConfig = {
   hooks: { afterChange: [redirectOnSlugChange('pages')] },
   fields: [
     { name: 'title', type: 'text', required: true },
-    slugField('title'),
+    slugField('title', 'pages'),
     { name: 'lead', type: 'textarea', label: 'Intro paragraph' },
     {
       name: 'layout',

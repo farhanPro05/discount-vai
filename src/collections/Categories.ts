@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, PayloadRequest, Where } from 'payload'
 
 import { anyone, staffOnly } from '../access'
 import { seoField } from '../fields/seo'
@@ -21,7 +21,7 @@ export const Categories: CollectionConfig = {
   hooks: { afterChange: [redirectOnSlugChange('categories')] },
   fields: [
     { name: 'name', type: 'text', required: true, admin: { description: 'Shown in menus, e.g. "2/4 Pants".' } },
-    slugField('name'),
+    slugField('name', 'categories'),
     {
       name: 'status',
       type: 'select',
@@ -38,9 +38,22 @@ export const Categories: CollectionConfig = {
       name: 'parent',
       type: 'relationship',
       relationTo: 'categories',
-      admin: { position: 'sidebar', description: 'Leave empty for a top-level category.' },
-      // A category can't be its own parent. (No id yet while creating.)
-      filterOptions: ({ id }) => (id ? { id: { not_equals: id } } : true),
+      admin: { position: 'sidebar', description: 'Leave empty for a top-level category. Menus have two levels, so pick a top-level one.' },
+      // Only top-level categories, never itself. (No id yet while creating.)
+      filterOptions: ({ id }): Where => (id ? { and: [{ id: { not_equals: id } }, { parent: { exists: false } }] } : { parent: { exists: false } }),
+      // The menu and addresses have two levels (/men/panjabi): keep categories to that.
+      validate: async (value: unknown, { req, id }: { req: PayloadRequest; id?: number | string }) => {
+        const pid = typeof value === 'object' && value ? (value as { id: number }).id : (value as number | null | undefined)
+        if (!pid) return true
+        if (pid === id) return 'A category can’t be inside itself.'
+        const parent = await req.payload.findByID({ collection: 'categories', id: pid, depth: 0, overrideAccess: true, req }).catch(() => null)
+        if (parent?.parent) return 'Choose a top-level category: menus have two levels.'
+        if (id) {
+          const kids = await req.payload.count({ collection: 'categories', where: { parent: { equals: id } }, overrideAccess: true, req })
+          if (kids.totalDocs) return 'This category has its own subcategories, so it has to stay top-level.'
+        }
+        return true
+      },
     },
     {
       name: 'order',
