@@ -1,3 +1,4 @@
+import { SITE_URL } from '../../../../../lib/format'
 import { getClient } from '../../../../../lib/payload'
 import { transactionOutcome, validatePayment } from '../../../../../lib/sslcommerz'
 import { holdOrder, releaseOrder } from '../../../../../lib/stock'
@@ -7,7 +8,8 @@ import { holdOrder, releaseOrder } from '../../../../../lib/stock'
  * /ipn server-to-server. A payment only counts once SSLCommerz's validation API confirms it.
  */
 
-const go = (req: Request, path: string) => Response.redirect(new URL(path, req.url), 303)
+// Built on the site's address, not the request's: behind a reverse proxy the request may say localhost.
+const go = (_req: Request, path: string) => Response.redirect(new URL(path, SITE_URL), 303)
 
 export async function POST(req: Request, { params }: { params: Promise<{ result: string }> }) {
   const { result } = await params
