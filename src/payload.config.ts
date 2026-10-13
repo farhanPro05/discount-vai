@@ -54,6 +54,8 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   graphQL: { disable: true },
+  // Uploads above 15 MB are refused (product photos should be far smaller; see the Media help text).
+  upload: { limits: { fileSize: 15_000_000 } },
   // Background jobs (scheduled publishing) run every minute on the server. Only staff may queue or run them.
   jobs: {
     autoRun: [{ cron: '* * * * *', queue: 'default' }],
