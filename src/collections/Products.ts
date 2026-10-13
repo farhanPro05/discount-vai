@@ -5,8 +5,10 @@ import { seoField } from '../fields/seo'
 import { shapeField } from '../fields/shapes'
 import { slugField } from '../fields/slug'
 import { redirectOnSlugChange } from '../hooks/redirectOnSlugChange'
+import { variantKey } from '../lib/sorts'
 
 type ColourRow = { name?: string | null; sizes?: { size?: string | null; stock?: number | null }[] | null }
+
 
 /** Keep the hidden helper fields (used for sorting and filtering) in step with what the owner typed. */
 const computeHelpers: CollectionBeforeChangeHook = ({ data }) => {
@@ -15,12 +17,20 @@ const computeHelpers: CollectionBeforeChangeHook = ({ data }) => {
   const onSale = sale != null && sale > 0 && sale < price
   const colours = (data.colours ?? []) as ColourRow[]
   const sizes = new Set<string>()
+  const inStockColours = new Set<string>()
+  const variants = new Set<string>()
   let stock = 0
   for (const c of colours) {
     for (const s of c.sizes ?? []) {
       const n = Number(s.stock) || 0
       stock += n
-      if (n > 0 && s.size) sizes.add(s.size)
+      if (n > 0 && s.size) {
+        sizes.add(s.size)
+        if (c.name) {
+          inStockColours.add(c.name)
+          variants.add(variantKey(c.name, s.size))
+        }
+      }
     }
   }
   return {
@@ -29,7 +39,10 @@ const computeHelpers: CollectionBeforeChangeHook = ({ data }) => {
     onSale,
     discountPercent: onSale ? Math.round((1 - (sale as number) / price) * 100) : 0,
     totalStock: stock,
+    inStock: stock > 0,
     availableSizes: [...sizes],
+    availableColours: [...inStockColours],
+    variants: [...variants],
     colourNames: colours.map((c) => c.name).filter(Boolean),
   }
 }
@@ -137,7 +150,8 @@ export const Products: CollectionConfig = {
           type: 'array',
           labels: { singular: 'Size', plural: 'Sizes' },
           admin: {
-            description: 'Stock for each size. Set stock to 0 when a size sells out.',
+            description:
+              'Stock for each size (0 = sold out). Orders take stock automatically, so reload this page before changing stock if it has been open a while; saving puts back the numbers you see.',
             initCollapsed: true,
             components: { RowLabel: '/admin/ColourRowLabel#SizeRowLabel' },
           },
@@ -187,7 +201,10 @@ export const Products: CollectionConfig = {
     { name: 'onSale', type: 'checkbox', index: true, admin: hidden },
     { name: 'discountPercent', type: 'number', admin: hidden },
     { name: 'totalStock', type: 'number', label: 'Stock', admin: { ...hidden, hidden: false } },
+    { name: 'inStock', type: 'checkbox', index: true, admin: hidden },
     { name: 'availableSizes', type: 'text', hasMany: true, admin: hidden },
+    { name: 'availableColours', type: 'text', hasMany: true, admin: hidden },
+    { name: 'variants', type: 'text', hasMany: true, admin: hidden },
     { name: 'colourNames', type: 'text', hasMany: true, admin: hidden },
     { name: 'salesCount', type: 'number', defaultValue: 0, index: true, admin: { ...hidden, hidden: false, description: 'Units sold. Used for "Best selling".' } },
   ],

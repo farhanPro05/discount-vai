@@ -260,7 +260,7 @@ export interface Product {
      */
     images?: (number | Media)[] | null;
     /**
-     * Stock for each size. Set stock to 0 when a size sells out.
+     * Stock for each size (0 = sold out). Orders take stock automatically, so reload this page before changing stock if it has been open a while; saving puts back the numbers you see.
      */
     sizes?:
       | {
@@ -295,7 +295,10 @@ export interface Product {
   onSale?: boolean | null;
   discountPercent?: number | null;
   totalStock?: number | null;
+  inStock?: boolean | null;
   availableSizes?: string[] | null;
+  availableColours?: string[] | null;
+  variants?: string[] | null;
   colourNames?: string[] | null;
   /**
    * Units sold. Used for "Best selling".
@@ -1193,7 +1196,10 @@ export interface ProductsSelect<T extends boolean = true> {
   onSale?: T;
   discountPercent?: T;
   totalStock?: T;
+  inStock?: T;
   availableSizes?: T;
+  availableColours?: T;
+  variants?: T;
   colourNames?: T;
   salesCount?: T;
   updatedAt?: T;

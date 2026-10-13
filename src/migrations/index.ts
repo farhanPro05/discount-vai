@@ -4,6 +4,7 @@ import * as migration_20261003_071825_analytics_settings from './20261003_071825
 import * as migration_20261003_073103_scheduled_publishing from './20261003_073103_scheduled_publishing';
 import * as migration_20261013_064024_stock_holds from './20261013_064024_stock_holds';
 import * as migration_20261013_065314_drop_footer_payment_labels from './20261013_065314_drop_footer_payment_labels';
+import * as migration_20261013_065821_stock_flags_for_listings from './20261013_065821_stock_flags_for_listings';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20261013_065314_drop_footer_payment_labels.up,
     down: migration_20261013_065314_drop_footer_payment_labels.down,
-    name: '20261013_065314_drop_footer_payment_labels'
+    name: '20261013_065314_drop_footer_payment_labels',
+  },
+  {
+    up: migration_20261013_065821_stock_flags_for_listings.up,
+    down: migration_20261013_065821_stock_flags_for_listings.down,
+    name: '20261013_065821_stock_flags_for_listings'
   },
 ];
