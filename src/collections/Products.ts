@@ -148,6 +148,8 @@ export const Products: CollectionConfig = {
         {
           name: 'sizes',
           type: 'array',
+          // A colour with no sizes can never be bought; at least one row (stock can be 0).
+          minRows: 1,
           labels: { singular: 'Size', plural: 'Sizes' },
           admin: {
             description:
