@@ -4,7 +4,7 @@ import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
-import { buildConfig } from 'payload'
+import { buildConfig, type PayloadRequest } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
@@ -30,6 +30,12 @@ import { Site } from './globals/Site'
 import { releaseUnpaidOrders } from './jobs/releaseUnpaidOrders'
 
 const filename = fileURLToPath(import.meta.url)
+
+const staffOnlyAccess = {
+  read: ({ req }: { req: PayloadRequest }) => isStaff(req),
+  create: ({ req }: { req: PayloadRequest }) => isStaff(req),
+  delete: ({ req }: { req: PayloadRequest }) => isStaff(req),
+}
 
 /** The site's own address, with and without www: admin cookies are only accepted from these (CSRF). */
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
@@ -102,6 +108,10 @@ export default buildConfig({
         { slug: 'subscribers', import: false, export: { format: 'csv', disableJobsQueue: true } },
         { slug: 'orders', import: false, export: { format: 'csv', disableJobsQueue: true } },
       ],
+      // Exports hold every order and subscriber: staff only. (The plugin's default lets any logged-in
+      // user in, and shoppers with accounts count as users.)
+      overrideExportCollection: ({ collection }) => ({ ...collection, access: { ...collection.access, ...staffOnlyAccess } }),
+      overrideImportCollection: ({ collection }) => ({ ...collection, access: { ...collection.access, ...staffOnlyAccess } }),
     }),
   ],
 })
