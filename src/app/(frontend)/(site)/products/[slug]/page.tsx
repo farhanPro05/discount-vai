@@ -106,7 +106,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
       freeOver: commerce.freeOver,
       exchangeDays: commerce.exchangeDays,
     },
-    payments: [commerce.codEnabled ? 'Cash on Delivery' : null, ...(commerce.onlineEnabled ? commerce.onlineLabels : [])].filter(Boolean).join(', ') || 'Cash on Delivery',
+    payments: commerce.payments.join(', ') || 'Cash on Delivery',
     shareUrl: absoluteUrl(`/products/${p.slug}`),
   }
 

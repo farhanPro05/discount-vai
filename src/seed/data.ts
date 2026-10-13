@@ -295,12 +295,12 @@ export const MEN_FAQS = [
   ['How do I find my size?', 'Every product page has a Size Guide with chest, length and waist in inches. If you are between sizes, go one up for a relaxed fit.'],
   ['How much is delivery?', 'Inside Dhaka ৳70 (1 to 2 days), outside Dhaka ৳130 (2 to 4 days). Free on orders over ৳2,000.'],
   ['Can I exchange if it does not fit?', 'Yes. Exchange any unworn item within 7 days of delivery. We pick it up and drop the new size.'],
-  ['Can I pay on delivery?', 'Yes, Cash on Delivery works everywhere in Bangladesh. You can also pay online with bKash, Nagad or card.'],
+  ['Can I pay on delivery?', 'Yes, Cash on Delivery works everywhere in Bangladesh. Online payment is coming soon.'],
 ]
 
 export const PANJABI_FAQS = [
   ['Do your Panjabi run true to size?', 'Yes, our Panjabi use a regular fit. Check the Size Guide for chest and length; size up for a looser festive look.'],
-  ['Will my order arrive before Eid?', 'Order at least 4 days before Eid outside Dhaka and 2 days inside Dhaka. Festive rush dates are shown at checkout.'],
+  ['Will my order arrive before Eid?', 'Order at least 4 days before Eid outside Dhaka and 2 days inside Dhaka.'],
   ['How should I wash embroidered Panjabi?', 'Hand wash cold, inside out, and dry in shade. Iron on the reverse side to protect the embroidery.'],
   ['Can I exchange a Panjabi after Eid?', 'Unworn items with tags can be exchanged within 7 days of delivery, festive season included.'],
 ]
@@ -310,7 +310,7 @@ export const FAQ_GROUPS = [
     title: 'Orders and payment',
     questions: [
       ['Can I pay Cash on Delivery?', 'Yes. Cash on Delivery works anywhere in Bangladesh. We call to confirm before we ship.'],
-      ['Which online payments do you take?', 'bKash, Nagad, Visa and Mastercard, all through SSLCommerz’s secure page.'],
+      ['Can I pay online?', 'Online payment with bKash, Nagad and cards is coming soon. For now every order is Cash on Delivery: you pay the rider when it arrives.'],
       ['Do I need an account to order?', 'No. Guest checkout only needs your phone number and address.'],
     ],
   },
@@ -319,7 +319,7 @@ export const FAQ_GROUPS = [
     questions: [
       ['How much is delivery?', 'Inside Dhaka ৳70, outside Dhaka ৳130. Free on orders over ৳2,000.'],
       ['How long does it take?', '1 to 2 days inside Dhaka, 2 to 4 days elsewhere. Festive seasons can add a day.'],
-      ['How do I track my order?', 'Use Track Order in the menu, or the SMS link we send when it ships.'],
+      ['How do I track my order?', 'Use Track Order in the menu with your order number and phone, or open the link in your confirmation email.'],
     ],
   },
   {

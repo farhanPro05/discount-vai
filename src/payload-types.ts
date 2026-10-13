@@ -1973,10 +1973,6 @@ export interface Site {
   };
   promise?: string | null;
   newsletterLabel?: string | null;
-  /**
-   * Separated by commas.
-   */
-  paymentLabels?: string | null;
   phone?: string | null;
   /**
    * With country code, digits only.
@@ -2273,7 +2269,6 @@ export interface SiteSelect<T extends boolean = true> {
       };
   promise?: T;
   newsletterLabel?: T;
-  paymentLabels?: T;
   phone?: T;
   whatsapp?: T;
   email?: T;

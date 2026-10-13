@@ -9,7 +9,6 @@ export const metadata: Metadata = { title: 'Your cart', robots: { index: false, 
 
 export default async function CartPage() {
   const [commerce, picks] = await Promise.all([getCommerceInfo(), listProducts({}, 'best', 1, 4)])
-  const payLabels = [commerce.codEnabled ? 'Cash on Delivery' : null, ...(commerce.onlineEnabled ? commerce.onlineLabels : [])].filter(Boolean) as string[]
   return (
     <div className="wrap pg-pad">
       <nav className="bc" aria-label="Breadcrumb">
@@ -19,7 +18,7 @@ export default async function CartPage() {
           Cart
         </span>
       </nav>
-      <CartView insideFee={commerce.inside.fee} freeOver={commerce.freeOver} picks={picks.cards} payLabels={payLabels.length ? payLabels : ['Cash on Delivery']} />
+      <CartView insideFee={commerce.inside.fee} freeOver={commerce.freeOver} picks={picks.cards} payLabels={commerce.payments.length ? commerce.payments : ['Cash on Delivery']} />
     </div>
   )
 }

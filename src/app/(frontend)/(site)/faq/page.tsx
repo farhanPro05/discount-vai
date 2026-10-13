@@ -9,7 +9,7 @@ import { getFaq } from '../../../../lib/settings'
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions',
-  description: 'Answers on Cash on Delivery, online payment, delivery charges and times across Bangladesh, and our 7-day exchange.',
+  description: 'Answers on ordering, payment, delivery charges and times across Bangladesh, and our 7-day exchange.',
   alternates: { canonical: '/faq' },
 }
 

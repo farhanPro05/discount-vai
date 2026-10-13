@@ -132,7 +132,12 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
 
   const commerce = await getCommerceInfo()
   if (input.payment === 'cod' && (!commerce.codEnabled || !commerce.codZones.includes(input.zone)))
-    return { ok: false, message: 'Cash on Delivery is not available for this address. Please pay online.' }
+    return {
+      ok: false,
+      message: commerce.onlineEnabled
+        ? 'Cash on Delivery is not available for this address. Please pay online.'
+        : 'Sorry, we can’t take orders for this address yet. Please contact us and we’ll help.',
+    }
   if (input.payment === 'online' && !commerce.onlineEnabled) return { ok: false, message: 'Online payment is coming soon. Please choose Cash on Delivery.' }
 
   const { items, subtotal, problems } = await priceCart(input.lines ?? [])

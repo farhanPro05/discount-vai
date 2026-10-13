@@ -28,6 +28,8 @@ export type CommerceInfo = {
   codAdvance: boolean
   onlineEnabled: boolean
   onlineLabels: string[]
+  /** What customers can pay with right now: Cash on Delivery, plus online methods once they're switched on. */
+  payments: string[]
   nextSteps: { call: string; ship: string }
 }
 
@@ -35,6 +37,10 @@ export type CommerceInfo = {
 export async function getCommerceInfo(): Promise<CommerceInfo> {
   const c = await getCommerce()
   const sslReady = !!(process.env.SSLCOMMERZ_STORE_ID && process.env.SSLCOMMERZ_STORE_PASSWORD)
+  const onlineLabels = (c.onlineLabels || 'bKash, Nagad, Visa, Mastercard')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
   return {
     inside: c.inside,
     outside: c.outside,
@@ -44,10 +50,8 @@ export async function getCommerceInfo(): Promise<CommerceInfo> {
     codZones: c.codZones?.length ? c.codZones : ['inside', 'outside'],
     codAdvance: !!c.codAdvanceDelivery && !!c.onlineEnabled && sslReady,
     onlineEnabled: !!c.onlineEnabled && sslReady,
-    onlineLabels: (c.onlineLabels || 'bKash, Nagad, Visa, Mastercard')
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean),
+    onlineLabels,
+    payments: [...(c.codEnabled !== false ? ['Cash on Delivery'] : []), ...(c.onlineEnabled && sslReady ? onlineLabels : [])],
     nextSteps: {
       call: c.nextSteps?.call || 'Within 2 hours, between 9 am and 10 pm.',
       ship: c.nextSteps?.ship || 'Same or next day. The courier contacts you before delivering.',
