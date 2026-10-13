@@ -217,7 +217,7 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
 /** Open (or re-open) an SSLCommerz session for an order. */
 export async function beginPayment(order: Order, amount: number): Promise<{ ok: true; url: string } | { ok: false; message: string }> {
   const payload = await getClient()
-  const tranId = `${order.orderNumber}-${randomBytes(3).toString('hex')}`
+  const tranId = `${order.orderNumber}-${randomBytes(8).toString('hex')}`
   await payload.update({
     collection: 'orders',
     id: order.id,
