@@ -69,10 +69,13 @@ const stockOnStatus: CollectionBeforeChangeHook = async ({ data, originalDoc, op
   return data
 }
 
-/** Deleting an order that still holds stock gives it back first. */
+/**
+ * Deleting an order that is still waiting (pending or confirmed) gives its stock back first. A shipped
+ * or delivered order's items have left the shop, so deleting that record doesn't add them back.
+ */
 const stockOnDelete: CollectionBeforeDeleteHook = async ({ id, req }) => {
   const order = await req.payload.findByID({ collection: 'orders', id, depth: 0, overrideAccess: true, req }).catch(() => null)
-  if (order?.stockCommitted) await releaseStock(req.payload, orderLines(order.items ?? []))
+  if (order?.stockCommitted && ['pending', 'confirmed'].includes(order.status)) await releaseStock(req.payload, orderLines(order.items ?? []))
 }
 
 /** COD placed, or an online / advance payment confirmed. */
