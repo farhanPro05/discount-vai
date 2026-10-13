@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto'
+import type { RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Order, Product } from '../payload-types'
 import { normalisePhone, isBdPhone } from './customer'
@@ -162,44 +163,47 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
   const held = await reserveStock(payload, items)
   if (!held.ok) return { ok: false, message: 'Some items sold out while you were checking out. Please review your cart.', problems: held.problems }
 
-  const orderNumber = await nextOrderNumber()
   const accessToken = randomBytes(16).toString('hex')
   const needsGateway = input.payment === 'online' || (input.payment === 'cod' && commerce.codAdvance && delivery > 0)
-  const order = await payload.create({
-    collection: 'orders',
-    overrideAccess: true,
-    data: {
-      orderNumber,
-      accessToken,
-      status: 'pending',
-      paymentMethod: input.payment,
-      paymentStatus: needsGateway ? 'pending' : 'unpaid_cod',
-      customer: customerId ?? null,
-      contact: { name: input.name.trim(), phone: normalisePhone(input.phone), email: input.email?.trim() || null },
-      address: { district: input.district.trim(), area: input.area.trim(), line: input.address.trim() },
-      zone: input.zone,
-      items: items.map((i) => ({
-        product: i.productId,
-        name: i.name,
-        colour: i.colour,
-        size: i.size,
-        qty: i.qty,
-        unitPrice: i.unitPrice,
-        originalPrice: i.originalPrice,
-        lineTotal: i.lineTotal,
-      })),
-      subtotal,
-      delivery,
-      discount,
-      discountCode: code,
-      total,
-      notes: input.notes?.trim() || null,
-      stockCommitted: true,
-    },
-  }).catch(async (err) => {
-    await releaseStock(payload, items)
-    throw err
-  })
+  const data: Omit<RequiredDataFromCollectionSlug<'orders'>, 'orderNumber'> = {
+    accessToken,
+    status: 'pending',
+    paymentMethod: input.payment,
+    paymentStatus: needsGateway ? 'pending' : 'unpaid_cod',
+    customer: customerId ?? null,
+    contact: { name: input.name.trim(), phone: normalisePhone(input.phone), email: input.email?.trim() || null },
+    address: { district: input.district.trim(), area: input.area.trim(), line: input.address.trim() },
+    zone: input.zone,
+    items: items.map((i) => ({
+      product: i.productId,
+      name: i.name,
+      colour: i.colour,
+      size: i.size,
+      qty: i.qty,
+      unitPrice: i.unitPrice,
+      originalPrice: i.originalPrice,
+      lineTotal: i.lineTotal,
+    })),
+    subtotal,
+    delivery,
+    discount,
+    discountCode: code,
+    total,
+    notes: input.notes?.trim() || null,
+    stockCommitted: true,
+  }
+  let order: Order | undefined
+  for (let attempt = 1; !order; attempt++) {
+    try {
+      order = await payload.create({ collection: 'orders', overrideAccess: true, data: { ...data, orderNumber: await nextOrderNumber() } })
+    } catch (err) {
+      // Two checkouts at the same moment can pick the same order number: take the next one.
+      if (attempt < 5 && JSON.stringify((err as { data?: unknown }).data ?? '').includes('orderNumber')) continue
+      await releaseStock(payload, items)
+      throw err
+    }
+  }
+  const { orderNumber } = order
 
   if (input.subscribe && input.email?.trim()) {
     await payload
