@@ -74,6 +74,8 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
   const chosen = oneSize ? colour.sizes[0].size : size
   const stock = colour.sizes.find((s) => s.size === chosen)?.stock ?? 0
   const allOut = colour.sizes.every((s) => s.stock <= 0)
+  const colourOut = (c: PDColour) => c.sizes.every((s) => s.stock <= 0)
+  const productOut = p.colours.every(colourOut)
 
   useEffect(() => rememberViewed(card), [card])
   // Room for the sticky mobile "Add to Cart" bar.
@@ -131,7 +133,13 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
       <Sil shape={p.shape} fill={colour.hex} className={`sil ${SHOTS[i] ?? ''}`} />
     )
 
-  const badge = p.onSale && p.discount > 0 ? <span className="b b-sale">-{p.discount}%</span> : p.isNew ? <span className="b b-new">NEW</span> : null
+  const badge = productOut ? (
+    <span className="b b-out">SOLD OUT</span>
+  ) : p.onSale && p.discount > 0 ? (
+    <span className="b b-sale">-{p.discount}%</span>
+  ) : p.isNew ? (
+    <span className="b b-new">NEW</span>
+  ) : null
   const share = encodeURIComponent(p.shareUrl)
 
   return (
@@ -200,6 +208,7 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
                 <span className="b b-sale">-{p.discount}%</span>
               </>
             ) : null}
+            {productOut ? <span className="b b-out">Sold out</span> : null}
           </div>
           {p.onSale ? <p className="save">You save {taka(p.was - p.price)}</p> : null}
 
@@ -214,9 +223,9 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
                   type="button"
                   role="radio"
                   aria-checked={i === ci}
-                  aria-label={c.name}
-                  title={c.name}
-                  className={i === ci ? 'swb on' : 'swb'}
+                  aria-label={colourOut(c) ? `${c.name}, sold out` : c.name}
+                  title={colourOut(c) ? `${c.name} (sold out)` : c.name}
+                  className={`swb${i === ci ? ' on' : ''}${colourOut(c) ? ' out' : ''}`}
                   onClick={() => pickColour(i)}
                 >
                   <span style={{ background: c.hex }} />
@@ -229,7 +238,7 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
             <div className="po" ref={sizesRef}>
               <div className="opt-row">
                 <p className="opt-l">
-                  Size: <b>{chosen ?? 'choose one'}</b>
+                  Size: <b>{chosen ?? (allOut ? 'sold out' : 'choose one')}</b>
                 </p>
                 {p.guide ? (
                   <button className="lnk ic-lnk" type="button" onClick={() => setGuideOpen(true)}>
@@ -274,7 +283,7 @@ export function ProductDetail({ p, card }: { p: PD; card: CardProduct }) {
           {allOut ? (
             <p className="low bad">
               <span className="dotw" aria-hidden="true" />
-              Sold out in {colour.name}.{p.colours.length > 1 ? ' Try another colour.' : ' Check back soon.'}
+              {productOut ? 'Sold out. Check back soon.' : `Sold out in ${colour.name}. Other colours are still in stock.`}
             </p>
           ) : chosen && stock > 0 && stock <= LOW ? (
             <p className="low">
