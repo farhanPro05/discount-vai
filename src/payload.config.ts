@@ -30,10 +30,15 @@ import { Site } from './globals/Site'
 import { releaseUnpaidOrders } from './jobs/releaseUnpaidOrders'
 
 const filename = fileURLToPath(import.meta.url)
+
+/** The site's own address, with and without www: admin cookies are only accepted from these (CSRF). */
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
+const siteOrigins = [SITE, SITE.includes('://www.') ? SITE.replace('://www.', '://') : SITE.replace('://', '://www.')]
 const dirname = path.dirname(filename)
 
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+  serverURL: SITE,
+  csrf: siteOrigins,
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
