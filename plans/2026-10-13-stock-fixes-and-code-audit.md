@@ -1,7 +1,7 @@
 # Stock Fixes and Code Audit
 
 - **Date:** 2026-10-13
-- **Status:** Done: built and tested, waiting for your review before merging to `main`
+- **Status:** Done: approved and merged into `main` on 2026-10-14 (tag `v0.9.1-stock-and-audit`)
 - **Related plans:** [Discount Vai Build Plan](2026-10-02-discount-vai-build-plan.md)
 
 ## Goal
