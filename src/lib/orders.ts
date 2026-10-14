@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto'
+import type { RequiredDataFromCollectionSlug } from 'payload'
 
 import type { Order, Product } from '../payload-types'
 import { normalisePhone, isBdPhone } from './customer'
@@ -87,10 +88,15 @@ export async function checkCode(raw: string, subtotal: number): Promise<{ ok: tr
   return { ok: true, code, discount, label: d.type === 'percent' ? `${d.value}% off` : `৳${d.value} off` }
 }
 
+/** Order numbers only go up: the highest ever issued is remembered, so deleting an order never frees its number. */
 async function nextOrderNumber(): Promise<string> {
   const payload = await getClient()
-  const last = await payload.find({ collection: 'orders', sort: '-createdAt', limit: 1, depth: 0, select: { orderNumber: true } })
-  const n = Number((last.docs[0]?.orderNumber ?? 'DV-24817').replace(/\D/g, '')) || 24817
+  const [last, commerce] = await Promise.all([
+    payload.find({ collection: 'orders', sort: '-createdAt', limit: 1, depth: 0, select: { orderNumber: true } }),
+    payload.findGlobal({ slug: 'commerce', depth: 0 }),
+  ])
+  const latest = Number((last.docs[0]?.orderNumber ?? '').replace(/\D/g, '')) || 0
+  const n = Math.max(latest, commerce.lastOrderNumber ?? 0, 24817)
   for (let i = 1; i < 50; i++) {
     const candidate = `DV-${n + i}`
     const exists = await payload.find({ collection: 'orders', where: { orderNumber: { equals: candidate } }, limit: 1, depth: 0 })
@@ -130,8 +136,10 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
   if (input.zone !== 'inside' && input.zone !== 'outside') errors.zone = 'Choose a delivery zone.'
   if (Object.keys(errors).length) return { ok: false, errors, message: 'Please check the highlighted fields.' }
 
+  // Inside-Dhaka delivery (and its lower charge) is only for addresses in Dhaka.
+  const zone: CheckoutInput['zone'] = input.district.trim() === 'Dhaka' ? input.zone : 'outside'
   const commerce = await getCommerceInfo()
-  if (input.payment === 'cod' && (!commerce.codEnabled || !commerce.codZones.includes(input.zone)))
+  if (input.payment === 'cod' && (!commerce.codEnabled || !commerce.codZones.includes(zone)))
     return {
       ok: false,
       message: commerce.onlineEnabled
@@ -152,7 +160,7 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
     discount = c.discount
     code = c.code
   }
-  const fee = input.zone === 'inside' ? commerce.inside.fee : commerce.outside.fee
+  const fee = zone === 'inside' ? commerce.inside.fee : commerce.outside.fee
   const delivery = commerce.freeOver && subtotal >= commerce.freeOver ? 0 : fee
   const total = Math.max(0, subtotal - discount + delivery)
 
@@ -162,44 +170,53 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
   const held = await reserveStock(payload, items)
   if (!held.ok) return { ok: false, message: 'Some items sold out while you were checking out. Please review your cart.', problems: held.problems }
 
-  const orderNumber = await nextOrderNumber()
   const accessToken = randomBytes(16).toString('hex')
   const needsGateway = input.payment === 'online' || (input.payment === 'cod' && commerce.codAdvance && delivery > 0)
-  const order = await payload.create({
-    collection: 'orders',
-    overrideAccess: true,
-    data: {
-      orderNumber,
-      accessToken,
-      status: 'pending',
-      paymentMethod: input.payment,
-      paymentStatus: needsGateway ? 'pending' : 'unpaid_cod',
-      customer: customerId ?? null,
-      contact: { name: input.name.trim(), phone: normalisePhone(input.phone), email: input.email?.trim() || null },
-      address: { district: input.district.trim(), area: input.area.trim(), line: input.address.trim() },
-      zone: input.zone,
-      items: items.map((i) => ({
-        product: i.productId,
-        name: i.name,
-        colour: i.colour,
-        size: i.size,
-        qty: i.qty,
-        unitPrice: i.unitPrice,
-        originalPrice: i.originalPrice,
-        lineTotal: i.lineTotal,
-      })),
-      subtotal,
-      delivery,
-      discount,
-      discountCode: code,
-      total,
-      notes: input.notes?.trim() || null,
-      stockCommitted: true,
-    },
-  }).catch(async (err) => {
-    await releaseStock(payload, items)
-    throw err
-  })
+  const data: Omit<RequiredDataFromCollectionSlug<'orders'>, 'orderNumber'> = {
+    accessToken,
+    status: 'pending',
+    paymentMethod: input.payment,
+    paymentStatus: needsGateway ? 'pending' : 'unpaid_cod',
+    customer: customerId ?? null,
+    contact: { name: input.name.trim(), phone: normalisePhone(input.phone), email: input.email?.trim() || null },
+    address: { district: input.district.trim(), area: input.area.trim(), line: input.address.trim() },
+    zone,
+    items: items.map((i) => ({
+      product: i.productId,
+      name: i.name,
+      colour: i.colour,
+      size: i.size,
+      qty: i.qty,
+      unitPrice: i.unitPrice,
+      originalPrice: i.originalPrice,
+      lineTotal: i.lineTotal,
+    })),
+    subtotal,
+    delivery,
+    discount,
+    discountCode: code,
+    total,
+    notes: input.notes?.trim() || null,
+    stockCommitted: true,
+  }
+  let order: Order | undefined
+  for (let attempt = 1; !order; attempt++) {
+    try {
+      order = await payload.create({ collection: 'orders', overrideAccess: true, data: { ...data, orderNumber: await nextOrderNumber() } })
+    } catch (err) {
+      // Two checkouts at the same moment can pick the same order number: take the next one.
+      if (attempt < 5 && JSON.stringify((err as { data?: unknown }).data ?? '').includes('orderNumber')) continue
+      await releaseStock(payload, items)
+      throw err
+    }
+  }
+  const { orderNumber } = order
+  // Remember the highest number issued (see nextOrderNumber).
+  const issued = Number(orderNumber.replace(/\D/g, '')) || 0
+  const commerceNow = await payload.findGlobal({ slug: 'commerce', depth: 0 })
+  if (issued > (commerceNow.lastOrderNumber ?? 0)) {
+    await payload.updateGlobal({ slug: 'commerce', data: { lastOrderNumber: issued }, overrideAccess: true }).catch(() => null)
+  }
 
   if (input.subscribe && input.email?.trim()) {
     await payload
@@ -217,7 +234,7 @@ export async function placeOrder(input: CheckoutInput, customerId?: number | nul
 /** Open (or re-open) an SSLCommerz session for an order. */
 export async function beginPayment(order: Order, amount: number): Promise<{ ok: true; url: string } | { ok: false; message: string }> {
   const payload = await getClient()
-  const tranId = `${order.orderNumber}-${randomBytes(3).toString('hex')}`
+  const tranId = `${order.orderNumber}-${randomBytes(8).toString('hex')}`
   await payload.update({
     collection: 'orders',
     id: order.id,

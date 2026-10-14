@@ -10,6 +10,25 @@ import { useHydrated } from './storage'
 const KEY = 'dv-cart-v1'
 const EMPTY: CartLine[] = []
 
+/** Only well-formed lines: an old, partial or edited cart saved in the browser must never break the site. */
+const cleanLines = (value: unknown): CartLine[] =>
+  Array.isArray(value)
+    ? value
+        .filter(
+          (l): l is CartLine =>
+            !!l &&
+            typeof l === 'object' &&
+            typeof l.key === 'string' &&
+            Number.isFinite(l.productId) &&
+            typeof l.colour === 'string' &&
+            typeof l.size === 'string' &&
+            Number.isFinite(l.qty) &&
+            l.qty > 0 &&
+            Number.isFinite(l.price),
+        )
+        .map((l) => ({ ...l, qty: Math.min(9, Math.floor(l.qty)) }))
+    : []
+
 /* The cart lives in localStorage, read through a tiny external store (also keeps tabs in sync). */
 const cartStore = (() => {
   let lines: CartLine[] | null = null
@@ -17,7 +36,7 @@ const cartStore = (() => {
   const load = (): CartLine[] => {
     if (lines) return lines
     try {
-      lines = JSON.parse(window.localStorage.getItem(KEY) || '[]') as CartLine[]
+      lines = cleanLines(JSON.parse(window.localStorage.getItem(KEY) || '[]'))
     } catch {
       lines = []
     }

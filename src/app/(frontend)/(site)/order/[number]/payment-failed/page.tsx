@@ -20,7 +20,7 @@ export default async function PaymentFailedPage({ params, searchParams }: Props)
   const customer = await getCustomer()
   const order = await getOrderForViewer(number, t, customer?.id)
   if (!order) notFound()
-  if (order.paymentStatus === 'paid' || order.paymentStatus === 'unpaid_cod') redirect(`/order/${order.orderNumber}?t=${t ?? ''}`)
+  if (order.paymentStatus === 'paid' || order.paymentStatus === 'unpaid_cod') redirect(`/order/${order.orderNumber}?t=${encodeURIComponent(t ?? '')}`)
   const [commerce, site] = await Promise.all([getCommerceInfo(), getSite()])
   const amount = order.paymentMethod === 'online' ? order.total : order.delivery
   const chat = waLink(site.whatsapp, `Hi! My payment for order ${order.orderNumber} didn't go through.`)

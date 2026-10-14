@@ -69,10 +69,13 @@ const stockOnStatus: CollectionBeforeChangeHook = async ({ data, originalDoc, op
   return data
 }
 
-/** Deleting an order that still holds stock gives it back first. */
+/**
+ * Deleting an order that is still waiting (pending or confirmed) gives its stock back first. A shipped
+ * or delivered order's items have left the shop, so deleting that record doesn't add them back.
+ */
 const stockOnDelete: CollectionBeforeDeleteHook = async ({ id, req }) => {
   const order = await req.payload.findByID({ collection: 'orders', id, depth: 0, overrideAccess: true, req }).catch(() => null)
-  if (order?.stockCommitted) await releaseStock(req.payload, orderLines(order.items ?? []))
+  if (order?.stockCommitted && ['pending', 'confirmed'].includes(order.status)) await releaseStock(req.payload, orderLines(order.items ?? []))
 }
 
 /** COD placed, or an online / advance payment confirmed. */
@@ -250,7 +253,7 @@ export const Orders: CollectionConfig = {
         },
       ],
     },
-    { name: 'staffNotes', type: 'textarea', label: 'Staff notes (private)' },
+    { name: 'staffNotes', type: 'textarea', label: 'Staff notes (private)', access: { read: ({ req }) => isStaff(req) } },
     {
       name: 'timeline',
       type: 'array',
@@ -265,7 +268,8 @@ export const Orders: CollectionConfig = {
       name: 'payment',
       type: 'group',
       label: 'Online payment details',
-      admin: { condition: (data) => data?.paymentMethod === 'online' },
+      // Online orders, and COD orders that paid the delivery charge in advance.
+      admin: { condition: (data) => data?.paymentMethod === 'online' || !!data?.payment?.tranId },
       fields: [
         { name: 'tranId', type: 'text', label: 'Transaction ID', index: true, admin: { readOnly: true } },
         { name: 'valId', type: 'text', label: 'Validation ID', admin: { readOnly: true } },
@@ -281,6 +285,7 @@ export const Orders: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       label: 'Holding stock',
+      access: { read: ({ req }) => isStaff(req) },
       admin: {
         readOnly: true,
         position: 'sidebar',
@@ -291,6 +296,7 @@ export const Orders: CollectionConfig = {
       name: 'stockProblem',
       type: 'textarea',
       label: 'Stock problem',
+      access: { read: ({ req }) => isStaff(req) },
       admin: {
         readOnly: true,
         position: 'sidebar',

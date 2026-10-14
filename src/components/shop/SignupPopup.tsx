@@ -36,7 +36,8 @@ type Memory = { closedAt?: number; joined?: boolean }
 
 function read(): Memory {
   try {
-    return JSON.parse(window.localStorage.getItem(STORE) || '{}') as Memory
+    const value: unknown = JSON.parse(window.localStorage.getItem(STORE) || '{}')
+    return value && typeof value === 'object' ? (value as Memory) : {}
   } catch {
     return {}
   }

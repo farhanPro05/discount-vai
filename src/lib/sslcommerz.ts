@@ -65,3 +65,25 @@ export async function validatePayment(valId: string): Promise<Validation> {
     return { valid: false }
   }
 }
+
+export type Outcome = 'paid' | 'failed' | 'pending' | 'unknown'
+
+/**
+ * What SSLCommerz itself says happened to a transaction. The fail / cancel callbacks are plain browser
+ * posts anyone could forge, so the order is only changed when SSLCommerz confirms the result.
+ */
+export async function transactionOutcome(tranId: string): Promise<Outcome> {
+  if (!tranId || !sslcommerzReady()) return 'unknown'
+  const q = new URLSearchParams({ tran_id: tranId, ...creds(), format: 'json' })
+  try {
+    const res = await fetch(`${base()}/validator/api/merchantTransIDvalidationAPI.php?${q}`, { cache: 'no-store' })
+    const j = (await res.json()) as { APIConnect?: string; element?: { status?: string }[] }
+    if (j.APIConnect !== 'DONE') return 'unknown'
+    const statuses = (j.element ?? []).map((e) => String(e.status ?? '').toUpperCase())
+    if (statuses.some((s) => s === 'VALID' || s === 'VALIDATED')) return 'paid'
+    if (statuses.some((s) => s === 'FAILED' || s === 'CANCELLED' || s === 'EXPIRED')) return 'failed'
+    return 'pending'
+  } catch {
+    return 'unknown'
+  }
+}

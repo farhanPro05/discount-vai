@@ -6,6 +6,8 @@ import { redirect } from 'next/navigation'
 
 import { buildWhere, getNav, listProducts, suggest, toCard, type ListFilters, type SortKey } from '../../lib/catalog'
 import { CUSTOMER_COOKIE, getCustomer, isBdPhone, normalisePhone } from '../../lib/customer'
+import { safePath } from '../../lib/format'
+import { TOO_MANY, tooMany } from '../../lib/rateLimit'
 import {
   beginPayment,
   checkCode,
@@ -21,6 +23,7 @@ import type { CardProduct } from '../../lib/types'
 import { holdOrder } from '../../lib/stock'
 
 type SubscriberSource = 'popup' | 'footer' | 'home-teaser' | 'coming-soon' | 'checkout' | 'account'
+const SOURCES: SubscriberSource[] = ['popup', 'footer', 'home-teaser', 'coming-soon', 'checkout', 'account']
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
@@ -32,6 +35,9 @@ export async function subscribeAction(
 ): Promise<{ ok: boolean; message?: string }> {
   const clean = String(email ?? '').trim().toLowerCase().slice(0, 200)
   if (!EMAIL.test(clean)) return { ok: false, message: "That email doesn't look right. Try name@example.com" }
+  if (await tooMany('subscribe')) return { ok: false, message: TOO_MANY }
+  if (!SOURCES.includes(source)) source = 'popup'
+  interest = typeof interest === 'string' ? interest.slice(0, 60) : undefined
   const payload = await getClient()
   const existing = await payload.find({ collection: 'subscribers', where: { email: { equals: clean } }, limit: 1, depth: 0 })
   if (existing.docs[0]) {
@@ -90,11 +96,14 @@ export async function priceCartAction(lines: CheckoutLine[]) {
 }
 
 export async function checkCodeAction(code: string, lines: CheckoutLine[]) {
+  if (await tooMany('code')) return { ok: false as const, message: TOO_MANY }
   const { subtotal } = await priceCart(Array.isArray(lines) ? lines.slice(0, 50) : [])
   return checkCode(String(code ?? '').slice(0, 40), subtotal)
 }
 
 export async function placeOrderAction(input: CheckoutInput) {
+  // Orders hold stock, so a flood of fake orders could empty the shop: cap orders per visitor.
+  if (await tooMany('order')) return { ok: false as const, message: TOO_MANY }
   const customer = await getCustomer()
   return placeOrder(input, customer?.id ?? null)
 }
@@ -105,9 +114,10 @@ const paidUp = (o: { paymentStatus: string; paymentMethod: string; advancePaid?:
 
 /** "Retry payment" on the payment-failed page. */
 export async function retryPaymentAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
+  if (await tooMany('payment')) return { ok: false, message: TOO_MANY }
   const order = await getOrderForViewer(orderNumber, token)
   if (!order) return { ok: false, message: 'We could not find that order.' }
-  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${token}`)
+  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${encodeURIComponent(token)}`)
   if (CLOSED.includes(order.status)) return { ok: false, message: 'This order was cancelled. Please place a new order.' }
   const commerce = await getCommerceInfo()
   if (!commerce.onlineEnabled) return { ok: false, message: 'Online payment is not available right now. Please switch to Cash on Delivery.' }
@@ -123,9 +133,10 @@ export async function retryPaymentAction(orderNumber: string, token: string): Pr
 
 /** "Switch to Cash on Delivery" on the payment-failed page. */
 export async function switchToCodAction(orderNumber: string, token: string): Promise<{ ok: false; message: string } | never> {
+  if (await tooMany('payment')) return { ok: false, message: TOO_MANY }
   const order = await getOrderForViewer(orderNumber, token)
   if (!order) return { ok: false, message: 'We could not find that order.' }
-  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${token}`)
+  if (paidUp(order)) redirect(`/order/${order.orderNumber}?t=${encodeURIComponent(token)}`)
   if (CLOSED.includes(order.status)) return { ok: false, message: 'This order was cancelled. Please place a new order.' }
   const commerce = await getCommerceInfo()
   if (!commerce.codEnabled || !commerce.codZones.includes(order.zone))
@@ -136,7 +147,7 @@ export async function switchToCodAction(orderNumber: string, token: string): Pro
   const payload = await getClient()
   const held = await holdOrder(payload, order.id, { paymentMethod: 'cod', paymentStatus: 'unpaid_cod' })
   if (!held.ok) return { ok: false, message: `Sorry, part of this order sold out in the meantime. ${held.problems.join(' ')}` }
-  redirect(`/order/${order.orderNumber}?t=${token}`)
+  redirect(`/order/${order.orderNumber}?t=${encodeURIComponent(token)}`)
 }
 
 /** Contact page form. */
@@ -148,12 +159,16 @@ export async function sendMessageAction(data: {
   topic: string
   message: string
 }): Promise<{ ok: boolean; errors?: Record<string, string> }> {
+  // Server actions can be called with anything: keep only text fields.
+  const text = (v: unknown) => (typeof v === 'string' ? v : '')
+  data = { name: text(data?.name), phone: text(data?.phone), email: text(data?.email), orderNumber: text(data?.orderNumber), topic: text(data?.topic), message: text(data?.message) }
   const errors: Record<string, string> = {}
   if (!data.name?.trim()) errors.name = 'Please tell us your name.'
   if (!isBdPhone(data.phone ?? '') && !EMAIL.test(data.email ?? '')) errors.phone = 'Add a phone number (or an email) so we can reply.'
   if (data.email && !EMAIL.test(data.email.trim())) errors.email = "That email doesn't look right."
   if (!data.message?.trim() || data.message.trim().length < 5) errors.message = "Tell us what's up."
   if (Object.keys(errors).length) return { ok: false, errors }
+  if (await tooMany('message')) return { ok: false, errors: { message: TOO_MANY } }
   const payload = await getClient()
   await payload.create({
     collection: 'messages',
@@ -188,8 +203,9 @@ export async function loginAction(_prev: AuthState, form: FormData): Promise<Aut
   const id = String(form.get('identifier') ?? '').trim()
   const password = String(form.get('password') ?? '')
   const remember = form.get('remember') === 'on'
-  const next = String(form.get('next') ?? '/account/orders')
+  const next = safePath(form.get('next'), '/account/orders')
   if (!id || !password) return { error: 'Enter your phone or email and your password.', fields: { identifier: id } }
+  if (await tooMany('login')) return { error: TOO_MANY, fields: { identifier: id } }
   const payload = await getClient()
   try {
     const data = id.includes('@') ? { email: id.toLowerCase(), password } : { username: normalisePhone(id), password }
@@ -199,12 +215,12 @@ export async function loginAction(_prev: AuthState, form: FormData): Promise<Aut
   } catch {
     return { error: "That phone/email and password don't match. Try again or reset your password.", fields: { identifier: id } }
   }
-  redirect(next.startsWith('/') ? next : '/account/orders')
+  redirect(next)
 }
 
 export async function registerAction(_prev: AuthState, form: FormData): Promise<AuthState> {
-  const name = String(form.get('name') ?? '').trim()
-  const id = String(form.get('identifier') ?? '').trim()
+  const name = String(form.get('name') ?? '').trim().slice(0, 120)
+  const id = String(form.get('identifier') ?? '').trim().slice(0, 200)
   const password = String(form.get('password') ?? '')
   const news = form.get('news') === 'on'
   const fields = { name, identifier: id }
@@ -212,6 +228,7 @@ export async function registerAction(_prev: AuthState, form: FormData): Promise<
   const isEmail = id.includes('@')
   if (isEmail ? !EMAIL.test(id) : !isBdPhone(id)) return { error: 'Enter a Bangladeshi mobile number (01XXXXXXXXX) or an email.', fields }
   if (password.length < 8) return { error: 'Use 8 or more characters for your password.', fields }
+  if (await tooMany('register')) return { error: TOO_MANY, fields }
   const payload = await getClient()
   const username = isEmail ? id.toLowerCase() : normalisePhone(id)
   const taken = await payload.find({
@@ -247,6 +264,7 @@ export type ForgotState = { error?: string; sent?: boolean; email?: string } | u
 export async function forgotPasswordAction(_prev: ForgotState, form: FormData): Promise<ForgotState> {
   const email = String(form.get('email') ?? '').trim().toLowerCase().slice(0, 200)
   if (!EMAIL.test(email)) return { error: "That email doesn't look right. Try name@example.com", email }
+  if (await tooMany('reset')) return { error: TOO_MANY, email }
   const payload = await getClient()
   try {
     await payload.forgotPassword({ collection: 'customers', data: { email } })
@@ -279,6 +297,7 @@ export async function trackOrderAction(_prev: AuthState, form: FormData): Promis
   const phone = normalisePhone(String(form.get('phone') ?? ''))
   const fields = { order: raw, phone: String(form.get('phone') ?? '') }
   if (!raw || !phone) return { error: 'Enter your order number and phone number.', fields }
+  if (await tooMany('track')) return { error: TOO_MANY, fields }
   const payload = await getClient()
   const res = await payload.find({ collection: 'orders', where: { orderNumber: { equals: number } }, limit: 1, depth: 0 })
   const order = res.docs[0]

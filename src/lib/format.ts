@@ -6,6 +6,13 @@ export const isPlaceholder = (v?: string | null): boolean => !v || /^\[.*\]$/.te
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
 
+/**
+ * A path on this site to send someone back to after logging in, or the fallback. Rejects
+ * "//evil.com" and "/\\evil.com", which browsers treat as other sites.
+ */
+export const safePath = (value: unknown, fallback: string): string =>
+  typeof value === 'string' && /^\/(?![/\\])/.test(value) ? value : fallback
+
 export const absoluteUrl = (path: string): string => (path.startsWith('http') ? path : `${SITE_URL}${path}`)
 
 /** WhatsApp chat link from the admin's number (digits only, with country code). */

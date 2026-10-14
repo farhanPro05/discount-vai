@@ -99,7 +99,11 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
       }
     })
 
+  // One order per click: pressing Enter twice quickly must not place two orders.
+  const placingRef = useRef(false)
   const place = () => {
+    if (placingRef.current) return
+    placingRef.current = true
     setMessage('')
     setProblems([])
     startPlace(async () => {
@@ -116,7 +120,7 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
         code: disc?.code ?? '',
         payment,
         subscribe,
-      })
+      }).catch(() => ({ ok: false as const, message: 'We could not reach the shop. Check your connection and try again.' }))
       if (res.ok) {
         clear()
         try {
@@ -128,10 +132,11 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
         else router.push(res.redirect)
         return
       }
-      setErrors(res.errors ?? {})
+      placingRef.current = false
+      setErrors('errors' in res ? (res.errors ?? {}) : {})
       setMessage(res.message ?? 'Something went wrong. Please try again.')
-      setProblems(res.problems ?? [])
-      const first = Object.keys(res.errors ?? {})[0]
+      setProblems('problems' in res ? (res.problems ?? []) : [])
+      const first = Object.keys('errors' in res ? (res.errors ?? {}) : {})[0]
       if (first) document.getElementById(`co-${first}`)?.focus()
     })
   }
@@ -331,7 +336,16 @@ export function CheckoutForm({ commerce, prefill }: { commerce: CommerceInfo; pr
                   ['outside', 'Outside Dhaka', commerce.outside],
                 ] as const
               ).map(([k, label, z]) => (
-                <button key={k} type="button" role="radio" aria-checked={zone === k} className={zone === k ? 'ocard on' : 'ocard'} onClick={() => setZone(k)}>
+                <button
+                  key={k}
+                  type="button"
+                  role="radio"
+                  aria-checked={zone === k}
+                  className={zone === k ? 'ocard on' : 'ocard'}
+                  onClick={() => setZone(k)}
+                  // Inside-Dhaka delivery is only for Dhaka addresses (the server checks this too).
+                  disabled={k === 'inside' && district !== 'Dhaka'}
+                >
                   <span className="radio" />
                   <span className="oc-t">
                     <b>{label}</b>

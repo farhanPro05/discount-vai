@@ -22,6 +22,12 @@ export const Commerce: GlobalConfig = {
   label: 'Delivery & payment',
   admin: { group: 'Settings', hidden: hiddenFromStaff },
   access: { read: anyone, update: ownerOnly },
+  hooks: {
+    // The order-number mark only ever goes up, even if a settings form opened earlier is saved now.
+    beforeChange: [
+      ({ data, originalDoc }) => ({ ...data, lastOrderNumber: Math.max(Number(data.lastOrderNumber) || 0, Number(originalDoc?.lastOrderNumber) || 0) || null }),
+    ],
+  },
   fields: [
     {
       type: 'tabs',
@@ -40,6 +46,8 @@ export const Commerce: GlobalConfig = {
               admin: { description: 'Leave empty to switch free delivery off.' },
             },
             { name: 'exchangeDays', type: 'number', defaultValue: 7, min: 0, label: 'Exchange window (days)' },
+            // The highest order number issued so far, so numbers are never reused (set by the checkout).
+            { name: 'lastOrderNumber', type: 'number', admin: { hidden: true } },
             {
               name: 'nextSteps',
               type: 'group',

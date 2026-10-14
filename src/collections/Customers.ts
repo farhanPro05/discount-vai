@@ -1,7 +1,17 @@
-import type { CollectionConfig } from 'payload'
+import { Forbidden, type CollectionBeforeOperationHook, type CollectionConfig } from 'payload'
 
 import { isOwner, isStaff } from '../access'
 import { passwordResetEmail } from '../lib/emails'
+
+/**
+ * Shoppers sign up, log in and reset passwords through the website's own forms, which are checked and
+ * rate-limited. The same actions on Payload's REST API (/api/customers, /login, /forgot-password…)
+ * would skip all that, so only staff may use them there.
+ */
+const SITE_FORMS_ONLY = ['create', 'login', 'forgotPassword', 'resetPassword']
+const onlyThroughSiteForms: CollectionBeforeOperationHook = ({ operation, req }) => {
+  if (req.payloadAPI !== 'local' && !isStaff(req) && SITE_FORMS_ONLY.includes(operation)) throw new Forbidden(req.t)
+}
 
 /** Shoppers' accounts. They log in on the website (phone or email), never in the admin panel. */
 export const Customers: CollectionConfig = {
@@ -26,10 +36,11 @@ export const Customers: CollectionConfig = {
   access: {
     admin: () => false,
     read: ({ req }) => (isStaff(req) ? true : req.user?.collection === 'customers' ? { id: { equals: req.user.id } } : false),
-    create: () => true,
+    create: ({ req }) => isStaff(req),
     update: ({ req }) => (isStaff(req) ? true : req.user?.collection === 'customers' ? { id: { equals: req.user.id } } : false),
     delete: ({ req }) => isOwner(req),
   },
+  hooks: { beforeOperation: [onlyThroughSiteForms] },
   fields: [
     { name: 'name', type: 'text', required: true },
     {

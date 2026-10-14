@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 import { checkCodeAction } from '../../app/(frontend)/actions'
 import { taka } from '../../lib/format'
@@ -27,6 +27,30 @@ export function CartView({ insideFee, freeOver, picks, payLabels }: { insideFee:
 
   const delivery = freeOver && subtotal >= freeOver ? 0 : insideFee
   const discount = disc ? Math.min(disc.amount, subtotal) : 0
+
+  // Keep the discount in step with the cart: re-check the code (applied or saved) whenever the cart changes.
+  const cartKey = lines.map((l) => `${l.key}x${l.qty}`).join(',')
+  const activeCode = disc?.code ?? saved
+  useEffect(() => {
+    if (!ready || !activeCode || !cartKey) return
+    let live = true
+    checkCodeAction(activeCode, lines.map((l) => ({ productId: l.productId, colour: l.colour, size: l.size, qty: l.qty })))
+      .then((res) => {
+        if (!live) return
+        if (res.ok) {
+          setDisc({ amount: res.discount, code: res.code })
+          setCodeMsg(`${res.code} applied: you save ${taka(res.discount)}.`)
+        } else {
+          setDisc(null)
+          setCodeMsg(res.message)
+        }
+      })
+      .catch(() => null)
+    return () => {
+      live = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, cartKey, activeCode])
   const apply = () =>
     start(async () => {
       const res = await checkCodeAction(code, lines.map((l) => ({ productId: l.productId, colour: l.colour, size: l.size, qty: l.qty })))

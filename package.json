@@ -16,6 +16,7 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
     "seed:structure": "cross-env SEED_ONLY=structure NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
+    "check:shop": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/check-shop.ts",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create"
   },

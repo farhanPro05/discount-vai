@@ -1,5 +1,6 @@
+import { SITE_URL } from '../../../../../lib/format'
 import { getClient } from '../../../../../lib/payload'
-import { validatePayment } from '../../../../../lib/sslcommerz'
+import { transactionOutcome, validatePayment } from '../../../../../lib/sslcommerz'
 import { holdOrder, releaseOrder } from '../../../../../lib/stock'
 
 /*
@@ -7,7 +8,8 @@ import { holdOrder, releaseOrder } from '../../../../../lib/stock'
  * /ipn server-to-server. A payment only counts once SSLCommerz's validation API confirms it.
  */
 
-const go = (req: Request, path: string) => Response.redirect(new URL(path, req.url), 303)
+// Built on the site's address, not the request's: behind a reverse proxy the request may say localhost.
+const go = (_req: Request, path: string) => Response.redirect(new URL(path, SITE_URL), 303)
 
 export async function POST(req: Request, { params }: { params: Promise<{ result: string }> }) {
   const { result } = await params
@@ -55,16 +57,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ result:
       return result === 'ipn' ? new Response('OK') : go(req, confirmUrl)
     }
     if (result === 'ipn') return new Response('Not valid', { status: 400 })
-    await releaseOrder(payload, order.id, { paymentStatus: 'failed', payment: { ...order.payment, message: 'We could not verify this payment.' } })
+    // Not a valid payment: only mark it failed (and give the stock back) if SSLCommerz agrees.
+    if ((await transactionOutcome(tranId)) === 'failed') {
+      await releaseOrder(payload, order.id, { paymentStatus: 'failed', payment: { ...order.payment, message: 'We could not verify this payment.' } })
+    }
     return go(req, failedUrl)
   }
 
-  if (!alreadyPaid) {
+  if (alreadyPaid) return go(req, confirmUrl)
+  // A fail / cancel post is only believed once SSLCommerz confirms it. While the transaction is still
+  // open (or SSLCommerz can't be reached) the order keeps its stock; the 45-minute job tidies up.
+  const outcome = await transactionOutcome(tranId)
+  if (outcome === 'paid') return go(req, confirmUrl)
+  if (outcome === 'failed') {
     const reason = String(form?.get('error') ?? '') || (result === 'cancel' ? 'Transaction cancelled.' : 'Transaction failed or timed out.')
     // Give the stock back until the customer retries or switches to Cash on Delivery.
     await releaseOrder(payload, order.id, { paymentStatus: 'failed', payment: { ...order.payment, message: reason.slice(0, 200) } })
   }
-  return go(req, alreadyPaid ? confirmUrl : failedUrl)
+  return go(req, failedUrl)
 }
 
 /** Someone opened a callback link directly. */

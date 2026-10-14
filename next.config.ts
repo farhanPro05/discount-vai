@@ -38,8 +38,25 @@ export default {
   // makes Chrome re-request the first page of every visit to send it (~0.6 s), so keep it to the admin only.
   headers: async () => {
     const rules = (await payloadHeaders?.()) ?? []
-    return rules.map((rule) =>
-      rule.source === '/:path*' && rule.headers.some((h) => h.key === 'Critical-CH') ? { ...rule, source: '/admin/:path*' } : rule,
-    )
+    return [
+      ...rules.map((rule) =>
+        rule.source === '/:path*' && rule.headers.some((h) => h.key === 'Critical-CH') ? { ...rule, source: '/admin/:path*' } : rule,
+      ),
+      // Basic protection on every page: no framing by other sites, no MIME sniffing, a modest referrer.
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+      // Uploaded SVGs (e.g. a logo) still show as images, but any script inside one can't run if opened directly.
+      {
+        source: '/api/media/file/:file*',
+        headers: [{ key: 'Content-Security-Policy', value: "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox" }],
+      },
+    ]
   },
 } satisfies NextConfig

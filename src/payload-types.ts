@@ -326,7 +326,7 @@ export interface Category {
   slug?: string | null;
   status: 'live' | 'soon' | 'hidden';
   /**
-   * Leave empty for a top-level category.
+   * Leave empty for a top-level category. Menus have two levels, so pick a top-level one.
    */
   parent?: (number | null) | Category;
   /**
@@ -2025,6 +2025,7 @@ export interface Commerce {
    */
   freeDeliveryOver?: number | null;
   exchangeDays?: number | null;
+  lastOrderNumber?: number | null;
   nextSteps?: {
     call?: string | null;
     ship?: string | null;
@@ -2310,6 +2311,7 @@ export interface CommerceSelect<T extends boolean = true> {
       };
   freeDeliveryOver?: T;
   exchangeDays?: T;
+  lastOrderNumber?: T;
   nextSteps?:
     | T
     | {
