@@ -22,7 +22,10 @@ function Row({ p }: { p: CardProduct }) {
       <span className="sp-th">{img ? <Image src={img.url} alt="" fill sizes="52px" /> : <Sil shape={p.shape} fill={c?.hex} className="" />}</span>
       <span className="sp-t">
         <b>{p.name}</b>
-        <small>{c?.name}</small>
+        <small>
+          {c?.name}
+          {p.out ? ' · Sold out' : ''}
+        </small>
       </span>
       <span className="pr">
         <span className={p.onSale ? 'now sale' : 'now'}>{taka(p.price)}</span>

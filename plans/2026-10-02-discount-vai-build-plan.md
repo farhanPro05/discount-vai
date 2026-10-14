@@ -109,14 +109,17 @@ Built on two branches, both approved and merged into `main` on 2026-10-06 and ta
 
 **First launch:**
 1. Create an empty production database.
-2. Run these on the server (keep the app running with pm2 or systemd):
+2. Run these on the server. Keep the app running with pm2 in **fork mode (one instance)** or systemd. The stock lock and background jobs (abandoned-payment release, scheduled publishing) assume a single app process, so don't use pm2 cluster mode or several containers:
    ```bash
    npm ci && npm run migrate && npm run build && npm run start
    ```
 3. Run `npm run seed:structure` once. It loads categories (with their SEO text), size guides, pages and settings, and nothing else. It refuses to run if the database already has content.
 4. Open `/admin`. On an empty database it asks you to create the first owner account.
 5. In the admin, fill in every placeholder listed above. Add products, upload the logo and favicon, and set the delivery charges and order-email address.
-6. In the SSLCommerz merchant panel, register the IPN URL `https://<domain>/payment/sslcommerz/ipn`. Place a sandbox order, then switch `SSLCOMMERZ_SANDBOX=false` and turn on "Offer online payment".
+6. Online payment: **launch with Cash on Delivery only.** Online payment shows as "Coming soon" until SSLCommerz is set up. When the merchant account is ready:
+   - Register the IPN URL `https://<domain>/payment/sslcommerz/ipn` in the SSLCommerz merchant panel.
+   - Place a sandbox order, then switch `SSLCOMMERZ_SANDBOX=false` and turn on "Offer online payment".
+   - Update the texts that currently say it's coming soon: the FAQ ("Can I pay online?", "Can I pay on delivery?"), Terms → Payment, About → How we work, and the homepage trust strip.
 7. Add the site to Google Search Console (paste the verification code into Header, footer & contact → Analytics) and submit `https://<domain>/sitemap.xml`. Add the Google Analytics 4 ID and, if you run Facebook ads, the Meta Pixel ID in the same tab; mention them in the Privacy policy. Run Lighthouse and the Rich Results Test on the live pages.
 
 **Every later deploy:**

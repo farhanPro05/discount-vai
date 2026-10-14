@@ -25,7 +25,9 @@ export async function pathFor(
  */
 export const redirectOnSlugChange =
   (collection: 'products' | 'categories' | 'pages'): CollectionAfterChangeHook =>
-  async ({ doc, previousDoc, operation, req }) => {
+  async ({ doc, previousDoc, operation, req, context }) => {
+    // Stock-only saves (orders) never change the address.
+    if (context?.stockUpdate) return doc
     if (operation !== 'update' || !previousDoc?.slug || previousDoc.slug === doc.slug) return doc
     if ((doc as { _status?: string })._status === 'draft') return doc
     const from = await pathFor(collection, previousDoc as Slugged, req.payload)

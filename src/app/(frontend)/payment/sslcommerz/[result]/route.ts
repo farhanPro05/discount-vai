@@ -1,6 +1,6 @@
-import { commitStock } from '../../../../../lib/orders'
 import { getClient } from '../../../../../lib/payload'
 import { validatePayment } from '../../../../../lib/sslcommerz'
+import { holdOrder, releaseOrder } from '../../../../../lib/stock'
 
 /*
  * SSLCommerz sends the shopper's browser back here (success / fail / cancel) and also calls
@@ -32,7 +32,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ result:
     const v = await validatePayment(valId)
     const expected = order.paymentMethod === 'online' ? order.total : order.delivery
     if (v.valid && v.tranId === tranId && Math.abs((v.amount ?? 0) - expected) < 1) {
-      const updated = await payload.update({
+      // The money is in. If the order's hold lapsed while the customer paid, take the stock again;
+      // if it has sold out (or the order was cancelled meanwhile), flag it for the shop to refund.
+      let stockProblem: string | null = null
+      if (['cancelled', 'returned'].includes(order.status)) {
+        stockProblem = 'Paid after the order was cancelled. Refund the customer, or re-open the order.'
+      } else {
+        const held = await holdOrder(payload, order.id)
+        if (!held.ok) stockProblem = `Paid, but: ${held.problems.join(' ')}`
+      }
+      await payload.update({
         collection: 'orders',
         id: order.id,
         overrideAccess: true,
@@ -40,29 +49,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ result:
           paymentStatus: order.paymentMethod === 'online' ? 'paid' : 'unpaid_cod',
           advancePaid: order.paymentMethod === 'cod' ? expected : order.advancePaid,
           payment: { ...order.payment, tranId, valId, bankTranId: v.bankTranId ?? null, cardType: v.cardType ?? null, message: 'Payment confirmed' },
+          stockProblem,
         },
       })
-      await commitStock(updated)
       return result === 'ipn' ? new Response('OK') : go(req, confirmUrl)
     }
     if (result === 'ipn') return new Response('Not valid', { status: 400 })
-    await payload.update({
-      collection: 'orders',
-      id: order.id,
-      overrideAccess: true,
-      data: { paymentStatus: 'failed', payment: { ...order.payment, message: 'We could not verify this payment.' } },
-    })
+    await releaseOrder(payload, order.id, { paymentStatus: 'failed', payment: { ...order.payment, message: 'We could not verify this payment.' } })
     return go(req, failedUrl)
   }
 
   if (!alreadyPaid) {
     const reason = String(form?.get('error') ?? '') || (result === 'cancel' ? 'Transaction cancelled.' : 'Transaction failed or timed out.')
-    await payload.update({
-      collection: 'orders',
-      id: order.id,
-      overrideAccess: true,
-      data: { paymentStatus: 'failed', payment: { ...order.payment, message: reason.slice(0, 200) } },
-    })
+    // Give the stock back until the customer retries or switches to Cash on Delivery.
+    await releaseOrder(payload, order.id, { paymentStatus: 'failed', payment: { ...order.payment, message: reason.slice(0, 200) } })
   }
   return go(req, alreadyPaid ? confirmUrl : failedUrl)
 }

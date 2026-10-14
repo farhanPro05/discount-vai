@@ -67,7 +67,11 @@ export default async function ProductPage({ params, searchParams }: Props) {
   const parent = parentId ? all.find((c) => c.id === parentId) : null
   const card = toCard(p)
   const wanted = typeof sp.colour === 'string' ? sp.colour.toLowerCase() : ''
-  const initialColour = Math.max(0, (p.colours ?? []).findIndex((c) => c.name.toLowerCase() === wanted))
+  // The colour asked for in the link, else the first one that's still in stock.
+  const colours = p.colours ?? []
+  const asked = colours.findIndex((c) => c.name.toLowerCase() === wanted)
+  const inStock = colours.findIndex((c) => (c.sizes ?? []).some((s) => (s.stock ?? 0) > 0))
+  const initialColour = asked >= 0 ? asked : Math.max(0, inStock)
 
   const details = [
     { label: 'Fabric', value: p.details?.fabric },
@@ -106,7 +110,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
       freeOver: commerce.freeOver,
       exchangeDays: commerce.exchangeDays,
     },
-    payments: [commerce.codEnabled ? 'Cash on Delivery' : null, ...(commerce.onlineEnabled ? commerce.onlineLabels : [])].filter(Boolean).join(', ') || 'Cash on Delivery',
+    payments: commerce.payments.join(', ') || 'Cash on Delivery',
     shareUrl: absoluteUrl(`/products/${p.slug}`),
   }
 

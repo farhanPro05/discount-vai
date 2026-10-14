@@ -17,7 +17,7 @@ import { getCards, getNav, listProducts } from '../../../lib/catalog'
 import { toImg } from '../../../lib/media'
 import { getClient } from '../../../lib/payload'
 import { organizationLd, websiteLd } from '../../../lib/seo'
-import { getHome, getSite } from '../../../lib/settings'
+import { getCommerceInfo, getHome, getSite } from '../../../lib/settings'
 
 export const metadata: Metadata = {
   title: { absolute: 'Discount Vai | Men’s Clothing & Panjabi Online in Bangladesh' },
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [home, nav, site] = await Promise.all([getHome(), getNav(), getSite()])
+  const [home, nav, site, commerce] = await Promise.all([getHome(), getNav(), getSite(), getCommerceInfo()])
   const order: HomeSectionKey[] = home.sections?.length ? home.sections.map((s) => s.section) : HOME_SECTIONS.map((s) => s.value)
 
   const render: Record<HomeSectionKey, () => Promise<React.ReactNode> | React.ReactNode> = {
@@ -308,7 +308,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <JsonLd data={[organizationLd(site), websiteLd()]} />
+      <JsonLd data={[organizationLd(site, commerce.payments), websiteLd()]} />
       {sections.map((node, i) => (
         <div key={`${order[i]}-${i}`} style={{ display: 'contents' }}>
           {node}

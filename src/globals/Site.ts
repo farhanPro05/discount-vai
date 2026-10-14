@@ -54,12 +54,6 @@ export const Site: GlobalConfig = {
           fields: [
             { name: 'promise', type: 'textarea', label: 'Brand promise' },
             { name: 'newsletterLabel', type: 'text', label: 'Newsletter line' },
-            {
-              name: 'paymentLabels',
-              type: 'text',
-              label: 'Payment methods shown',
-              admin: { description: 'Separated by commas.', placeholder: 'Cash on Delivery, bKash, Nagad, Visa, Mastercard' },
-            },
           ],
         },
         {

@@ -389,7 +389,7 @@ async function run() {
           blockType: 'text',
           heading: 'How we work',
           body: doc(
-            p("We sell online only, so we can skip rent and pass that on to you. Order with Cash on Delivery anywhere in Bangladesh, or pay with bKash, Nagad or card, and exchange within 7 days if it isn't right."),
+            p("We sell online only, so we can skip rent and pass that on to you. Order with Cash on Delivery anywhere in Bangladesh (online payment is coming soon), and exchange within 7 days if it isn't right."),
           ) as never,
         },
       ],
@@ -444,7 +444,7 @@ async function run() {
           items: [
             { title: '7 days', text: 'to request an exchange' },
             { title: 'Free pickup', text: 'inside Dhaka, ৳70 outside' },
-            { title: 'Refunds', text: 'to bKash, Nagad or your card in 5 to 7 days' },
+            { title: 'Refunds', text: 'to bKash or Nagad in 5 to 7 days' },
           ],
         },
         {
@@ -466,7 +466,7 @@ async function run() {
         {
           blockType: 'text',
           heading: 'Refunds',
-          body: doc(p("If we can't swap it, we refund to your original payment method. Cash on Delivery orders are refunded to bKash or Nagad.")) as never,
+          body: doc(p("If we can't swap it, we refund you to bKash or Nagad within 5 to 7 days.")) as never,
         },
       ],
     },
@@ -515,7 +515,7 @@ async function run() {
         {
           blockType: 'text',
           heading: 'Payment',
-          body: doc(p('You can pay Cash on Delivery or online through SSLCommerz. For Cash on Delivery, please check your items before paying the rider.')) as never,
+          body: doc(p('Every order is Cash on Delivery: please check your items before paying the rider. Online payment (bKash, Nagad and cards) is coming soon.')) as never,
         },
         { blockType: 'text', heading: 'Exchanges', body: doc(p('See our Returns & Exchange page for the full exchange policy.')) as never },
       ],
@@ -536,7 +536,6 @@ async function run() {
       accessoriesFeature: { eyebrow: 'Carry more', title: 'Bags from ৳650', linkLabel: 'Shop now', link: '/accessories/bags' },
       promise: "Good clothes, fair prices, honest service. That's the Vai promise.",
       newsletterLabel: 'New drops and members-only deals, straight to your inbox',
-      paymentLabels: 'Cash on Delivery, bKash, Nagad, Visa, Mastercard',
       phone: '[01XXX-XXXXXX]',
       whatsapp: '',
       email: '',
@@ -595,14 +594,14 @@ async function run() {
       trust: [
         { icon: 'exchange', title: 'Easy exchange', subtitle: '7 days, no fuss' },
         { icon: 'truck', title: 'Delivery across Bangladesh', subtitle: '1 to 4 days' },
-        { icon: 'wallet', title: 'Cash on Delivery', subtitle: 'and secure online payment' },
+        { icon: 'wallet', title: 'Cash on Delivery', subtitle: 'pay when it arrives' },
         { icon: 'shirt', title: 'Quality fabrics', subtitle: 'checked before they ship' },
       ],
       reviews: { heading: 'What our customers say', ratingText: '' },
       seo: {
         heading: 'About Discount Vai',
         text: "Discount Vai is a Bangladeshi online clothing shop for men, with unisex bags and a women's line on the way. We make everyday trousers, shorts, drop-shoulder tees, club jerseys, jackets and Panjabi in breathable fabrics, and sell them at prices that make sense.",
-        more: 'Order online with Cash on Delivery anywhere in Bangladesh, or pay with bKash, Nagad or card. Delivery inside Dhaka takes 1 to 2 days and outside Dhaka 2 to 4 days. If the size is not right, exchange it within 7 days. Think of us as your brother in the business: honest about quality, fair on price.',
+        more: 'Order online with Cash on Delivery anywhere in Bangladesh. Delivery inside Dhaka takes 1 to 2 days and outside Dhaka 2 to 4 days. If the size is not right, exchange it within 7 days. Think of us as your brother in the business: honest about quality, fair on price.',
       },
     },
   })

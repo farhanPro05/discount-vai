@@ -2,17 +2,15 @@ import Link from 'next/link'
 
 import { getNav } from '../../lib/catalog'
 import { toImg } from '../../lib/media'
-import { getBrand, getSite } from '../../lib/settings'
+import { getBrand, getCommerceInfo, getSite } from '../../lib/settings'
 import { NewsletterForm } from '../shop/NewsletterForm'
 import { Wordmark } from '../ui/Art'
 import { SocialIcons } from './HeaderClient'
 
 export async function Footer() {
-  const [site, brand, nav] = await Promise.all([getSite(), getBrand(), getNav()])
-  const pays = (site.paymentLabels || 'Cash on Delivery, bKash, Nagad, Visa, Mastercard')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const [site, brand, nav, commerce] = await Promise.all([getSite(), getBrand(), getNav(), getCommerceInfo()])
+  // Only what customers can actually pay with today (online methods appear once they're switched on).
+  const pays = commerce.payments.length ? commerce.payments : ['Cash on Delivery']
   const socials = {
     facebook: site.facebook || null,
     instagram: site.instagram || null,
@@ -66,6 +64,7 @@ export async function Footer() {
               {p}
             </span>
           ))}
+          {!commerce.onlineEnabled ? <span className="pill">Online payment soon</span> : null}
         </div>
         <p className="copy">© {new Date().getFullYear()} Discount Vai. All rights reserved.</p>
       </div>

@@ -21,4 +21,7 @@ export type ListFilters = {
   q?: string
 }
 
+/** A colour + size pair that's in stock, as stored on products for the listing filters. */
+export const variantKey = (colour: string, size: string) => `${colour}|${size}`
+
 export type Facets = { sizes: string[]; colours: { name: string; hex: string; count: number }[]; min: number; max: number }

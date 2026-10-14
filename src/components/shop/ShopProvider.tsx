@@ -58,7 +58,8 @@ type Shop = {
   ready: boolean
   count: number
   subtotal: number
-  add: (line: Omit<CartLine, 'key'>) => void
+  /** `max` is the stock left: the cart never holds more than that of one size. */
+  add: (line: Omit<CartLine, 'key'>, max?: number) => void
   setQty: (key: string, qty: number) => void
   patch: (key: string, change: Partial<Pick<CartLine, 'price' | 'was' | 'qty' | 'image'>>) => void
   remove: (key: string) => void
@@ -105,13 +106,14 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     document.body.classList.toggle('lock', drawerOpen || searchOpen || menuOpen)
   }, [drawerOpen, searchOpen, menuOpen])
 
-  const add = useCallback((line: Omit<CartLine, 'key'>) => {
+  const add = useCallback((line: Omit<CartLine, 'key'>, max = MAX_QTY) => {
     const key = `${line.productId}|${line.colour}|${line.size}`
-    let added: CartLine = { ...line, key }
+    const limit = Math.max(1, Math.min(MAX_QTY, max))
+    let added: CartLine = { ...line, key, qty: Math.min(limit, line.qty) }
     cartStore.set((prev) => {
       const found = prev.find((l) => l.key === key)
       if (found) {
-        added = { ...found, ...line, key, qty: Math.min(MAX_QTY, found.qty + line.qty) }
+        added = { ...found, ...line, key, qty: Math.min(limit, found.qty + line.qty) }
         return prev.map((l) => (l.key === key ? added : l))
       }
       return [...prev, added]

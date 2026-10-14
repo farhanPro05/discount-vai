@@ -1,8 +1,15 @@
-import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import {
+  APIError,
+  type CollectionAfterChangeHook,
+  type CollectionBeforeChangeHook,
+  type CollectionBeforeDeleteHook,
+  type CollectionConfig,
+} from 'payload'
 
 import { isOwner, isStaff } from '../access'
 import { newOrderAlertEmail, orderConfirmationEmail } from '../lib/emails'
 import { isPlaceholder } from '../lib/format'
+import { orderLines, releaseStock, reserveStock } from '../lib/stock'
 import type { Order } from '../payload-types'
 
 export const ORDER_STATUSES = [
@@ -32,35 +39,58 @@ const trackStatus: CollectionBeforeChangeHook = ({ data, originalDoc, operation 
   return data
 }
 
-type Item = { product?: number | { id: number } | null; colour?: string | null; size?: string | null; qty?: number | null }
-
-/** Put stock back when an order is cancelled or returned (only once). */
-const restock: CollectionAfterChangeHook = async ({ doc, previousDoc, req, operation }) => {
-  if (operation !== 'update') return doc
-  const back = ['cancelled', 'returned']
-  if (!doc.stockCommitted || !back.includes(doc.status) || back.includes(previousDoc?.status)) return doc
-  for (const item of (doc.items ?? []) as Item[]) {
-    const id = typeof item.product === 'object' ? item.product?.id : item.product
-    if (!id) continue
-    const product = await req.payload.findByID({ collection: 'products', id, depth: 0, draft: true, req })
-    const colours = (product.colours ?? []).map((c) =>
-      c.name !== item.colour
-        ? c
-        : { ...c, sizes: (c.sizes ?? []).map((s) => (s.size === item.size ? { ...s, stock: (s.stock ?? 0) + (item.qty ?? 0) } : s)) },
-    )
-    await req.payload.update({ collection: 'products', id, data: { colours }, req, overrideAccess: true })
-  }
-  return doc
-}
+const BACK = ['cancelled', 'returned']
 
 /**
- * Email the customer and the shop once an order is real: stock is taken when a COD order is placed
- * or when an online payment is validated, so that's the moment to send. A failed email never
- * blocks the order; it's logged instead.
+ * Keep the order's stock in step with its status. Cancelling or returning gives the stock back;
+ * re-opening a cancelled order takes it again (or refuses if it has sold out since).
+ * `stockCommitted` is only ever changed here or by lib/stock.ts (context.stockFlag), never by a
+ * stale value from an open admin form.
+ *
+ * This must run before the order is written: once the order's save has written its item links,
+ * its open transaction locks the products, and a product update from here would wait on it forever.
  */
-const notify: CollectionAfterChangeHook = async ({ doc, previousDoc, req, operation }) => {
-  if (operation !== 'update' || !doc.stockCommitted || previousDoc?.stockCommitted) return doc
+const stockOnStatus: CollectionBeforeChangeHook = async ({ data, originalDoc, operation, req, context }) => {
+  if (operation !== 'update' || !originalDoc) return data
+  // Saves made by lib/stock.ts already hold the stock lock and set the flag themselves.
+  if (context?.stockFlag) return data
+  data.stockCommitted = originalDoc.stockCommitted
+  if (!data.status || data.status === originalDoc.status) return data
+  const wasBack = BACK.includes(originalDoc.status)
+  const nowBack = BACK.includes(data.status)
+  if (!wasBack && nowBack && originalDoc.stockCommitted) {
+    await releaseStock(req.payload, orderLines(originalDoc.items ?? []))
+    data.stockCommitted = false
+  } else if (wasBack && !nowBack && !originalDoc.stockCommitted) {
+    const res = await reserveStock(req.payload, orderLines(originalDoc.items ?? []))
+    if (!res.ok) throw new APIError(`Not enough stock to re-open this order. ${res.problems.join(' ')}`, 400, null, true)
+    data.stockCommitted = true
+  }
+  return data
+}
+
+/** Deleting an order that still holds stock gives it back first. */
+const stockOnDelete: CollectionBeforeDeleteHook = async ({ id, req }) => {
+  const order = await req.payload.findByID({ collection: 'orders', id, depth: 0, overrideAccess: true, req }).catch(() => null)
+  if (order?.stockCommitted) await releaseStock(req.payload, orderLines(order.items ?? []))
+}
+
+/** COD placed, or an online / advance payment confirmed. */
+const isConfirmed = (s?: string | null) => s === 'unpaid_cod' || s === 'paid'
+
+/**
+ * When an order is confirmed: count the discount code's use and email the customer and the shop.
+ * A failed email never blocks the order; it's logged instead.
+ */
+const onConfirmed: CollectionAfterChangeHook = async ({ doc, previousDoc, req, operation, context }) => {
+  if (context?.seed) return doc
+  if (!isConfirmed(doc.paymentStatus) || (operation === 'update' && isConfirmed(previousDoc?.paymentStatus))) return doc
   const order = doc as Order
+  if (order.discountCode) {
+    const res = await req.payload.find({ collection: 'discount-codes', where: { code: { equals: order.discountCode } }, limit: 1, depth: 0, req })
+    const code = res.docs[0]
+    if (code) await req.payload.update({ collection: 'discount-codes', id: code.id, data: { used: (code.used ?? 0) + 1 }, overrideAccess: true, req })
+  }
   try {
     const [commerce, site] = await Promise.all([
       req.payload.findGlobal({ slug: 'commerce', depth: 0, req }),
@@ -71,7 +101,7 @@ const notify: CollectionAfterChangeHook = async ({ doc, previousDoc, req, operat
       const mail = orderConfirmationEmail(order, isPlaceholder(site.phone) ? null : site.phone)
       sends.push(req.payload.sendEmail({ to: order.contact.email, ...(site.email && !isPlaceholder(site.email) ? { replyTo: site.email } : {}), ...mail }))
     }
-    const shop = commerce.orderAlertEmail || site.email
+    const shop = commerce.orderAlertEmail || (isPlaceholder(site.email) ? null : site.email)
     if (shop) sends.push(req.payload.sendEmail({ to: shop, ...newOrderAlertEmail(order) }))
     const results = await Promise.allSettled(sends)
     for (const r of results) if (r.status === 'rejected') req.payload.logger.error({ err: r.reason }, `Order email for ${order.orderNumber} failed`)
@@ -102,7 +132,7 @@ export const Orders: CollectionConfig = {
     update: ({ req }) => isStaff(req),
     delete: ({ req }) => isOwner(req),
   },
-  hooks: { beforeChange: [trackStatus], afterChange: [restock, notify] },
+  hooks: { beforeChange: [trackStatus, stockOnStatus], afterChange: [onConfirmed], beforeDelete: [stockOnDelete] },
   fields: [
     { name: 'invoice', type: 'ui', admin: { position: 'sidebar', components: { Field: '/admin/PrintInvoice#PrintInvoice' } } },
     {
@@ -246,7 +276,28 @@ export const Orders: CollectionConfig = {
     },
     { name: 'customer', type: 'relationship', relationTo: 'customers', admin: { position: 'sidebar', readOnly: true } },
     // Set once the items have been taken out of stock (COD: when placed; online: when paid).
-    { name: 'stockCommitted', type: 'checkbox', defaultValue: false, admin: { hidden: true } },
+    {
+      name: 'stockCommitted',
+      type: 'checkbox',
+      defaultValue: false,
+      label: 'Holding stock',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description: 'Ticked while this order holds its items. Cancelling or returning the order gives them back automatically.',
+      },
+    },
+    {
+      name: 'stockProblem',
+      type: 'textarea',
+      label: 'Stock problem',
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        condition: (data) => !!data?.stockProblem,
+        description: 'The customer paid, but these items had sold out. Refund them or restock before shipping.',
+      },
+    },
     {
       name: 'accessToken',
       type: 'text',

@@ -3236,6 +3236,22 @@ body.lock {
 .swb.on {
   box-shadow: inset 0 0 0 2px var(--text);
 }
+/* A colour with no sizes left: faded, with a line through it (still selectable to see its photos). */
+.swb.out {
+  position: relative;
+}
+.swb.out span {
+  opacity: 0.45;
+}
+.swb.out::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  border-top: 2px solid var(--text2);
+  transform: rotate(-45deg);
+}
 .low {
   display: flex;
   align-items: center;

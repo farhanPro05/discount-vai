@@ -5,7 +5,7 @@ import type { ShapeKey } from '../fields/shapes'
 import type { Category, Product } from '../payload-types'
 import { toImg, toImgs } from './media'
 import { getClient } from './payload'
-import { SORTS, type Facets, type ListFilters, type SortKey } from './sorts'
+import { SORTS, variantKey, type Facets, type ListFilters, type SortKey } from './sorts'
 import type { CardProduct, NavCategory } from './types'
 
 export { SORTS, type Facets, type ListFilters, type SortKey }
@@ -135,8 +135,10 @@ export function buildWhere(f: ListFilters): Where {
   if (f.categoryIds?.length) and.push({ category: { in: f.categoryIds } })
   if (f.onSale) and.push({ onSale: { equals: true } })
   if (f.isNew) and.push({ isNew: { equals: true } })
-  if (f.sizes?.length) and.push({ availableSizes: { in: f.sizes } })
-  if (f.colours?.length) and.push({ colourNames: { in: f.colours } })
+  // Filters match what can actually be bought: a size and colour together must be in stock together.
+  if (f.sizes?.length && f.colours?.length) and.push({ variants: { in: f.colours.flatMap((c) => f.sizes!.map((s) => variantKey(c, s))) } })
+  else if (f.sizes?.length) and.push({ availableSizes: { in: f.sizes } })
+  else if (f.colours?.length) and.push({ availableColours: { in: f.colours } })
   if (f.min != null) and.push({ effectivePrice: { greater_than_equal: f.min } })
   if (f.max != null) and.push({ effectivePrice: { less_than_equal: f.max } })
   if (f.q) and.push(...searchWhere(f.q))
@@ -155,7 +157,8 @@ export async function listProducts(
   const res = await payload.find({
     collection: 'products',
     where: buildWhere(filters),
-    sort: SORTS[sort]?.sort ?? SORTS.newest.sort,
+    // Sold-out products go last, whatever the chosen order.
+    sort: ['-inStock', SORTS[sort]?.sort ?? SORTS.newest.sort],
     page,
     limit,
     depth: 1,
@@ -181,7 +184,7 @@ export async function getFacets(base: ListFilters): Promise<Facets> {
     limit: 500,
     depth: 0,
     pagination: false,
-    select: { availableSizes: true, colours: { name: true, hex: true }, effectivePrice: true },
+    select: { availableSizes: true, availableColours: true, colours: { name: true, hex: true }, effectivePrice: true },
   })
   const sizes = new Set<string>()
   const colours = new Map<string, { name: string; hex: string; count: number }>()
@@ -190,6 +193,8 @@ export async function getFacets(base: ListFilters): Promise<Facets> {
   for (const p of res.docs) {
     for (const s of p.availableSizes ?? []) sizes.add(s)
     for (const c of p.colours ?? []) {
+      // Only colours that still have stock (the colour filter matches in-stock colours).
+      if (!(p.availableColours ?? []).includes(c.name)) continue
       const key = c.name
       const e = colours.get(key)
       if (e) e.count++
@@ -241,7 +246,7 @@ export async function relatedProducts(product: Product, limit = 8): Promise<Card
   const res = await payload.find({
     collection: 'products',
     where: { and: [PUBLISHED, { category: { equals: catId } }, { id: { not_equals: product.id } }] },
-    sort: '-salesCount',
+    sort: ['-inStock', '-salesCount'],
     limit,
     depth: 1,
   })

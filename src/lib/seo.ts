@@ -1,11 +1,14 @@
 import type { Product } from '../payload-types'
-import { absoluteUrl, SITE_URL } from './format'
+import { absoluteUrl, isPlaceholder, SITE_URL } from './format'
 import { toImgs } from './media'
 import type { CardProduct } from './types'
 
 type Json = Record<string, unknown>
 
-export function organizationLd(site: { facebook?: string | null; instagram?: string | null; tiktok?: string | null; phone?: string | null; email?: string | null }): Json {
+export function organizationLd(
+  site: { facebook?: string | null; instagram?: string | null; tiktok?: string | null; phone?: string | null; email?: string | null },
+  payments: string[],
+): Json {
   return {
     '@context': 'https://schema.org',
     '@type': 'OnlineStore',
@@ -15,9 +18,9 @@ export function organizationLd(site: { facebook?: string | null; instagram?: str
     logo: absoluteUrl('/icon-512.png'),
     areaServed: 'BD',
     currenciesAccepted: 'BDT',
-    paymentAccepted: 'Cash on Delivery, bKash, Nagad, Visa, Mastercard',
-    sameAs: [site.facebook, site.instagram, site.tiktok].filter(Boolean),
-    ...(site.email ? { email: site.email } : {}),
+    paymentAccepted: payments.join(', ') || 'Cash on Delivery',
+    sameAs: [site.facebook, site.instagram, site.tiktok].filter((v) => v && !isPlaceholder(v)),
+    ...(site.email && !isPlaceholder(site.email) ? { email: site.email } : {}),
   }
 }
 
